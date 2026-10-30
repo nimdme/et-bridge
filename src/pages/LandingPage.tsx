@@ -13,9 +13,6 @@ import {
   CheckCircle2, 
   Sun, 
   Moon,
-  Github,
-  Heart,
-  Eye,
   Check
 } from 'lucide-react'
 import { InstallModal } from '../components/InstallModal'
