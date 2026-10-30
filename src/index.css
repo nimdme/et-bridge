@@ -109,6 +109,51 @@ html.light .glass-panel-hover:hover {
   animation: indeterminate 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
+/* Graceful Button Shimmer & Glow Animations */
+@keyframes shimmerSweep {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+
+.animate-shimmer-sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shimmer-sweep::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.22) 50%,
+    transparent 100%
+  );
+  animation: shimmerSweep 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes subtleFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.animate-subtle-float {
+  animation: subtleFloat 3s ease-in-out infinite;
+}
+
 /* =========================================================================
    LIGHT THEME COMPLETE ADAPTATION LAYER
    Maps all dark-themed surfaces, borders, and typography to crisp modern
