@@ -17,6 +17,7 @@ import {
   Check
 } from 'lucide-react'
 import { LoadingScreen } from '../components/LoadingScreen'
+import { ETBridgeLogo } from '../components/ETBridgeLogo'
 
 export const LoginPage: React.FC = () => {
   const { login, loginDemo, isAuthenticated } = useAuth()
@@ -134,14 +135,7 @@ export const LoginPage: React.FC = () => {
         {/* Brand Header */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2.5 mb-4 group">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-500 p-0.5 shadow-lg shadow-brand-500/25 group-hover:scale-105 transition-transform flex items-center justify-center">
-              <svg viewBox="0 0 512 512" className="w-6 h-6 text-white" fill="none">
-                <path d="M120 340 C180 220, 332 220, 392 340" stroke="currentColor" strokeWidth="48" strokeLinecap="round"/>
-                <path d="M256 340 L256 240" stroke="currentColor" strokeWidth="36" strokeLinecap="round"/>
-                <circle cx="256" cy="160" r="36" fill="currentColor"/>
-              </svg>
-            </div>
-            <span className="font-extrabold text-2xl tracking-tight text-white">ETBridge</span>
+            <ETBridgeLogo size="lg" showText={true} />
           </Link>
           <h2 className="text-xl font-bold text-white">Sign in to your college portal</h2>
           <p className="text-xs text-zinc-400 mt-1">Connects directly to ETLab's official API server</p>
