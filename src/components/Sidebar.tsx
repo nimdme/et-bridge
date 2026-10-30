@@ -28,6 +28,7 @@ export const Sidebar: React.FC = () => {
 
   const [showProfilePopup, setShowProfilePopup] = useState(false)
   const popoverRef = useRef<HTMLDivElement>(null)
+  const cardContainerRef = useRef<HTMLDivElement>(null)
 
   const currentPath = location.pathname
   const currentSearch = location.search
@@ -35,9 +36,14 @@ export const Sidebar: React.FC = () => {
   // Close popover when clicking outside or pressing Escape
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
-        setShowProfilePopup(false)
+      const target = e.target as Node
+      if (
+        popoverRef.current?.contains(target) ||
+        cardContainerRef.current?.contains(target)
+      ) {
+        return
       }
+      setShowProfilePopup(false)
     }
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -151,12 +157,14 @@ export const Sidebar: React.FC = () => {
           {/* Discord Floating Profile Card rendered via Portal to avoid sidebar clipping */}
           {showProfilePopup && createPortal(
             <div 
-              className="fixed inset-0 z-[100] flex items-end justify-start p-4 bg-black/20 md:bg-transparent"
+              className="fixed inset-0 z-[100] flex items-end justify-start p-4 bg-black/30 md:bg-transparent"
               onClick={() => setShowProfilePopup(false)}
             >
               <div 
+                ref={cardContainerRef}
                 className="fixed bottom-20 left-4 z-[101] w-84 max-w-[calc(100vw-2rem)] shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-150"
                 onClick={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.stopPropagation()}
               >
                 <DiscordProfileCard onClose={() => setShowProfilePopup(false)} />
               </div>

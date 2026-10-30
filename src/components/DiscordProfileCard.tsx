@@ -30,10 +30,14 @@ export const DiscordProfileCard: React.FC<DiscordProfileCardProps> = ({ onClose,
   const [copiedAdmission, setCopiedAdmission] = useState(false)
   const [showInstallModal, setShowInstallModal] = useState(false)
 
-  const handleLogout = () => {
-    logout()
-    navigate('/')
+  const handleLogout = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
     onClose()
+    logout()
+    navigate('/', { replace: true })
   }
 
   const handleCopyAdmission = (e: React.MouseEvent) => {
@@ -180,8 +184,9 @@ export const DiscordProfileCard: React.FC<DiscordProfileCardProps> = ({ onClose,
 
           {/* Sign out */}
           <button
+            type="button"
             onClick={handleLogout}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-950/30 transition-colors text-left"
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-950/30 transition-colors text-left cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
             <span>Sign Out of ETLab</span>
@@ -200,7 +205,11 @@ export const DiscordProfileCard: React.FC<DiscordProfileCardProps> = ({ onClose,
         className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-150"
         onClick={onClose}
       >
-        <div onClick={(e) => e.stopPropagation()} className="w-full max-w-sm">
+        <div 
+          onClick={(e) => e.stopPropagation()} 
+          onMouseDown={(e) => e.stopPropagation()}
+          className="w-full max-w-sm"
+        >
           {cardContent}
         </div>
       </div>,
