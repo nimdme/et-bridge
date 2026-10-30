@@ -23,7 +23,7 @@ interface FAQItem {
 const FAQ_ITEMS: FAQItem[] = [
   {
     question: 'How do I log in?',
-    answer: 'Enter your college institute code (for example: cev for College of Engineering Vadakara, gcek for Kannur, mace for Kothamangalam) along with your regular ETLab admission number or username and password. The authentication request is made directly to ETLab.'
+    answer: 'Enter your college institute code (for example: gcek for Kannur, mace for Kothamangalam, rit for Kottayam) along with your regular ETLab admission number or username and password. The authentication request is made directly to ETLab.'
   },
   {
     question: 'Is my password or student data stored on any server?',
@@ -39,7 +39,7 @@ const FAQ_ITEMS: FAQItem[] = [
   },
   {
     question: 'Which colleges are supported?',
-    answer: 'Any university or college that uses ETLab\'s student portal (including CEV, GCEK, MACE, TKMCE, JEC, VJEC, RIT, GECK, and others). You only need your college\'s institute code, which matches the subdomain of your portal (for instance, cev from cev.etlab.app).'
+    answer: 'Any university or college that uses ETLab\'s student portal (including GCEK, MACE, TKMCE, JEC, VJEC, RIT, GECK, and others). You only need your college\'s institute code, which matches the subdomain of your portal (for instance, gcek from gcek.etlab.app).'
   },
   {
     question: 'Can I install this on my iPhone or Android device?',
@@ -127,18 +127,24 @@ export const LandingPage: React.FC = () => {
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <Link
               to="/login"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-sm transition-all"
+              className="inline-flex items-center gap-2.5 px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl bg-brand-600 hover:bg-brand-500 active:scale-95 text-white text-xs sm:text-sm font-semibold shadow-md shadow-brand-600/20 transition-all group"
             >
-              <span>Sign In with College Account</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <span>Sign in with ETLab account</span>
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
 
-            <button
-              onClick={handleDemoClick}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-zinc-800 dark:border-zinc-800 light:border-slate-300 bg-zinc-900/60 dark:bg-zinc-900/60 light:bg-white text-zinc-200 dark:text-zinc-200 light:text-slate-800 hover:bg-zinc-800 text-xs font-semibold transition-all"
+            <a
+              href="https://github.com/nimd/etbridge"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl border border-zinc-800 dark:border-zinc-800 light:border-slate-300 bg-zinc-900/60 dark:bg-zinc-900/60 light:bg-white text-zinc-200 dark:text-zinc-200 light:text-slate-800 hover:bg-zinc-800 dark:hover:bg-zinc-800 light:hover:bg-slate-100 text-xs sm:text-sm font-semibold transition-all active:scale-95 group"
             >
-              <span>View Demo (CEV Student Data)</span>
-            </button>
+              <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current text-zinc-400 group-hover:text-white dark:group-hover:text-white light:group-hover:text-slate-900 transition-colors" aria-hidden="true">
+                <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+              </svg>
+              <span>GitHub</span>
+              <ExternalLink className="w-3.5 h-3.5 text-zinc-500" />
+            </a>
           </div>
         </section>
 
@@ -301,27 +307,53 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* Document Footer */}
-        <footer className="pt-8 border-t border-zinc-800 dark:border-zinc-800 light:border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-zinc-500 dark:text-zinc-500 light:text-slate-400 font-mono">
-          <div>
-            Built by Niranjan M D (CEV). Licensed under MIT.
+        <footer className="pt-8 border-t border-zinc-800 dark:border-zinc-800 light:border-slate-200 space-y-4 text-xs font-mono">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-zinc-500 dark:text-zinc-500 light:text-slate-400">
+            <div>
+              Made with love by{' '}
+              <a
+                href="https://nimd.me"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-zinc-300 hover:text-white dark:text-zinc-300 dark:hover:text-white light:text-slate-700 light:hover:text-slate-900 transition-colors font-bold"
+              >
+                NiMD
+              </a>
+              . Licensed under MIT.
+            </div>
+
+            <div className="flex items-center gap-4 flex-wrap">
+              <button
+                type="button"
+                onClick={handleDemoClick}
+                className="hover:underline text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors"
+              >
+                Demo Preview
+              </button>
+              <a
+                href="https://github.com/nimd/etbridge"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline flex items-center gap-1 text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors"
+              >
+                <span>GitHub Repository</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+              <button
+                type="button"
+                onClick={() => setShowInstallModal(true)}
+                className="hover:underline text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors"
+              >
+                Install App
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <a
-              href="https://github.com/nimd/etbridge"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline flex items-center gap-1"
-            >
-              <span>GitHub Repository</span>
-              <ExternalLink className="w-3 h-3" />
-            </a>
-            <button
-              onClick={() => setShowInstallModal(true)}
-              className="hover:underline"
-            >
-              Install App
-            </button>
+          {/* Legal Disclaimer */}
+          <div className="pt-3 text-[11px] text-zinc-600 dark:text-zinc-600 light:text-slate-400 leading-relaxed border-t border-zinc-900 dark:border-zinc-900 light:border-slate-200/60">
+            <p>
+              Disclaimer: ETBridge is an independent open-source project and is not affiliated, associated, authorized, endorsed by, or in any way officially connected with ETLab, Etuwa Concepts, or any of their subsidiaries or affiliates. All product and company names are trademarks or registered trademarks of their respective holders.
+            </p>
           </div>
         </footer>
 

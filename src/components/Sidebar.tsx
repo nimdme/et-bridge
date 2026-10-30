@@ -17,9 +17,11 @@ import {
   Bell, 
   PieChart, 
   BookMarked,
-  ChevronUp
+  ChevronUp,
+  HelpCircle
 } from 'lucide-react'
 import { DiscordProfileCard } from './DiscordProfileCard'
+import { FeedbackModal } from './FeedbackModal'
 import { formatSemester } from '../utils/format'
 
 export const Sidebar: React.FC = () => {
@@ -27,6 +29,7 @@ export const Sidebar: React.FC = () => {
   const location = useLocation()
 
   const [showProfilePopup, setShowProfilePopup] = useState(false)
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false)
   const popoverRef = useRef<HTMLDivElement>(null)
   const cardContainerRef = useRef<HTMLDivElement>(null)
 
@@ -150,6 +153,18 @@ export const Sidebar: React.FC = () => {
               </div>
             </div>
           ))}
+
+          {/* Faint "Something Missing?" Option */}
+          <div className="pt-2 px-1">
+            <button
+              type="button"
+              onClick={() => setShowFeedbackModal(true)}
+              className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-mono text-zinc-500 hover:text-zinc-300 dark:text-zinc-500 dark:hover:text-zinc-300 light:text-slate-400 light:hover:text-slate-700 hover:bg-zinc-900/40 dark:hover:bg-zinc-900/40 light:hover:bg-slate-200/50 transition-colors text-left group"
+            >
+              <HelpCircle className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-600 light:text-slate-400 group-hover:text-zinc-400 transition-colors" />
+              <span>Something Missing?</span>
+            </button>
+          </div>
         </div>
 
         {/* Discord-Style Interactive Profile Tile at Bottom */}
@@ -203,6 +218,9 @@ export const Sidebar: React.FC = () => {
           </div>
         </div>
       </aside>
+
+      {/* Something Missing Feedback Modal */}
+      <FeedbackModal isOpen={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} />
     </>
   )
 }
