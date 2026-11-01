@@ -301,73 +301,1268 @@ export const DEMO_EVALUATIONS: EvaluationsData = {
 }
 
 export const DEMO_MONTH_TIMETABLE: DayTimetable[] = [
-  {
-    date: '2026-10-26',
-    day: 'Monday',
-    sub: [
-      { hour: 1, subject: 'Formal Languages and Automata Theory', subject_code: 'CST301', teacher_name: 'Dr. Suresh Kumar', attendance_status: 'present' },
-      { hour: 2, subject: 'Computer Networks', subject_code: 'CST303', teacher_name: 'Prof. Anjali Nair', attendance_status: 'present' },
-      { hour: 3, subject: 'System Software', subject_code: 'CST305', teacher_name: 'Dr. Manoj V.', attendance_status: 'absent' },
-      { hour: 4, subject: 'Management of Software Systems', subject_code: 'CST307', teacher_name: 'Dr. Radhika P.', attendance_status: 'present' },
-      { hour: 5, subject: 'DBMS Lab', subject_code: 'CSL333', teacher_name: 'Prof. Rajesh K.', attendance_status: 'present' },
-      { hour: 6, subject: 'DBMS Lab', subject_code: 'CSL333', teacher_name: 'Prof. Rajesh K.', attendance_status: 'present' }
-    ]
-  },
-  {
-    date: '2026-10-27',
-    day: 'Tuesday',
-    sub: [
-      { hour: 1, subject: 'Computer Networks', subject_code: 'CST303', teacher_name: 'Prof. Anjali Nair', attendance_status: 'present' },
-      { hour: 2, subject: 'System Software', subject_code: 'CST305', teacher_name: 'Dr. Manoj V.', attendance_status: 'present' },
-      { hour: 3, subject: 'Formal Languages and Automata Theory', subject_code: 'CST301', teacher_name: 'Dr. Suresh Kumar', attendance_status: 'present' },
-      { hour: 4, subject: 'Library / Seminar', subject_code: 'SEM301', teacher_name: 'Prof. Divya R.', attendance_status: 'present' },
-      { hour: 5, subject: 'System Software Lab', subject_code: 'CSL331', teacher_name: 'Prof. Divya R.', attendance_status: 'present' },
-      { hour: 6, subject: 'System Software Lab', subject_code: 'CSL331', teacher_name: 'Prof. Divya R.', attendance_status: 'present' }
-    ]
-  },
-  {
-    date: '2026-10-28',
-    day: 'Wednesday',
-    sub: [
-      { hour: 1, subject: 'Management of Software Systems', subject_code: 'CST307', teacher_name: 'Dr. Radhika P.', attendance_status: 'present' },
-      { hour: 2, subject: 'Formal Languages and Automata Theory', subject_code: 'CST301', teacher_name: 'Dr. Suresh Kumar', attendance_status: 'present' },
-      { hour: 3, subject: 'Computer Networks', subject_code: 'CST303', teacher_name: 'Prof. Anjali Nair', attendance_status: 'present' },
-      { hour: 4, subject: 'System Software', subject_code: 'CST305', teacher_name: 'Dr. Manoj V.', attendance_status: 'present' },
-      { hour: 5, subject: 'Tutorial / Remedial', subject_code: 'TUT301', teacher_name: 'Dr. Suresh Kumar', attendance_status: 'present' },
-      { hour: 6, subject: 'Sports / Physical Education', subject_code: 'PED301', teacher_name: 'Staff', attendance_status: 'present' }
-    ]
-  },
-  {
-    date: '2026-10-29',
-    day: 'Thursday',
-    sub: [
-      { hour: 1, subject: 'Formal Languages and Automata Theory', subject_code: 'CST301', teacher_name: 'Dr. Suresh Kumar', attendance_status: 'present' },
-      { hour: 2, subject: 'Computer Networks', subject_code: 'CST303', teacher_name: 'Prof. Anjali Nair', attendance_status: 'present' },
-      { hour: 3, subject: 'System Software', subject_code: 'CST305', teacher_name: 'Dr. Manoj V.', attendance_status: 'absent' },
-      { hour: 4, subject: 'System Software & Microprocessors Lab', subject_code: 'CSL331', teacher_name: 'Prof. Divya R.', attendance_status: 'present' },
-      { hour: 5, subject: 'System Software & Microprocessors Lab', subject_code: 'CSL331', teacher_name: 'Prof. Divya R.', attendance_status: 'present' },
-      { hour: 6, subject: 'Management of Software Systems', subject_code: 'CST307', teacher_name: 'Dr. Radhika P.', attendance_status: 'not_marked' }
-    ]
-  },
-  {
-    date: '2026-10-30',
-    day: 'Friday',
-    sub: [
-      { 
-        hour: 1, 
-        subject: 'Computer Networks', 
-        subject_code: 'CST303', 
-        subject_type: 'Theory',
-        teacher_name: 'Prof. Anjali Nair', 
-        attendance_status: 'not_marked',
-        change: 'substitution',
-        regular_subject: 'Physics for Information Science',
-        in_place_of: 'Dr. Suresh Kumar'
+{
+    "date": "2026-10-05",
+    "day": "Monday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Introduction to Grammars and Chomsky Classification"
+        ]
       },
-      { hour: 2, subject: 'System Software', subject_code: 'CST305', subject_type: 'Theory', teacher_name: 'Dr. Manoj V.', attendance_status: 'not_marked' },
-      { hour: 3, subject: 'Management of Software Systems', subject_code: 'CST307', subject_type: 'Theory', teacher_name: 'Dr. Radhika P.', attendance_status: 'not_marked' },
-      { hour: 4, subject: 'Formal Languages and Automata Theory', subject_code: 'CST301', subject_type: 'Theory', teacher_name: 'Dr. Suresh Kumar', attendance_status: 'not_marked' },
-      { hour: 5, subject: 'Activity Hour / Clubs', subject_code: 'ACT301', subject_type: 'Practical', teacher_name: 'Staff Coordinator', attendance_status: 'not_marked' }
+      {
+        "hour": 2,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Network topologies and physical layer encoding standards"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Overview of SIC and SIC/XE system architectures"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "Management of Software Systems",
+        "subject_code": "CST307",
+        "teacher_name": "Dr. Radhika P.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Software development lifecycles: Agile vs Waterfall paradigms"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "DBMS Lab",
+        "subject_code": "CSL333",
+        "teacher_name": "Prof. Rajesh K.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "DDL commands, schema creation and primary key constraints"
+        ]
+      },
+      {
+        "hour": 6,
+        "subject": "DBMS Lab",
+        "subject_code": "CSL333",
+        "teacher_name": "Prof. Rajesh K.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Foreign key references and cascading update triggers"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "day": "Tuesday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Framing methods: Bit stuffing and byte stuffing techniques"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "SIC machine instructions and addressing modes analysis"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Deterministic Finite Automata (DFA) state minimization algorithms"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "Library / Seminar",
+        "subject_code": "SEM301",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Research paper review and citation standards"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "System Software Lab",
+        "subject_code": "CSL331",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Lexical analysis token parsing in C"
+        ]
+      },
+      {
+        "hour": 6,
+        "subject": "System Software Lab",
+        "subject_code": "CSL331",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Symbol table implementation using hash tables"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2026-10-07",
+    "day": "Wednesday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Management of Software Systems",
+        "subject_code": "CST307",
+        "teacher_name": "Dr. Radhika P.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Requirement engineering: elicitation and feasibility study"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Non-deterministic Finite Automata (NFA) to DFA conversion via subset construction"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Error detection: CRC polynomial division and checksum verification"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Basic assembler functions and two-pass assembler data structures"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "Tutorial / Remedial",
+        "subject_code": "TUT301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "DFA construction practice problems"
+        ]
+      },
+      {
+        "hour": 6,
+        "subject": "Sports / Physical Education",
+        "subject_code": "PED301",
+        "teacher_name": "Staff",
+        "attendance_status": "present"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-08",
+    "day": "Thursday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Regular expressions to epsilon-NFA Thompson construction"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Sliding window protocols: Stop-and-Wait and Go-Back-N ARQ"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Pass 1 assembler algorithm: OPTAB and SYMTAB operations"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "System Software & Microprocessors Lab",
+        "subject_code": "CSL331",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Pass 1 assembler code generation"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "System Software & Microprocessors Lab",
+        "subject_code": "CSL331",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Intermediate file formatting in assembler"
+        ]
+      },
+      {
+        "hour": 6,
+        "subject": "Management of Software Systems",
+        "subject_code": "CST307",
+        "teacher_name": "Dr. Radhika P.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Software Requirements Specification (SRS) IEEE 830 standards"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2026-10-09",
+    "day": "Friday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Selective Repeat protocol and channel utilization efficiency"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Pass 2 assembler algorithm: Object code generation"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "Management of Software Systems",
+        "subject_code": "CST307",
+        "teacher_name": "Dr. Radhika P.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "COCOMO basic and intermediate software cost estimation models"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Pumping Lemma for Regular Languages: Proofs and applications"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "Activity Hour / Clubs",
+        "subject_code": "ACT301",
+        "teacher_name": "Staff Coordinator",
+        "attendance_status": "present"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "day": "Monday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Context Free Grammars (CFG) derivation trees and ambiguity"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Medium Access Control: Pure ALOHA, Slotted ALOHA and CSMA/CD"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Machine dependent assembler features: Program relocation and literal pools"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "Management of Software Systems",
+        "subject_code": "CST307",
+        "teacher_name": "Dr. Radhika P.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Function Point (FP) metric computation and complexity weights"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "DBMS Lab",
+        "subject_code": "CSL333",
+        "teacher_name": "Prof. Rajesh K.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Nested subqueries with ANY, ALL, EXISTS operators in SQL"
+        ]
+      },
+      {
+        "hour": 6,
+        "subject": "DBMS Lab",
+        "subject_code": "CSL333",
+        "teacher_name": "Prof. Rajesh K.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Aggregate functions and GROUP BY, HAVING clause queries"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2026-10-13",
+    "day": "Tuesday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Ethernet standards 802.3 and token ring protocol operations"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Symbol table management and literal table resolution"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Chomsky Normal Form (CNF) conversion steps"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "Library / Seminar",
+        "subject_code": "SEM301",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Technical presentation skills workshop"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "System Software Lab",
+        "subject_code": "CSL331",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Pass 2 assembler implementation in C"
+        ]
+      },
+      {
+        "hour": 6,
+        "subject": "System Software Lab",
+        "subject_code": "CSL331",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Object code file formatting and verification"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2026-10-14",
+    "day": "Wednesday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Management of Software Systems",
+        "subject_code": "CST307",
+        "teacher_name": "Dr. Radhika P.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Software project planning: WBS, Gantt charts and critical path method"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Greibach Normal Form (GNF) and PDA formal definition"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "present",
+        "covered_topics": [
+          "IPv4 header format, packet fragmentation and reassembly"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Machine independent assembler features: Literals and symbol definition"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "Tutorial / Remedial",
+        "subject_code": "TUT301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "CFG simplification exercises"
+        ]
+      },
+      {
+        "hour": 6,
+        "subject": "Sports / Physical Education",
+        "subject_code": "PED301",
+        "teacher_name": "Staff",
+        "attendance_status": "present"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-15",
+    "day": "Thursday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Push Down Automata (PDA): Acceptance by final state vs empty stack"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "present",
+        "covered_topics": [
+          "IPv4 addressing classes, subnet masking and CIDR blocks"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Macro Processor functions: Macro definitions and call expansion"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "System Software & Microprocessors Lab",
+        "subject_code": "CSL331",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Two-pass macro processor simulation"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "System Software & Microprocessors Lab",
+        "subject_code": "CSL331",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Macro parameter substitution routines"
+        ]
+      },
+      {
+        "hour": 6,
+        "subject": "Management of Software Systems",
+        "subject_code": "CST307",
+        "teacher_name": "Dr. Radhika P.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Risk management: Identification, projection and mitigation strategies"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2026-10-16",
+    "day": "Friday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Routing algorithms: Distance Vector Routing and count-to-infinity problem"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "DEFTAB, NAMTAB, and ARGTAB data structure implementations"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "Management of Software Systems",
+        "subject_code": "CST307",
+        "teacher_name": "Dr. Radhika P.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Software design concepts: High cohesion and low coupling architectures"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Equivalence of PDA and Context Free Languages theorem"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "Activity Hour / Clubs",
+        "subject_code": "ACT301",
+        "teacher_name": "Staff Coordinator",
+        "attendance_status": "present"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-19",
+    "day": "Monday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Pumping Lemma for CFLs: Proof formulation and examples"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Link State Routing and Dijkstra shortest path algorithm"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Linkers and Loaders: Absolute loaders and bootstrap loaders"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "Management of Software Systems",
+        "subject_code": "CST307",
+        "teacher_name": "Dr. Radhika P.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Object-Oriented Design with UML class and sequence diagrams"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "DBMS Lab",
+        "subject_code": "CSL333",
+        "teacher_name": "Prof. Rajesh K.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "PL/SQL procedures and cursor implementations"
+        ]
+      },
+      {
+        "hour": 6,
+        "subject": "DBMS Lab",
+        "subject_code": "CSL333",
+        "teacher_name": "Prof. Rajesh K.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Row-level and statement-level triggers in Oracle"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2026-10-20",
+    "day": "Tuesday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Hierarchical routing and Border Gateway Protocol (BGP)"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Relocating loaders: Modification record and bit mask methods"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Turing Machine: Formal definition and instantaneous descriptions"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "Library / Seminar",
+        "subject_code": "SEM301",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Literature survey drafting"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "System Software Lab",
+        "subject_code": "CSL331",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Absolute loader implementation in C"
+        ]
+      },
+      {
+        "hour": 6,
+        "subject": "System Software Lab",
+        "subject_code": "CSL331",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Relocating loader with bitmask evaluation"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2026-10-21",
+    "day": "Wednesday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Management of Software Systems",
+        "subject_code": "CST307",
+        "teacher_name": "Dr. Radhika P.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Software testing fundamentals: Verification vs Validation"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Turing Machine design for language recognition"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Transport layer: UDP segment header and checksum calculation"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Direct linking loaders and pass 1 linker algorithm"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "Tutorial / Remedial",
+        "subject_code": "TUT301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Turing machine transition tables"
+        ]
+      },
+      {
+        "hour": 6,
+        "subject": "Sports / Physical Education",
+        "subject_code": "PED301",
+        "teacher_name": "Staff",
+        "attendance_status": "present"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-22",
+    "day": "Thursday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Modifications of Turing Machines: Multi-tape and non-deterministic TMs"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "present",
+        "covered_topics": [
+          "TCP connection management: 3-way handshake and termination"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Pass 2 linker algorithm: External reference resolution"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "System Software & Microprocessors Lab",
+        "subject_code": "CSL331",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Pass 1 linking loader algorithm"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "System Software & Microprocessors Lab",
+        "subject_code": "CSL331",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "External symbol table (ESTAB) lookup"
+        ]
+      },
+      {
+        "hour": 6,
+        "subject": "Management of Software Systems",
+        "subject_code": "CST307",
+        "teacher_name": "Dr. Radhika P.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "White-box testing: Basis path testing and cyclomatic complexity"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2026-10-23",
+    "day": "Friday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "present",
+        "covered_topics": [
+          "TCP Congestion Control: AIMD, slow start and fast recovery"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Dynamic linking and shared library architectures in Linux"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "Management of Software Systems",
+        "subject_code": "CST307",
+        "teacher_name": "Dr. Radhika P.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Black-box testing: Equivalence partitioning and boundary value analysis"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Undecidability and the Halting Problem proof"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "Activity Hour / Clubs",
+        "subject_code": "ACT301",
+        "teacher_name": "Staff Coordinator",
+        "attendance_status": "present"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-26",
+    "day": "Monday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Post Correspondence Problem (PCP) and Rice theorem"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Application layer: DNS resolution hierarchy and record types"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Compiler phases overview: Lexical, syntax and semantic analysis"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "Management of Software Systems",
+        "subject_code": "CST307",
+        "teacher_name": "Dr. Radhika P.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Software maintenance and configuration management tools (Git)"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "DBMS Lab",
+        "subject_code": "CSL333",
+        "teacher_name": "Prof. Rajesh K.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Database transaction isolation levels and rollback tests"
+        ]
+      },
+      {
+        "hour": 6,
+        "subject": "DBMS Lab",
+        "subject_code": "CSL333",
+        "teacher_name": "Prof. Rajesh K.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "JDBC connectivity and CRUD interface in Java"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2026-10-27",
+    "day": "Tuesday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "HTTP/1.1 vs HTTP/2 protocol architecture and headers"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Lexical analysis with Lex / Flex specifications"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Recursive and recursively enumerable languages properties"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "Library / Seminar",
+        "subject_code": "SEM301",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Seminar report formatting"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "System Software Lab",
+        "subject_code": "CSL331",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Lex program for C token identifier"
+        ]
+      },
+      {
+        "hour": 6,
+        "subject": "System Software Lab",
+        "subject_code": "CSL331",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Yacc parser for arithmetic expressions"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2026-10-28",
+    "day": "Wednesday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Management of Software Systems",
+        "subject_code": "CST307",
+        "teacher_name": "Dr. Radhika P.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Software quality assurance: ISO 9001 and CMMI level certifications"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Semester review: Regular and context-free languages"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Email architecture: SMTP, POP3 and IMAP protocol flows"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Parsing techniques: Top-down parsing and LL(1) grammars"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "Tutorial / Remedial",
+        "subject_code": "TUT301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Comprehensive problem set on Turing machines"
+        ]
+      },
+      {
+        "hour": 6,
+        "subject": "Sports / Physical Education",
+        "subject_code": "PED301",
+        "teacher_name": "Staff",
+        "attendance_status": "present"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-29",
+    "day": "Thursday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Comprehensive syllabus review and model question discussions"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Network security basics: Symmetric vs Asymmetric cryptography"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Bottom-up parsing: Shift-reduce parsing and LR(0) items"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "System Software & Microprocessors Lab",
+        "subject_code": "CSL331",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Complete two pass assembler evaluation"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "System Software & Microprocessors Lab",
+        "subject_code": "CSL331",
+        "teacher_name": "Prof. Divya R.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Microprocessor 8086 assembly simulations"
+        ]
+      },
+      {
+        "hour": 6,
+        "subject": "Management of Software Systems",
+        "subject_code": "CST307",
+        "teacher_name": "Dr. Radhika P.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "DevOps pipelines and continuous integration/deployment (CI/CD)"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2026-10-30",
+    "day": "Friday",
+    "sub": [
+      {
+        "hour": 1,
+        "subject": "Computer Networks",
+        "subject_code": "CST303",
+        "subject_type": "Theory",
+        "teacher_name": "Prof. Anjali Nair",
+        "attendance_status": "present",
+        "change": "substitution",
+        "regular_subject": "Physics for Information Science",
+        "in_place_of": "Dr. Suresh Kumar",
+        "covered_topics": [
+          "Firewalls, NAT gateways and VPN tunneling implementations"
+        ]
+      },
+      {
+        "hour": 2,
+        "subject": "System Software",
+        "subject_code": "CST305",
+        "subject_type": "Theory",
+        "teacher_name": "Dr. Manoj V.",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Code generation and basic block DAG representations"
+        ]
+      },
+      {
+        "hour": 3,
+        "subject": "Management of Software Systems",
+        "subject_code": "CST307",
+        "subject_type": "Theory",
+        "teacher_name": "Dr. Radhika P.",
+        "attendance_status": "absent",
+        "covered_topics": [
+          "Software product management and agile sprint retrospectives"
+        ]
+      },
+      {
+        "hour": 4,
+        "subject": "Formal Languages and Automata Theory",
+        "subject_code": "CST301",
+        "subject_type": "Theory",
+        "teacher_name": "Dr. Suresh Kumar",
+        "attendance_status": "present",
+        "covered_topics": [
+          "Theory examination preparation and problem solving"
+        ]
+      },
+      {
+        "hour": 5,
+        "subject": "Activity Hour / Clubs",
+        "subject_code": "ACT301",
+        "subject_type": "Practical",
+        "teacher_name": "Staff Coordinator",
+        "attendance_status": "present"
+      }
     ]
   }
 ]

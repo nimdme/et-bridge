@@ -812,7 +812,7 @@ export const AttendancePage: React.FC = () => {
       {selectedSubjectModal && (
         <SubjectAttendanceModal
           subject={selectedSubjectModal}
-          timetableHistory={semesterTimetable}
+          timetableHistory={allTimetableEntries}
           onClose={() => setSelectedSubjectModal(null)}
         />
       )}

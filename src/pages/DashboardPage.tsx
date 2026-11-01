@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { etlabClient } from '../api/client'
 import { AttendanceRing } from '../components/AttendanceRing'
@@ -40,6 +40,13 @@ export const DashboardPage: React.FC = () => {
   const [showFeedbackModal, setShowFeedbackModal] = useState(false)
   const [downloadingAsgId, setDownloadingAsgId] = useState<string | number | null>(null)
   const [semesterTimetable, setSemesterTimetable] = useState<DayTimetable[]>(() => timetable || [])
+
+  const allTimetableEntries: DayTimetable[] = useMemo(() => {
+    const map = new Map<string, DayTimetable>()
+    ;(semesterTimetable || []).forEach((d: DayTimetable) => { if (d.date) map.set(d.date, d) })
+    ;(timetable || []).forEach((d: DayTimetable) => { if (d.date) map.set(d.date, d) })
+    return Array.from(map.values())
+  }, [timetable, semesterTimetable])
 
   const handleDownloadAssignmentPaper = async (asg: Assignment, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -910,7 +917,7 @@ export const DashboardPage: React.FC = () => {
       {selectedSubjectModal && (
         <SubjectAttendanceModal
           subject={selectedSubjectModal}
-          timetableHistory={semesterTimetable}
+          timetableHistory={allTimetableEntries}
           onClose={() => setSelectedSubjectModal(null)}
         />
       )}

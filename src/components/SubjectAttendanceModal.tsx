@@ -35,6 +35,7 @@ interface ClassRecord {
   subject_code?: string
   teacher_name?: string
   attendance_status: string
+  statusType: 'present' | 'absent' | 'duty_leave' | 'suspended' | 'other'
   covered_topics?: string[]
   change?: string
   regular_subject?: string
@@ -46,7 +47,7 @@ export const SubjectAttendanceModal: React.FC<SubjectAttendanceModalProps> = ({
   timetableHistory,
   onClose
 }) => {
-  const { pendingDutyLeaves } = useAuth()
+  const { timetable, pendingDutyLeaves } = useAuth()
   const [filterMode, setFilterMode] = useState<'absent' | 'present' | 'all'>('absent')
 
   if (!subject) return null
@@ -59,8 +60,13 @@ export const SubjectAttendanceModal: React.FC<SubjectAttendanceModalProps> = ({
   const canMiss = parseNumber(subject.can_miss_hours, 0)
   const mustAttend = parseNumber(subject.must_attend_hours, 0)
 
+  // Use either timetableHistory or timetable fallback
+  const effectiveHistory = Array.isArray(timetableHistory) && timetableHistory.length > 0 
+    ? timetableHistory 
+    : (timetable || [])
+
   // Calculate projected stats with pending duty leaves
-  const proj = calculateSubjectProjection(subject, pendingDutyLeaves, timetableHistory, target)
+  const proj = calculateSubjectProjection(subject, pendingDutyLeaves, effectiveHistory, target)
 
   // Standard period times (approx)
   const periodTimes: Record<number, string> = {
@@ -72,45 +78,89 @@ export const SubjectAttendanceModal: React.FC<SubjectAttendanceModalProps> = ({
     6: '02:40 - 03:35 PM'
   }
 
-  // Helper to normalize course codes (e.g. "GMEST103" / "gmest103" / " GMEST-103 ")
+  // Normalization helpers
   const cleanCode = (val?: string) => (val || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase().trim()
 
-  // Helper to normalize subject title text for comparison
   const normalizeSubject = (val?: string) =>
     (val || '')
       .toLowerCase()
+      .replace(/&/g, ' and ')
       .replace(/[^a-z0-9]/g, ' ')
       .replace(/\s+/g, ' ')
       .trim()
+
+  const normalizeStatus = (status?: string): 'present' | 'absent' | 'duty_leave' | 'suspended' | 'other' => {
+    const s = (status || '').toLowerCase().trim()
+    if (s === 'present' || s === 'p' || s.includes('present')) return 'present'
+    if (s === 'absent' || s === 'a' || s.includes('absent')) return 'absent'
+    if (s === 'duty_leave' || s === 'duty leave' || s.includes('duty') || s === 'dl') return 'duty_leave'
+    if (s === 'suspended' || s.includes('suspend') || s.includes('holiday')) return 'suspended'
+    return 'other'
+  }
+
+  const isSubjectMatch = (
+    targetCode: string,
+    targetName: string,
+    pCode: string,
+    pName: string,
+    pRegularName: string
+  ) => {
+    // 1. Direct code equality or prefix/substring match
+    if (targetCode && pCode) {
+      if (targetCode === pCode) return true
+      if (targetCode.length >= 4 && pCode.length >= 4) {
+        if (targetCode.includes(pCode) || pCode.includes(targetCode)) return true
+      }
+      // If both have different distinct 5+ char codes (e.g. CST305 vs CSL331), do NOT match
+      if (targetCode.length >= 5 && pCode.length >= 5 && targetCode !== pCode) {
+        if (targetName && pRegularName && (targetName === pRegularName || pRegularName.includes(targetName))) {
+          return true
+        }
+        return false
+      }
+    }
+
+    // 2. Title matching (when code is missing or matched by title)
+    if (targetName && pName) {
+      if (targetName === pName) return true
+      if (!pCode || !targetCode) {
+        if (targetName.length > 5 && pName.length > 5) {
+          if (targetName.includes(pName) || pName.includes(targetName)) return true
+        }
+      }
+      // Word token overlap (only when codes are not contradictory)
+      if (!targetCode || !pCode || targetCode === pCode) {
+        const tWords = targetName.split(' ').filter(w => w.length > 2)
+        const pWords = pName.split(' ').filter(w => w.length > 2)
+        if (tWords.length > 0 && pWords.length > 0) {
+          const matchCount = tWords.filter(w => pWords.includes(w)).length
+          if (matchCount / Math.max(tWords.length, pWords.length) >= 0.7) return true
+        }
+      }
+    }
+
+    // 3. Substitution replacement match
+    if (targetName && pRegularName) {
+      if (targetName === pRegularName) return true
+      if (targetName.includes(pRegularName) || pRegularName.includes(targetName)) return true
+    }
+
+    return false
+  }
 
   const targetCode = cleanCode(subject.code || subject.display_code)
   const targetName = normalizeSubject(subject.subject)
 
   const allRecords: ClassRecord[] = []
-  timetableHistory.forEach(dayEntry => {
+  effectiveHistory.forEach(dayEntry => {
     if (Array.isArray(dayEntry.sub)) {
       dayEntry.sub.forEach(p => {
         const pCode = cleanCode(p.subject_code)
         const pName = normalizeSubject(p.subject)
         const pRegularName = normalizeSubject(p.regular_subject)
 
-        // Strict Matching:
-        // 1. Primary match by exact course code (e.g. GMEST103 === GMEST103)
-        // 2. Or exact subject title match if codes are missing
-        // 3. Or if this period was a substitution replacing this target subject
-        let isMatch = false
-        if (targetCode && pCode) {
-          isMatch = (pCode === targetCode)
-        } else if (targetName && pName) {
-          isMatch = (pName === targetName)
-        }
-
-        // Also check if this period was a substitution replacing this target subject
-        if (!isMatch && targetName && pRegularName) {
-          isMatch = (pRegularName === targetName)
-        }
-
-        if (isMatch) {
+        if (isSubjectMatch(targetCode, targetName, pCode, pName, pRegularName)) {
+          const statusType = normalizeStatus(p.attendance_status)
           allRecords.push({
             date: dayEntry.date,
             day: dayEntry.day,
@@ -119,6 +169,7 @@ export const SubjectAttendanceModal: React.FC<SubjectAttendanceModalProps> = ({
             subject_code: p.subject_code,
             teacher_name: p.teacher_name || subject.teacher_name,
             attendance_status: p.attendance_status || 'not_marked',
+            statusType,
             covered_topics: p.covered_topics || [],
             change: p.change,
             regular_subject: p.regular_subject,
@@ -136,9 +187,10 @@ export const SubjectAttendanceModal: React.FC<SubjectAttendanceModalProps> = ({
     return b.hour - a.hour
   })
 
-  // Separate absent vs present
-  const absentRecords = allRecords.filter(r => r.attendance_status === 'absent')
-  const presentRecords = allRecords.filter(r => r.attendance_status === 'present')
+  // Separate absent vs present vs duty leave
+  const absentRecords = allRecords.filter(r => r.statusType === 'absent')
+  const presentRecords = allRecords.filter(r => r.statusType === 'present')
+  const dutyLeaveRecords = allRecords.filter(r => r.statusType === 'duty_leave')
 
   const displayedRecords =
     filterMode === 'absent' ? absentRecords :
@@ -226,11 +278,11 @@ export const SubjectAttendanceModal: React.FC<SubjectAttendanceModalProps> = ({
           </div>
 
           {/* Filter Navigation: Absent Records vs Present vs All */}
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-zinc-950/80 dark:bg-zinc-950/80 light:bg-slate-100 border border-zinc-800 dark:border-zinc-800 light:border-slate-300">
+          <div className="flex items-center justify-between gap-2 overflow-x-auto scrollbar-none no-scrollbar pb-0.5 max-w-full">
+            <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-zinc-950/80 dark:bg-zinc-950/80 light:bg-slate-100 border border-zinc-800 dark:border-zinc-800 light:border-slate-300 w-fit max-w-full">
               <button
                 onClick={() => setFilterMode('absent')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
                   filterMode === 'absent'
                     ? 'bg-rose-600 text-white shadow-sm'
                     : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
@@ -242,7 +294,7 @@ export const SubjectAttendanceModal: React.FC<SubjectAttendanceModalProps> = ({
 
               <button
                 onClick={() => setFilterMode('present')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
                   filterMode === 'present'
                     ? 'bg-emerald-600 text-white shadow-sm'
                     : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
@@ -254,7 +306,7 @@ export const SubjectAttendanceModal: React.FC<SubjectAttendanceModalProps> = ({
 
               <button
                 onClick={() => setFilterMode('all')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
                   filterMode === 'all'
                     ? 'bg-brand-600 text-white shadow-sm'
                     : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
@@ -395,14 +447,34 @@ export const SubjectAttendanceModal: React.FC<SubjectAttendanceModalProps> = ({
                 )
               })
             ) : (
-              <div className="py-12 text-center text-zinc-500 glass-panel rounded-2xl border border-zinc-800">
-                <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-emerald-400" />
-                <p className="text-xs font-semibold text-white">No {filterMode} sessions recorded</p>
-                <p className="text-[11px] text-zinc-400 mt-0.5">
-                  {filterMode === 'absent'
-                    ? 'Congratulations! You have not missed any recorded classes for this course.'
-                    : 'No attendance records match the selected filter.'}
-                </p>
+              <div className="py-12 text-center text-zinc-500 glass-panel rounded-2xl border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 p-4">
+                {filterMode === 'absent' && absentHours === 0 ? (
+                  <>
+                    <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-emerald-400" />
+                    <p className="text-xs font-semibold text-white dark:text-white light:text-slate-900">Zero Absences Recorded</p>
+                    <p className="text-[11px] text-zinc-400 dark:text-zinc-400 light:text-slate-600 mt-0.5">
+                      Congratulations! You have 100% attendance in all conducted sessions for this course.
+                    </p>
+                  </>
+                ) : filterMode === 'absent' && absentHours > 0 ? (
+                  <>
+                    <AlertTriangle className="w-8 h-8 mx-auto mb-2 text-amber-400" />
+                    <p className="text-xs font-semibold text-white dark:text-white light:text-slate-900">
+                      {absentHours} {absentHours === 1 ? 'Absence' : 'Absences'} in Official Register
+                    </p>
+                    <p className="text-[11px] text-zinc-400 dark:text-zinc-400 light:text-slate-600 mt-1 max-w-md mx-auto leading-relaxed">
+                      Daily hour-by-hour logs for earlier sessions have not been published in the timetable portal by department faculty, but are factored into your official percentage above.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <BookOpen className="w-8 h-8 mx-auto mb-2 opacity-50 text-brand-400" />
+                    <p className="text-xs font-semibold text-white dark:text-white light:text-slate-900">No {filterMode} sessions found</p>
+                    <p className="text-[11px] text-zinc-400 dark:text-zinc-400 light:text-slate-600 mt-0.5">
+                      No matching records found in the timetable log for this filter.
+                    </p>
+                  </>
+                )}
               </div>
             )}
           </div>
