@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { etlabClient } from '../api/client'
 import { BunkBadge } from '../components/BunkBadge'
@@ -23,7 +23,7 @@ import {
   Zap,
   Trash2
 } from 'lucide-react'
-import { TimetablePeriod, SubjectAttendance } from '../api/types'
+import { TimetablePeriod, SubjectAttendance, DayTimetable } from '../api/types'
 
 export const AttendancePage: React.FC = () => {
   const { profile, attendance, timetable, dutyLeaves, pendingDutyLeaves, totalPendingDlHours, deletePendingDutyLeave } = useAuth()
@@ -43,9 +43,39 @@ export const AttendancePage: React.FC = () => {
     return () => { isMounted = false }
   }, [timetable])
   
-  // Date and month navigation for Calendar view
-  const [currentDate, setCurrentDate] = useState(() => new Date(2026, 9, 1)) // Default to October 2026
-  const [selectedDayDate, setSelectedDayDate] = useState<string>('2026-10-01')
+  // Combine timetable and semesterTimetable for comprehensive date lookups
+  const allTimetableEntries: DayTimetable[] = useMemo(() => {
+    const map = new Map<string, DayTimetable>()
+    ;(semesterTimetable || []).forEach((d: DayTimetable) => { if (d.date) map.set(d.date, d) })
+    ;(timetable || []).forEach((d: DayTimetable) => { if (d.date) map.set(d.date, d) })
+    return Array.from(map.values())
+  }, [timetable, semesterTimetable])
+
+  // Helper to get local date string YYYY-MM-DD
+  const formatLocalDate = (d: Date) => {
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${y}-${m}-${day}`
+  }
+
+  // Determine initial date from available timetable entries or current date
+  const [currentDate, setCurrentDate] = useState(() => {
+    if (timetable && timetable.length > 0 && timetable[0].date) {
+      const parts = timetable[0].date.split('-').map(Number)
+      if (parts.length === 3 && !isNaN(parts[0])) {
+        return new Date(parts[0], parts[1] - 1, 1)
+      }
+    }
+    return new Date()
+  })
+
+  const [selectedDayDate, setSelectedDayDate] = useState<string>(() => {
+    if (timetable && timetable.length > 0 && timetable[0].date) {
+      return timetable[0].date
+    }
+    return formatLocalDate(new Date())
+  })
 
   // Overall attendance calculation
   const overallAttended = parseNumber(profile?.attendance?.classes_attended, 167)
@@ -63,25 +93,40 @@ export const AttendancePage: React.FC = () => {
 
   // Month navigation helpers
   const handlePrevMonth = () => {
-    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))
+    setCurrentDate(prev => {
+      const newDate = new Date(prev.getFullYear(), prev.getMonth() - 1, 1)
+      const y = newDate.getFullYear()
+      const m = String(newDate.getMonth() + 1).padStart(2, '0')
+      setSelectedDayDate(`${y}-${m}-01`)
+      return newDate
+    })
   }
+
   const handleNextMonth = () => {
-    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))
+    setCurrentDate(prev => {
+      const newDate = new Date(prev.getFullYear(), prev.getMonth() + 1, 1)
+      const y = newDate.getFullYear()
+      const m = String(newDate.getMonth() + 1).padStart(2, '0')
+      setSelectedDayDate(`${y}-${m}-01`)
+      return newDate
+    })
   }
 
   const monthYearString = currentDate.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
   const monthKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`
 
-  // Filter timetable for this month
-  const monthDays = (timetable || []).filter(d => d.date?.startsWith(monthKey))
+  // Filter timetable for this month using all combined timetable entries
+  const monthDays = useMemo(() => {
+    return allTimetableEntries.filter((d: DayTimetable) => d.date?.startsWith(monthKey))
+  }, [allTimetableEntries, monthKey])
 
   // Calculate monthly attendance stats
   let monthPresent = 0
   let monthAbsent = 0
   let monthTotal = 0
 
-  monthDays.forEach(d => {
-    d.sub?.forEach(p => {
+  monthDays.forEach((d: DayTimetable) => {
+    d.sub?.forEach((p: TimetablePeriod) => {
       monthTotal++
       if (p.attendance_status === 'present') monthPresent++
       else if (p.attendance_status === 'absent') monthAbsent++
@@ -96,70 +141,68 @@ export const AttendancePage: React.FC = () => {
   const firstDayIndex = new Date(year, month, 1).getDay()
   const daysInMonth = new Date(year, month + 1, 0).getDate()
 
-  // Selected Day timetable
-  const selectedDayData = monthDays.find(d => d.date === selectedDayDate) || {
-    date: selectedDayDate,
-    day: 'Thursday',
-    sub: [
-      {
-        hour: 1,
-        subject_code: 'GXEST104',
-        subject: 'Introduction to Electrical & Electronics Engineering',
-        type: 'Theory',
-        teacher_name: 'AISHWARYADASS K',
-        attendance_status: 'absent',
-        covered_topics: ['Nodal analysis in DC circuits', 'KVL and KCL applications']
-      },
-      {
-        hour: 2,
-        subject_code: 'GMEST103',
-        subject: 'Engineering Graphics and Computer Aided Drawing',
-        type: 'Theory',
-        teacher_name: 'ARJUN SREEDHAR S',
-        attendance_status: 'absent',
-        covered_topics: ['Projection of solids with axis inclined to both reference planes']
-      },
-      {
-        hour: 3,
-        subject_code: 'UCHUT128',
-        subject: 'Life Skills and Professional Communication',
-        type: 'Theory',
-        teacher_name: 'ANASWARA N.G.',
-        attendance_status: 'present',
-        covered_topics: ['Interpersonal communication and group dynamics']
-      },
-      {
-        hour: 4,
-        subject_code: 'GAMAT101',
-        subject: 'Mathematics for Information Science - 1',
-        type: 'Theory',
-        teacher_name: 'RADHIKA KALIYARTHODI',
-        attendance_status: 'present',
-        covered_topics: ['Eigenvalues and Eigenvectors of symmetric matrices']
-      },
-      {
-        hour: 5,
-        subject_code: 'GAPHT121',
-        subject: 'Physics for Information Science',
-        type: 'Theory',
-        teacher_name: 'SNEHA K V',
-        attendance_status: 'present',
-        covered_topics: ['Carrier concentration in intrinsic semiconductors']
-      },
-      {
-        hour: 6,
-        subject_code: 'UCEST105',
-        subject: 'Algorithmic Thinking with Python',
-        type: 'Theory',
-        teacher_name: 'MUMTHAS THAZHATHKOYILOTH',
-        attendance_status: 'present',
-        covered_topics: ['Binary search implementation and complexity analysis']
-      }
-    ] as TimetablePeriod[]
-  }
+  // Selected Day Timetable resolved dynamically per selected date
+  const selectedDayEntry = useMemo(() => {
+    if (!selectedDayDate) return null
 
-  const selectedDayPresentCount = selectedDayData.sub.filter(p => p.attendance_status === 'present').length
-  const selectedDayAbsentCount = selectedDayData.sub.filter(p => p.attendance_status === 'absent').length
+    // 1. Direct date match in all combined timetable entries
+    const exact = allTimetableEntries.find((d: DayTimetable) => d.date === selectedDayDate)
+    if (exact && Array.isArray(exact.sub) && exact.sub.length > 0) {
+      return exact
+    }
+
+    // 2. Day-of-week match
+    const parts = selectedDayDate.split('-').map(Number)
+    const dateObj = new Date(parts[0], parts[1] - 1, parts[2])
+    const dayName = dateObj.toLocaleDateString('en-IN', { weekday: 'long' })
+    const isSunday = dateObj.getDay() === 0
+
+    if (isSunday) {
+      return {
+        date: selectedDayDate,
+        day: 'Sunday',
+        is_holiday: true,
+        holiday_reason: 'Sunday - Weekly Off',
+        sub: []
+      }
+    }
+
+    // Lookup day of week schedule from timetable entries
+    const byDayName = allTimetableEntries.find((d: DayTimetable) => d.day?.toLowerCase() === dayName.toLowerCase() && Array.isArray(d.sub) && d.sub.length > 0)
+    if (byDayName && Array.isArray(byDayName.sub)) {
+      return {
+        date: selectedDayDate,
+        day: dayName,
+        sub: byDayName.sub.map((p: any) => ({
+          ...p,
+          attendance_status: p.attendance_status || 'scheduled'
+        }))
+      }
+    }
+
+    // 3. Fallback to profile regular timetable
+    if (profile?.timetable && profile.timetable.length > 0) {
+      return {
+        date: selectedDayDate,
+        day: dayName,
+        sub: profile.timetable.map((p: any) => ({
+          ...p,
+          attendance_status: 'scheduled'
+        }))
+      }
+    }
+
+    return {
+      date: selectedDayDate,
+      day: dayName,
+      sub: []
+    }
+  }, [selectedDayDate, allTimetableEntries, profile])
+
+  const activePeriods: TimetablePeriod[] = (selectedDayEntry?.sub as TimetablePeriod[]) || []
+  const selectedDayPresentCount = activePeriods.filter(p => p.attendance_status === 'present').length
+  const selectedDayAbsentCount = activePeriods.filter(p => p.attendance_status === 'absent').length
+  const selectedDayDutyLeaveCount = activePeriods.filter(p => p.attendance_status === 'duty_leave').length
 
   return (
     <div className="w-full px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-6 pb-28 md:pb-12 space-y-4 sm:space-y-6 max-w-full overflow-hidden">
@@ -597,7 +640,7 @@ export const AttendancePage: React.FC = () => {
                 {Array.from({ length: daysInMonth }).map((_, i) => {
                   const dayNum = i + 1
                   const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`
-                  const dayData = monthDays.find(d => d.date === dateStr)
+                  const dayData = monthDays.find((d: DayTimetable) => d.date === dateStr)
                   const isSelected = selectedDayDate === dateStr
                   const dayOfWeek = (firstDayIndex + i) % 7
                   const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
@@ -605,8 +648,8 @@ export const AttendancePage: React.FC = () => {
                   // Determine status dot
                   let dotColor = ''
                   if (dayData && dayData.sub && dayData.sub.length > 0) {
-                    const present = dayData.sub.filter(p => p.attendance_status === 'present').length
-                    const absent = dayData.sub.filter(p => p.attendance_status === 'absent').length
+                    const present = dayData.sub.filter((p: TimetablePeriod) => p.attendance_status === 'present').length
+                    const absent = dayData.sub.filter((p: TimetablePeriod) => p.attendance_status === 'absent').length
                     if (absent === 0) dotColor = 'bg-emerald-500'
                     else if (present > 0 && absent > 0) dotColor = 'bg-amber-500'
                     else dotColor = 'bg-rose-500'
@@ -650,75 +693,115 @@ export const AttendancePage: React.FC = () => {
                   <h4 className="text-base font-extrabold text-white dark:text-white light:text-slate-900">
                     {formatIndianDate(selectedDayDate, 'day-short')}
                   </h4>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-800/60 text-emerald-400 text-[10px] font-bold">
-                      {selectedDayPresentCount || 4} Present
-                    </span>
-                    <span className="px-2 py-0.5 rounded-full bg-rose-950/60 border border-rose-800/60 text-rose-400 text-[10px] font-bold">
-                      {selectedDayAbsentCount || 2} Absent
-                    </span>
-                    <span className="text-xs text-zinc-500 font-semibold">
-                      {selectedDayData.sub.length} hours
-                    </span>
+                  <div className="flex items-center gap-2 mt-1 flex-wrap">
+                    {activePeriods.length > 0 ? (
+                      <>
+                        <span className="px-2 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-800/60 text-emerald-400 text-[10px] font-bold whitespace-nowrap">
+                          {selectedDayPresentCount} Present
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full bg-rose-950/60 border border-rose-800/60 text-rose-400 text-[10px] font-bold whitespace-nowrap">
+                          {selectedDayAbsentCount} Absent
+                        </span>
+                        {selectedDayDutyLeaveCount > 0 && (
+                          <span className="px-2 py-0.5 rounded-full bg-purple-950/60 border border-purple-800/60 text-purple-400 text-[10px] font-bold whitespace-nowrap">
+                            {selectedDayDutyLeaveCount} Duty Leave
+                          </span>
+                        )}
+                        <span className="text-xs text-zinc-500 font-semibold whitespace-nowrap">
+                          {activePeriods.length} hours
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-xs text-zinc-400 dark:text-zinc-400 light:text-slate-500 font-medium">
+                        {(selectedDayEntry as any)?.holiday_reason || 'No classes recorded for this date'}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
 
               {/* Periods List */}
               <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
-                {selectedDayData.sub.map((period) => {
-                  const isPresent = period.attendance_status === 'present'
-                  const isAbsent = period.attendance_status === 'absent'
+                {activePeriods.length > 0 ? (
+                  activePeriods.map((period, pIdx) => {
+                    const isPresent = period.attendance_status === 'present'
+                    const isAbsent = period.attendance_status === 'absent'
+                    const isDutyLeave = period.attendance_status === 'duty_leave'
+                    const isSuspended = period.suspended
 
-                  return (
-                    <div
-                      key={period.hour}
-                      className={`p-3.5 rounded-2xl border transition-all ${
-                        isAbsent
-                          ? 'bg-rose-950/25 border-rose-800/50 text-rose-200'
-                          : 'bg-zinc-900/70 dark:bg-zinc-900/70 light:bg-slate-50 border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                          <span className="w-6 h-6 rounded-lg bg-zinc-800 dark:bg-zinc-800 light:bg-slate-200 text-zinc-300 dark:text-zinc-300 light:text-slate-700 text-xs font-bold flex items-center justify-center shrink-0">
-                            {period.hour}
-                          </span>
-                          <div>
-                            <span className="font-mono text-[11px] font-bold text-brand-400 block">
-                              {period.subject_code} • {period.type || 'Theory'}
+                    return (
+                      <div
+                        key={`${period.hour}-${pIdx}`}
+                        className={`p-3.5 rounded-2xl border transition-all ${
+                          isAbsent
+                            ? 'bg-rose-950/25 border-rose-800/50 text-rose-200'
+                            : isDutyLeave
+                            ? 'bg-purple-950/25 border-purple-800/50 text-purple-200'
+                            : isSuspended
+                            ? 'bg-amber-950/25 border-amber-800/50 text-amber-200'
+                            : 'bg-zinc-900/70 dark:bg-zinc-900/70 light:bg-slate-50 border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="w-6 h-6 rounded-lg bg-zinc-800 dark:bg-zinc-800 light:bg-slate-200 text-zinc-300 dark:text-zinc-300 light:text-slate-700 text-xs font-bold flex items-center justify-center shrink-0">
+                              {period.hour}
                             </span>
-                            <h5 className="text-xs font-bold text-white dark:text-white light:text-slate-900 mt-0.5">
-                              {period.subject}
-                            </h5>
+                            <div>
+                              <span className="font-mono text-[11px] font-bold text-brand-400 block">
+                                {period.subject_code || 'ACADEMIC'} • {period.type || period.subject_type || 'Theory'}
+                              </span>
+                              <h5 className="text-xs font-bold text-white dark:text-white light:text-slate-900 mt-0.5">
+                                {period.subject}
+                              </h5>
+                              {period.teacher_name && (
+                                <p className="text-[11px] text-zinc-400 dark:text-zinc-400 light:text-slate-500 mt-0.5">
+                                  {period.teacher_name}
+                                </p>
+                              )}
+                            </div>
                           </div>
+
+                          <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-md border shrink-0 ${
+                            isPresent
+                              ? 'bg-emerald-950/70 border-emerald-800 text-emerald-400'
+                              : isAbsent
+                              ? 'bg-rose-950/70 border-rose-800 text-rose-400'
+                              : isDutyLeave
+                              ? 'bg-purple-950/70 border-purple-800 text-purple-400'
+                              : isSuspended
+                              ? 'bg-amber-950/70 border-amber-800 text-amber-400'
+                              : 'bg-zinc-800 border-zinc-700 text-zinc-400'
+                          }`}>
+                            {period.attendance_status || 'Scheduled'}
+                          </span>
                         </div>
 
-                        <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-md border shrink-0 ${
-                          isPresent
-                            ? 'bg-emerald-950/70 border-emerald-800 text-emerald-400'
-                            : isAbsent
-                            ? 'bg-rose-950/70 border-rose-800 text-rose-400'
-                            : 'bg-zinc-800 border-zinc-700 text-zinc-400'
-                        }`}>
-                          {period.attendance_status || 'Scheduled'}
-                        </span>
+                        {/* Covered topics */}
+                        {period.covered_topics && period.covered_topics.length > 0 && (
+                          <div className="mt-2.5 pt-2 border-t border-zinc-800/50 dark:border-zinc-800/50 light:border-slate-200 text-[11px] text-zinc-400 dark:text-zinc-400 light:text-slate-600">
+                            <span className="font-semibold text-zinc-300 dark:text-zinc-300 light:text-slate-700 block mb-0.5">Topics:</span>
+                            <ul className="list-disc list-inside space-y-0.5">
+                              {period.covered_topics.map((t, idx) => (
+                                <li key={idx} className="line-clamp-2">{t}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
                       </div>
-
-                      {/* Covered topics */}
-                      {period.covered_topics && period.covered_topics.length > 0 && (
-                        <div className="mt-2.5 pt-2 border-t border-zinc-800/50 dark:border-zinc-800/50 light:border-slate-200 text-[11px] text-zinc-400 dark:text-zinc-400 light:text-slate-600">
-                          <span className="font-semibold text-zinc-300 dark:text-zinc-300 light:text-slate-700 block mb-0.5">Topics:</span>
-                          <ul className="list-disc list-inside space-y-0.5">
-                            {period.covered_topics.map((t, idx) => (
-                              <li key={idx} className="line-clamp-2">{t}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  )
-                })}
+                    )
+                  })
+                ) : (
+                  <div className="py-12 text-center text-zinc-500">
+                    <CalendarIcon className="w-8 h-8 mx-auto mb-2 opacity-40 text-brand-400" />
+                    <p className="text-sm font-semibold text-zinc-300 dark:text-zinc-300 light:text-slate-700">
+                      {(selectedDayEntry as any)?.holiday_reason || 'No classes recorded for this date'}
+                    </p>
+                    <p className="text-xs text-zinc-500 mt-1">
+                      Weekly off, holiday, or no session entries in ETLab.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

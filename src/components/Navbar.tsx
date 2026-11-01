@@ -88,13 +88,14 @@ export const Navbar: React.FC = () => {
 
           {/* Right: Quick Controls */}
           <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
-            {/* Mobile Search Button */}
+            {/* Mobile Search Button (High-Visibility) */}
             <button
               onClick={openCommandPalette}
-              title="Search"
-              className="md:hidden p-2 rounded-xl text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white dark:hover:text-white light:hover:text-slate-900 hover:bg-zinc-800/80 dark:hover:bg-zinc-800/80 light:hover:bg-slate-200 transition-colors"
+              title="Search (⌘K)"
+              className="md:hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-zinc-900/90 dark:bg-zinc-900/90 light:bg-slate-100 hover:bg-zinc-800 border border-zinc-700/80 dark:border-zinc-700/80 light:border-slate-300 text-zinc-100 dark:text-zinc-100 light:text-slate-800 shadow-sm transition-all active:scale-95"
             >
-              <Search className="w-4 h-4" />
+              <Search className="w-3.5 h-3.5 text-brand-400 shrink-0" />
+              <span className="text-xs font-bold text-zinc-200 dark:text-zinc-200 light:text-slate-700">Search</span>
             </button>
 
             {/* Theme Toggle Button */}

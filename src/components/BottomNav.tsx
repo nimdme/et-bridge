@@ -8,9 +8,16 @@ import {
   PieChart, 
   Menu,
   X,
+  Award,
+  FileText,
   BookMarked,
   TrendingUp,
-  Building,
+  Users,
+  BookOpen,
+  Sparkles,
+  CreditCard,
+  ShieldCheck,
+  FileQuestion,
   Bell,
   Clock,
   HelpCircle,
@@ -18,10 +25,7 @@ import {
   Sun,
   Moon,
   LogOut,
-  ChevronRight,
-  Sparkles,
-  CreditCard,
-  ShieldCheck
+  ChevronRight
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
@@ -33,7 +37,7 @@ import { formatSemester } from '../utils/format'
 export const BottomNav: React.FC = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { session, profile, totalPendingDlHours, academicAnalysis, activityPoints, fees, logout } = useAuth()
+  const { session, profile, totalPendingDlHours, academicAnalysis, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
 
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -54,14 +58,57 @@ export const BottomNav: React.FC = () => {
     .join('')
     .toUpperCase() || 'ST'
 
+  const currentFullPath = location.pathname + location.search
   const secondaryPaths = ['/courses', '/analysis', '/campus', '/notices']
   const isSecondaryActive = secondaryPaths.includes(location.pathname)
 
-  const navItems = [
+  // 4 Regular items + 1 Center Accent Button
+  const leftItems = [
     { to: '/dashboard', label: 'Home', icon: LayoutDashboard },
     { to: '/attendance', label: 'Attendance', icon: PieChart },
+  ]
+
+  const rightItems = [
     { to: '/timetable', label: 'Schedule', icon: CalendarDays },
     { to: '/academics', label: 'Academics', icon: GraduationCap },
+  ]
+
+  // Exact sections matching desktop Sidebar.tsx for 1:1 parity and easy maintenance
+  const navSections = [
+    {
+      title: 'Core',
+      items: [
+        { label: 'Overview', path: '/dashboard', icon: LayoutDashboard },
+        { label: 'Attendance', path: '/attendance', icon: PieChart },
+        { label: 'Class Timetable', path: '/timetable', icon: CalendarDays },
+      ]
+    },
+    {
+      title: 'Academics',
+      items: [
+        { label: 'Examinations', path: '/academics?tab=exams', icon: Award },
+        { label: 'Assignments', path: '/academics?tab=assignments', icon: FileText },
+        { label: 'Courses & Syllabus', path: '/courses', icon: BookMarked },
+        { label: 'Academic Analysis', path: '/analysis', icon: TrendingUp },
+        { label: 'Faculty Directory', path: '/academics?tab=teachers', icon: Users },
+        { label: 'Study Notes', path: '/academics?tab=materials', icon: BookOpen },
+      ]
+    },
+    {
+      title: 'Campus Life',
+      items: [
+        { label: 'Activity Points', path: '/campus?tab=points', icon: Sparkles },
+        { label: 'Fees & No Dues', path: '/campus?tab=fees', icon: CreditCard },
+        { label: 'Duty Leaves', path: '/campus?tab=duty', icon: ShieldCheck },
+        { label: 'Surveys', path: '/campus?tab=surveys', icon: FileQuestion },
+      ]
+    },
+    {
+      title: 'Notice Board',
+      items: [
+        { label: 'Notices & Circulars', path: '/notices', icon: Bell },
+      ]
+    }
   ]
 
   const handleNavigate = (path: string) => {
@@ -75,68 +122,112 @@ export const BottomNav: React.FC = () => {
     navigate('/login')
   }
 
+  const isItemActive = (path: string) => {
+    if (path.includes('?')) {
+      return currentFullPath === path
+    }
+    return location.pathname === path
+  }
+
   return (
     <>
       <nav 
         style={{ paddingBottom: 'max(0.375rem, env(safe-area-inset-bottom))' }}
-        className="fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/95 dark:bg-zinc-950/95 light:bg-white/95 backdrop-blur-md border-t border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 px-2 pt-1.5 md:hidden transition-colors shadow-lg"
+        className="fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/95 dark:bg-zinc-950/95 light:bg-white/95 backdrop-blur-md border-t border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 px-3 pt-1.5 md:hidden transition-colors shadow-lg"
       >
-        <div className="flex items-center justify-around max-w-md mx-auto">
-          {navItems.map((item) => {
-            const Icon = item.icon
-            return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={({ isActive }) =>
-                  `flex flex-col items-center justify-center py-0.5 px-2 rounded-xl transition-all ${
-                    isActive
-                      ? 'text-brand-400 font-bold'
-                      : 'text-zinc-500 dark:text-zinc-500 light:text-slate-500 hover:text-zinc-300 font-medium'
-                  }`
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <div className={`p-1 rounded-xl transition-all ${
-                      isActive ? 'bg-brand-500/15 text-brand-400 scale-105' : ''
-                    }`}>
-                      <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
-                    </div>
-                    <span className="text-[10px] mt-0.5 tracking-tight font-medium">{item.label}</span>
-                  </>
-                )}
-              </NavLink>
-            )
-          })}
+        <div className="flex items-end justify-between max-w-md mx-auto relative">
+          {/* Left 2 Items: Home, Attendance */}
+          <div className="flex items-center justify-around flex-1">
+            {leftItems.map((item) => {
+              const Icon = item.icon
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({ isActive }) =>
+                    `flex flex-col items-center justify-center py-0.5 px-2 rounded-xl transition-all ${
+                      isActive
+                        ? 'text-brand-400 font-bold'
+                        : 'text-zinc-500 dark:text-zinc-500 light:text-slate-500 hover:text-zinc-300 font-medium'
+                    }`
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <div className={`p-1 rounded-xl transition-all ${
+                        isActive ? 'bg-brand-500/15 text-brand-400 scale-105' : ''
+                      }`}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] mt-0.5 tracking-tight font-medium">{item.label}</span>
+                    </>
+                  )}
+                </NavLink>
+              )
+            })}
+          </div>
 
-          {/* 5th Button: More / Menu */}
-          <button
-            type="button"
-            onClick={() => setIsMenuOpen(true)}
-            className={`flex flex-col items-center justify-center py-0.5 px-2 rounded-xl transition-all ${
-              isSecondaryActive || isMenuOpen
-                ? 'text-brand-400 font-bold'
-                : 'text-zinc-500 dark:text-zinc-500 light:text-slate-500 hover:text-zinc-300 font-medium'
-            }`}
-          >
-            <div className={`p-1 rounded-xl transition-all relative ${
-              isSecondaryActive || isMenuOpen ? 'bg-brand-500/15 text-brand-400 scale-105' : ''
-            }`}>
-              <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
+          {/* Center: Accent Elevated Water Drop / Inverted Notch Menu Button */}
+          <div className="relative -top-4 flex flex-col items-center shrink-0 px-2">
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen(prev => !prev)}
+              aria-label="Toggle Navigation Menu"
+              className={`w-12 h-12 rounded-[1.25rem] flex items-center justify-center transition-all duration-200 shadow-xl ${
+                isSecondaryActive || isMenuOpen
+                  ? 'bg-gradient-to-tr from-brand-500 via-indigo-500 to-brand-600 text-white shadow-brand-500/50 scale-105 ring-4 ring-zinc-950 dark:ring-zinc-950 light:ring-white'
+                  : 'bg-gradient-to-tr from-brand-600 via-indigo-600 to-brand-500 text-white shadow-brand-600/35 ring-4 ring-zinc-950 dark:ring-zinc-950 light:ring-white hover:scale-105 active:scale-95'
+              }`}
+            >
+              <Menu className={`w-5 h-5 text-white transition-transform duration-200 ${isMenuOpen ? 'rotate-90' : ''}`} />
               {totalPendingDlHours > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-zinc-950 animate-pulse" />
               )}
-            </div>
-            <span className="text-[10px] mt-0.5 tracking-tight font-medium">Menu</span>
-          </button>
+            </button>
+            <span className={`text-[10px] mt-0.5 font-bold tracking-tight ${
+              isSecondaryActive || isMenuOpen ? 'text-brand-400' : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600'
+            }`}>
+              Menu
+            </span>
+          </div>
+
+          {/* Right 2 Items: Schedule, Academics */}
+          <div className="flex items-center justify-around flex-1">
+            {rightItems.map((item) => {
+              const Icon = item.icon
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({ isActive }) =>
+                    `flex flex-col items-center justify-center py-0.5 px-2 rounded-xl transition-all ${
+                      isActive
+                        ? 'text-brand-400 font-bold'
+                        : 'text-zinc-500 dark:text-zinc-500 light:text-slate-500 hover:text-zinc-300 font-medium'
+                    }`
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <div className={`p-1 rounded-xl transition-all ${
+                        isActive ? 'bg-brand-500/15 text-brand-400 scale-105' : ''
+                      }`}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] mt-0.5 tracking-tight font-medium">{item.label}</span>
+                    </>
+                  )}
+                </NavLink>
+              )
+            })}
+          </div>
         </div>
       </nav>
 
-      {/* Mobile Navigation Drawer Sheet */}
+      {/* Mobile Navigation Drawer Sheet - Mirrors Desktop Sidebar */}
       {isMenuOpen && createPortal(
         <div 
-          className="fixed inset-0 z-50 flex flex-col justify-end bg-black/70 backdrop-blur-sm animate-in fade-in duration-200 md:hidden"
+          className="fixed inset-0 z-50 flex flex-col justify-end bg-black/75 backdrop-blur-sm animate-in fade-in duration-200 md:hidden"
           onClick={() => setIsMenuOpen(false)}
         >
           <div 
@@ -166,180 +257,115 @@ export const BottomNav: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsMenuOpen(false)}
-                className="p-1.5 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors shrink-0"
+                className="p-1.5 rounded-full hover:bg-zinc-800 dark:hover:bg-zinc-800 light:hover:bg-slate-200 text-zinc-400 hover:text-white transition-colors shrink-0"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Sheet Scrollable Content */}
-            <div className="p-4 space-y-4 overflow-y-auto">
-              {/* Primary Pages Grid */}
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-500 light:text-slate-400 block px-1 mb-2">
-                  Academic Sections
-                </span>
+            {/* Scrollable Sidebar List (Identical to Desktop Sidebar) */}
+            <div className="p-4 space-y-5 overflow-y-auto">
+              {navSections.map((section, idx) => (
+                <div key={idx} className="space-y-1">
+                  <h4 className="px-3 text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-500 light:text-slate-400 mb-1.5">
+                    {section.title}
+                  </h4>
+                  <div className="space-y-0.5">
+                    {section.items.map((item, itemIdx) => {
+                      const Icon = item.icon
+                      const active = isItemActive(item.path)
+                      return (
+                        <button
+                          key={itemIdx}
+                          type="button"
+                          onClick={() => handleNavigate(item.path)}
+                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                            active
+                              ? 'bg-brand-600/15 dark:bg-brand-600/15 light:bg-brand-50 text-brand-400 dark:text-brand-400 light:text-brand-600 font-bold shadow-sm'
+                              : 'text-zinc-400 dark:text-zinc-400 light:text-slate-700 hover:text-zinc-200 hover:bg-zinc-800/40'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <Icon className={`w-4 h-4 ${active ? 'text-brand-400' : 'text-zinc-500'}`} />
+                            <span>{item.label}</span>
+                          </div>
+                          {active && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-brand-400" />
+                          )}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+
+              {/* Quick Actions & Utilities */}
+              <div className="pt-2 border-t border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 space-y-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMenuOpen(false)
+                    setShowLogModal(true)
+                  }}
+                  className="w-full p-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/30 text-amber-300 flex items-center justify-between text-xs font-bold transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Clock className="w-4 h-4 text-amber-400" />
+                    <span>+ Log Pending Duty Leave</span>
+                  </div>
+                  {totalPendingDlHours > 0 ? (
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-200">
+                      +{totalPendingDlHours}h Pending
+                    </span>
+                  ) : (
+                    <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+                  )}
+                </button>
+
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    onClick={() => handleNavigate('/courses')}
-                    className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between gap-2 ${
-                      location.pathname === '/courses'
-                        ? 'bg-brand-600 text-white border-brand-500 shadow-md shadow-brand-500/20'
-                        : 'bg-zinc-950/60 dark:bg-zinc-950/60 light:bg-slate-50 border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 text-zinc-300 dark:text-zinc-300 light:text-slate-700 hover:bg-zinc-800/60'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="p-1.5 rounded-xl bg-purple-500/15 text-purple-400">
-                        <BookMarked className="w-4 h-4" />
-                      </div>
-                      <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-                    </div>
-                    <div>
-                      <span className="text-xs font-bold block">Courses & Syllabus</span>
-                      <span className="text-[10px] opacity-70 block">Modules & Outlines</span>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('/analysis')}
-                    className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between gap-2 ${
-                      location.pathname === '/analysis'
-                        ? 'bg-brand-600 text-white border-brand-500 shadow-md shadow-brand-500/20'
-                        : 'bg-zinc-950/60 dark:bg-zinc-950/60 light:bg-slate-50 border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 text-zinc-300 dark:text-zinc-300 light:text-slate-700 hover:bg-zinc-800/60'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="p-1.5 rounded-xl bg-emerald-500/15 text-emerald-400">
-                        <TrendingUp className="w-4 h-4" />
-                      </div>
-                      <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-                    </div>
-                    <div>
-                      <span className="text-xs font-bold block">Academic Analysis</span>
-                      <span className="text-[10px] opacity-70 block">CGPA & Backlogs</span>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('/campus')}
-                    className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between gap-2 ${
-                      location.pathname === '/campus'
-                        ? 'bg-brand-600 text-white border-brand-500 shadow-md shadow-brand-500/20'
-                        : 'bg-zinc-950/60 dark:bg-zinc-950/60 light:bg-slate-50 border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 text-zinc-300 dark:text-zinc-300 light:text-slate-700 hover:bg-zinc-800/60'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="p-1.5 rounded-xl bg-brand-500/15 text-brand-400">
-                        <Building className="w-4 h-4" />
-                      </div>
-                      <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-                    </div>
-                    <div>
-                      <span className="text-xs font-bold block">Campus & Services</span>
-                      <span className="text-[10px] opacity-70 block">Points, Fees & Dues</span>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('/notices')}
-                    className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between gap-2 ${
-                      location.pathname === '/notices'
-                        ? 'bg-brand-600 text-white border-brand-500 shadow-md shadow-brand-500/20'
-                        : 'bg-zinc-950/60 dark:bg-zinc-950/60 light:bg-slate-50 border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 text-zinc-300 dark:text-zinc-300 light:text-slate-700 hover:bg-zinc-800/60'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="p-1.5 rounded-xl bg-amber-500/15 text-amber-400">
-                        <Bell className="w-4 h-4" />
-                      </div>
-                      <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-                    </div>
-                    <div>
-                      <span className="text-xs font-bold block">Notice Board</span>
-                      <span className="text-[10px] opacity-70 block">Circulars & Alerts</span>
-                    </div>
-                  </button>
-                </div>
-              </div>
-
-              {/* Quick Actions & Tools */}
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-500 light:text-slate-400 block px-1 mb-2">
-                  Quick Actions & Tools
-                </span>
-                <div className="space-y-1.5">
-                  <button
-                    type="button"
                     onClick={() => {
                       setIsMenuOpen(false)
-                      setShowLogModal(true)
+                      setShowInstallModal(true)
                     }}
-                    className="w-full p-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/30 text-amber-300 flex items-center justify-between text-xs font-bold transition-colors"
+                    className="p-2.5 rounded-xl bg-zinc-950/60 dark:bg-zinc-950/60 light:bg-slate-50 border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 text-zinc-300 dark:text-zinc-300 light:text-slate-700 hover:bg-zinc-800/60 flex items-center justify-center gap-2 text-xs font-semibold transition-colors"
                   >
-                    <div className="flex items-center gap-2.5">
-                      <Clock className="w-4 h-4 text-amber-400" />
-                      <span>Log Pending Duty Leave</span>
-                    </div>
-                    {totalPendingDlHours > 0 ? (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-200">
-                        +{totalPendingDlHours}h Pending
-                      </span>
+                    <Smartphone className="w-3.5 h-3.5 text-brand-400" />
+                    <span>Install App</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={toggleTheme}
+                    className="p-2.5 rounded-xl bg-zinc-950/60 dark:bg-zinc-950/60 light:bg-slate-50 border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 text-zinc-300 dark:text-zinc-300 light:text-slate-700 hover:bg-zinc-800/60 flex items-center justify-center gap-2 text-xs font-semibold transition-colors"
+                  >
+                    {theme === 'dark' ? (
+                      <>
+                        <Sun className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Light Mode</span>
+                      </>
                     ) : (
-                      <span className="text-[10px] opacity-80 font-medium">Claim hours →</span>
+                      <>
+                        <Moon className="w-3.5 h-3.5 text-indigo-600" />
+                        <span>Dark Mode</span>
+                      </>
                     )}
                   </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsMenuOpen(false)
-                      setShowFeedbackModal(true)
-                    }}
-                    className="w-full p-3 rounded-2xl bg-zinc-950/60 dark:bg-zinc-950/60 light:bg-slate-50 hover:bg-zinc-800/60 border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 text-zinc-300 dark:text-zinc-300 light:text-slate-700 flex items-center justify-between text-xs font-semibold transition-colors"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <HelpCircle className="w-4 h-4 text-zinc-400" />
-                      <span>Something Missing? (Feedback)</span>
-                    </div>
-                    <span className="text-[10px] text-zinc-500 font-normal">Report to Admin →</span>
-                  </button>
-
-                  <div className="grid grid-cols-2 gap-2 pt-1">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsMenuOpen(false)
-                        setShowInstallModal(true)
-                      }}
-                      className="p-2.5 rounded-xl bg-zinc-950/60 dark:bg-zinc-950/60 light:bg-slate-50 border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 text-zinc-300 dark:text-zinc-300 light:text-slate-700 hover:bg-zinc-800/60 flex items-center justify-center gap-2 text-xs font-semibold transition-colors"
-                    >
-                      <Smartphone className="w-3.5 h-3.5 text-brand-400" />
-                      <span>Install PWA</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={toggleTheme}
-                      className="p-2.5 rounded-xl bg-zinc-950/60 dark:bg-zinc-950/60 light:bg-slate-50 border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 text-zinc-300 dark:text-zinc-300 light:text-slate-700 hover:bg-zinc-800/60 flex items-center justify-center gap-2 text-xs font-semibold transition-colors"
-                    >
-                      {theme === 'dark' ? (
-                        <>
-                          <Sun className="w-3.5 h-3.5 text-amber-400" />
-                          <span>Light Mode</span>
-                        </>
-                      ) : (
-                        <>
-                          <Moon className="w-3.5 h-3.5 text-indigo-600" />
-                          <span>Dark Mode</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
                 </div>
+
+                {/* Something Missing? Faint feedback button matching desktop sidebar */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMenuOpen(false)
+                    setShowFeedbackModal(true)
+                  }}
+                  className="w-full flex items-center justify-center gap-1.5 py-2 text-[11px] font-medium text-zinc-500 dark:text-zinc-500 light:text-slate-500 hover:text-zinc-300 transition-colors"
+                >
+                  <HelpCircle className="w-3.5 h-3.5" />
+                  <span>Something Missing?</span>
+                </button>
               </div>
 
               {/* Sign Out & Legal */}
@@ -363,19 +389,19 @@ export const BottomNav: React.FC = () => {
         document.body
       )}
 
-      {/* Duty Leave Modal mounted globally for mobile drawer */}
+      {/* Duty Leave Modal mounted globally */}
       <LogDutyLeaveModal
         isOpen={showLogModal}
         onClose={() => setShowLogModal(false)}
       />
 
-      {/* Feedback Modal mounted globally for mobile drawer */}
+      {/* Feedback Modal mounted globally */}
       <FeedbackModal
         isOpen={showFeedbackModal}
         onClose={() => setShowFeedbackModal(false)}
       />
 
-      {/* Install Modal mounted globally for mobile drawer */}
+      {/* Install Modal mounted globally */}
       <InstallModal
         isOpen={showInstallModal}
         onClose={() => setShowInstallModal(false)}

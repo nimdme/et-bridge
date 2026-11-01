@@ -537,21 +537,23 @@ export const DashboardPage: React.FC = () => {
 
       {/* Section: Upcoming Deadlines & Action Items */}
       <div className="space-y-3.5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center font-bold">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center font-bold shrink-0">
               <Clock className="w-4 h-4" />
             </div>
-            <div>
-              <h2 className="text-lg md:text-xl font-bold text-white dark:text-white light:text-slate-900 tracking-tight flex items-center gap-2">
-                <span>Upcoming Deadlines</span>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-base sm:text-lg md:text-xl font-bold text-white dark:text-white light:text-slate-900 tracking-tight whitespace-nowrap">
+                  Upcoming Deadlines
+                </h2>
                 {urgentDeadlinesCount > 0 && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-950/80 border border-rose-700 text-rose-300 animate-pulse">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-950/80 border border-rose-700 text-rose-300 animate-pulse whitespace-nowrap shrink-0">
                     {urgentDeadlinesCount} Urgent
                   </span>
                 )}
-              </h2>
-              <p className="text-xs text-zinc-400 dark:text-zinc-400 light:text-slate-600">
+              </div>
+              <p className="text-xs text-zinc-400 dark:text-zinc-400 light:text-slate-600 truncate">
                 Assignment submissions and coursework deadlines tracked in real-time
               </p>
             </div>
@@ -559,10 +561,11 @@ export const DashboardPage: React.FC = () => {
 
           <Link
             to="/academics?tab=assignments"
-            className="text-xs font-semibold text-brand-400 hover:text-brand-300 flex items-center gap-1 transition-colors"
+            className="self-start sm:self-auto text-xs font-semibold text-brand-400 hover:text-brand-300 flex items-center gap-1 transition-colors shrink-0 whitespace-nowrap"
           >
-            <span>View All Assignments ({allAssignments.length})</span>
-            <ChevronRight className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">View All Assignments ({allAssignments.length})</span>
+            <span className="sm:hidden">All Assignments ({allAssignments.length}) →</span>
+            <ChevronRight className="w-3.5 h-3.5 hidden sm:inline" />
           </Link>
         </div>
 
@@ -585,13 +588,13 @@ export const DashboardPage: React.FC = () => {
                   <div>
                     {/* Header: Subject Code & Countdown Pill */}
                     <div className="flex items-start justify-between gap-2 mb-2">
-                      <span className="text-[11px] font-mono font-bold text-brand-400 bg-brand-950/60 dark:bg-brand-950/60 light:bg-brand-50 border border-brand-800/40 light:border-brand-200 px-2 py-0.5 rounded-md">
+                      <span className="text-[11px] font-mono font-bold text-brand-400 bg-brand-950/60 dark:bg-brand-950/60 light:bg-brand-50 border border-brand-800/40 light:border-brand-200 px-2 py-0.5 rounded-md shrink-0">
                         {asg.subject_code}
                       </span>
 
                       {days.text && (
                         <span
-                          className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-lg border shrink-0 ${
+                          className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-lg border shrink-0 whitespace-nowrap ${
                             isUrgent
                               ? 'bg-rose-950/90 border-rose-700 text-rose-300 shadow-sm animate-pulse'
                               : 'bg-amber-950/70 border-amber-800/80 text-amber-300'
@@ -745,18 +748,18 @@ export const DashboardPage: React.FC = () => {
 
       {/* Section: Subject Attendance Breakdown */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2">
           <div>
-            <h2 className="text-lg md:text-xl font-bold text-white dark:text-white light:text-slate-900 tracking-tight">
+            <h2 className="text-base sm:text-lg md:text-xl font-bold text-white dark:text-white light:text-slate-900 tracking-tight">
               Subject Attendance & Bunk Allowance
             </h2>
             <p className="text-xs text-zinc-400 dark:text-zinc-400 light:text-slate-600">
-              Live Safe bunk calculation calibrated against the 75% KTU minimum criteria
+              Live safe bunk calculation calibrated against the 75% KTU minimum criteria
             </p>
           </div>
           <Link
             to="/attendance"
-            className="text-xs font-semibold text-brand-400 hover:text-brand-300 flex items-center gap-1 transition-colors"
+            className="self-start sm:self-auto text-xs font-semibold text-brand-400 hover:text-brand-300 flex items-center gap-1 transition-colors shrink-0"
           >
             <span>View All Subjects</span>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -872,12 +875,12 @@ export const DashboardPage: React.FC = () => {
       {/* Section: Recent Notices Preview */}
       {profile?.notices && profile.notices.length > 0 && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg md:text-xl font-bold text-white dark:text-white light:text-slate-900 tracking-tight flex items-center gap-2">
-              <Bell className="w-5 h-5 text-brand-400" />
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="text-base sm:text-lg md:text-xl font-bold text-white dark:text-white light:text-slate-900 tracking-tight flex items-center gap-2">
+              <Bell className="w-5 h-5 text-brand-400 shrink-0" />
               <span>Campus Announcements</span>
             </h2>
-            <Link to="/notices" className="text-xs text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white flex items-center gap-1 transition-colors">
+            <Link to="/notices" className="text-xs text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white flex items-center gap-1 transition-colors shrink-0">
               <span>View All</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </Link>
