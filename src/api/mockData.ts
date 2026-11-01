@@ -36,13 +36,13 @@ export const DEMO_PROFILE: StudentProfile = {
   name: 'Arjun K. V.',
   student_id: 12973,
   roll_no: '22',
-  admission_no: 'CEV22CS045',
-  register_no: 'VDA22CS045',
+  admission_no: 'KTU22CS045',
+  register_no: 'KTU22CS045',
   curnt_sem: 'S5',
   sem_id: 5,
   batch_id: 2022,
   course: 'Computer Science and Engineering',
-  email: 'arjun.cs22@cev.ac.in',
+  email: 'arjun.cs22@engg.edu.in',
   phone: '+91 98765 43210',
   gender: 'Male',
   attendance: {
@@ -379,7 +379,7 @@ export const DEMO_TEACHERS: Teacher[] = [
     subject: 'Department of Computer Science',
     role_label: 'Head of Department',
     is_hod: true,
-    email: 'akhilam@cev.ac.in',
+    email: 'akhilam@engg.edu.in',
     phone: '+91 94978 28473'
   },
   {
@@ -388,7 +388,7 @@ export const DEMO_TEACHERS: Teacher[] = [
     subject: 'Computer Science & Engineering',
     role_label: 'Staff Advisor',
     is_staff_advisor: true,
-    email: 'shibili.t@cev.ac.in',
+    email: 'shibili.t@engg.edu.in',
     phone: '+91 98478 41673'
   },
   {
@@ -396,7 +396,7 @@ export const DEMO_TEACHERS: Teacher[] = [
     name: 'Dr. Suresh Kumar',
     subject: 'Formal Languages and Automata Theory (CST301)',
     role_label: 'Faculty',
-    email: 'suresh.kumar@cev.ac.in',
+    email: 'suresh.kumar@engg.edu.in',
     phone: '+91 94471 23456'
   },
   {
@@ -404,7 +404,7 @@ export const DEMO_TEACHERS: Teacher[] = [
     name: 'Prof. Anjali Nair',
     subject: 'Computer Networks (CST303)',
     role_label: 'Faculty',
-    email: 'anjali.nair@cev.ac.in',
+    email: 'anjali.nair@engg.edu.in',
     phone: '+91 98952 34567'
   },
   {
@@ -412,7 +412,7 @@ export const DEMO_TEACHERS: Teacher[] = [
     name: 'Dr. Manoj V.',
     subject: 'System Software (CST305)',
     role_label: 'Faculty',
-    email: 'manoj.v@cev.ac.in',
+    email: 'manoj.v@engg.edu.in',
     phone: '+91 97443 45678'
   },
   {
@@ -420,7 +420,7 @@ export const DEMO_TEACHERS: Teacher[] = [
     name: 'Dr. Radhika P.',
     subject: 'Management of Software Systems (CST307)',
     role_label: 'Faculty',
-    email: 'radhika.p@cev.ac.in',
+    email: 'radhika.p@engg.edu.in',
     phone: '+91 94964 56789'
   }
 ]

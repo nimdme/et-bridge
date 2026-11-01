@@ -23,7 +23,9 @@ export const LoginPage: React.FC = () => {
   const navigate = useNavigate()
 
   const [institutes, setInstitutes] = useState<Institute[]>([])
-  const [selectedInstId, setSelectedInstId] = useState<string>('cev')
+  const [selectedInstId, setSelectedInstId] = useState<string>(() => {
+    return localStorage.getItem('etbridge_remembered_inst') || ''
+  })
   const [instSearch, setInstSearch] = useState<string>('')
   const [showInstPicker, setShowInstPicker] = useState<boolean>(false)
 
@@ -57,11 +59,13 @@ export const LoginPage: React.FC = () => {
     return () => { isMounted = false }
   }, [])
 
-  const selectedInstitute = institutes.find(i => i.id === selectedInstId) || {
-    id: selectedInstId,
-    name: selectedInstId.toUpperCase(),
-    shortName: selectedInstId.toUpperCase()
-  }
+  const selectedInstitute = selectedInstId 
+    ? institutes.find(i => i.id === selectedInstId) || {
+        id: selectedInstId,
+        name: selectedInstId.toUpperCase(),
+        shortName: selectedInstId.toUpperCase()
+      }
+    : null
 
   const filteredInstitutes = institutes.filter(i => {
     if (!instSearch.trim()) return true
@@ -78,7 +82,7 @@ export const LoginPage: React.FC = () => {
     setError(null)
 
     if (!selectedInstId) {
-      setError('Please select your institution.')
+      setError('Please select your college from the list.')
       return
     }
 
@@ -90,7 +94,7 @@ export const LoginPage: React.FC = () => {
     setLoading(true)
     try {
       localStorage.setItem('etbridge_remembered_inst', selectedInstId)
-      await login(username.trim(), password, selectedInstId, selectedInstitute.name)
+      await login(username.trim(), password, selectedInstId, selectedInstitute?.name || selectedInstId.toUpperCase())
       navigate('/dashboard')
     } catch (err: any) {
       setError(err?.message || 'Login failed. Please check your credentials.')
@@ -117,7 +121,7 @@ export const LoginPage: React.FC = () => {
       <LoadingScreen
         mode="login"
         instituteId={selectedInstId}
-        instituteName={selectedInstitute.name}
+        instituteName={selectedInstitute?.name || selectedInstId.toUpperCase()}
         studentName={username.trim()}
         onCancel={() => setLoading(false)}
       />
@@ -165,17 +169,27 @@ export const LoginPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowInstPicker(!showInstPicker)}
-                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-left text-xs transition-colors"
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-zinc-900 border text-left text-xs transition-colors ${
+                  !selectedInstId
+                    ? 'border-dashed border-zinc-700 hover:border-brand-500/60'
+                    : 'border-zinc-800 hover:border-zinc-700'
+                }`}
               >
                 <div className="flex items-center gap-2 truncate">
-                  <Building2 className="w-4 h-4 text-brand-400 shrink-0" />
-                  <span className="truncate text-white font-medium">
-                    {selectedInstitute.name}
+                  <Building2 className={`w-4 h-4 shrink-0 ${selectedInstitute ? 'text-brand-400' : 'text-zinc-500'}`} />
+                  <span className={`truncate ${selectedInstitute ? 'text-white font-medium' : 'text-zinc-400'}`}>
+                    {selectedInstitute?.name || 'Select your college...'}
                   </span>
                 </div>
-                <span className="text-[11px] font-bold uppercase text-brand-400 bg-brand-950/60 border border-brand-800/40 px-2 py-0.5 rounded-md ml-2 shrink-0">
-                  {selectedInstitute.shortName || selectedInstitute.id}
-                </span>
+                {selectedInstitute ? (
+                  <span className="text-[11px] font-bold uppercase text-brand-400 bg-brand-950/60 border border-brand-800/40 px-2 py-0.5 rounded-md ml-2 shrink-0">
+                    {selectedInstitute.shortName || selectedInstitute.id}
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-mono font-semibold text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-md ml-2 shrink-0">
+                    Choose
+                  </span>
+                )}
               </button>
 
               {/* Dropdown Popover */}

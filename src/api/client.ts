@@ -98,8 +98,8 @@ class EtlabApiClient {
   public setDemoSession(): AuthSession {
     const demoSession: AuthSession = {
       token: 'demo-token',
-      instituteId: 'cev',
-      instituteName: 'College of Engineering Vadakara (Demo)',
+      instituteId: 'demo',
+      instituteName: 'Engineering College (Demo)',
       username: 'DEMO_STUDENT',
       studentName: 'Arjun K. V.'
     }

@@ -116,8 +116,8 @@ export const Sidebar: React.FC = () => {
     .join('')
     .toUpperCase() || 'ST'
 
-  const instCode = (session?.instituteId || 'cev').toUpperCase()
-  const instName = session?.instituteName || 'College of Engineering Vadakara'
+  const instCode = session?.instituteId ? session.instituteId.toUpperCase() : ''
+  const instName = session?.instituteName || (instCode ? `${instCode} Portal` : 'College Portal')
 
   return (
     <>
@@ -205,8 +205,12 @@ export const Sidebar: React.FC = () => {
                   {studentName}
                 </p>
                 <div className="flex items-center gap-1.5 text-[10px] text-zinc-400 dark:text-zinc-400 light:text-slate-500 mt-0.5 truncate">
-                  <span className="font-mono font-bold text-brand-400">{instCode}</span>
-                  <span>•</span>
+                  {instCode && (
+                    <>
+                      <span className="font-mono font-bold text-brand-400">{instCode}</span>
+                      <span>•</span>
+                    </>
+                  )}
                   <span className="truncate">{formatSemester(profile?.curnt_sem, 'Sem')}</span>
                 </div>
               </div>

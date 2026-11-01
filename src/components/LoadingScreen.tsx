@@ -69,8 +69,8 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
   )
 
   const currentStep = steps[stepIndex]
-  const instCode = (instituteId || 'cev').toUpperCase()
-  const instDisplayName = instituteName || (instCode === 'CEV' ? 'College of Engineering Vadakara' : `${instCode} Portal`)
+  const instCode = instituteId ? instituteId.toUpperCase() : ''
+  const instDisplayName = instituteName || (instCode ? `${instCode} Portal` : 'Student Portal')
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 bg-zinc-950 dark:bg-zinc-950 light:bg-slate-50 text-zinc-100 dark:text-zinc-100 light:text-slate-900 transition-colors animate-in fade-in duration-200">

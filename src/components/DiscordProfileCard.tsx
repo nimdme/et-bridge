@@ -59,18 +59,20 @@ export const DiscordProfileCard: React.FC<DiscordProfileCardProps> = ({ onClose,
     .join('')
     .toUpperCase() || 'ST'
 
-  const instCode = (session?.instituteId || 'cev').toUpperCase()
-  const instName = session?.instituteName || 'College of Engineering Vadakara'
+  const instCode = session?.instituteId ? session.instituteId.toUpperCase() : ''
+  const instName = session?.instituteName || (instCode ? `${instCode} Portal` : 'College Portal')
 
   const cardContent = (
     <div className="bg-zinc-900 dark:bg-zinc-900 light:bg-white border border-zinc-700/80 dark:border-zinc-700/80 light:border-slate-300 rounded-3xl shadow-2xl overflow-hidden w-full max-w-sm max-h-[calc(100vh-6rem)] overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
       {/* Discord Top Banner with College Gradient */}
       <div className="h-20 bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 p-3.5 flex items-start justify-between relative always-white shrink-0">
         {/* College Code Pill in banner */}
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-white font-mono text-[11px] font-black uppercase shadow-sm always-white">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span>{instCode}</span>
-        </span>
+        {instCode ? (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-white font-mono text-[11px] font-black uppercase shadow-sm always-white">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>{instCode}</span>
+          </span>
+        ) : <div />}
 
         <button
           onClick={onClose}
@@ -130,7 +132,7 @@ export const DiscordProfileCard: React.FC<DiscordProfileCardProps> = ({ onClose,
           <div>
             <span className="text-[9px] font-black uppercase tracking-wider text-zinc-500 block">College</span>
             <p className="font-semibold text-zinc-200 dark:text-zinc-200 light:text-slate-800 truncate">
-              {instName} ({instCode})
+              {instName} {instCode && !instName.includes(instCode) ? `(${instCode})` : ''}
             </p>
           </div>
 
