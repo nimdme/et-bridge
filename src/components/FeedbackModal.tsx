@@ -82,7 +82,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose })
       <div
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
-        className="w-full max-w-lg bg-zinc-900 dark:bg-zinc-900 light:bg-white border border-zinc-800 dark:border-zinc-800 light:border-slate-300 rounded-3xl p-6 sm:p-7 shadow-2xl relative overflow-hidden"
+        className="w-full max-w-lg bg-zinc-900 dark:bg-zinc-900 light:bg-white border border-zinc-800 dark:border-zinc-800 light:border-slate-300 rounded-3xl p-4 sm:p-7 shadow-2xl relative max-h-[92vh] overflow-y-auto"
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-4 pb-4 border-b border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200">

@@ -149,7 +149,7 @@ export const SubjectAttendanceModal: React.FC<SubjectAttendanceModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
       <div className="bg-zinc-900 dark:bg-zinc-900 light:bg-white border border-zinc-800 dark:border-zinc-800 light:border-slate-200 rounded-3xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="p-5 md:p-6 border-b border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 flex items-start justify-between gap-3">
+        <div className="p-4 sm:p-6 border-b border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 flex items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2 flex-wrap mb-1.5">
               <span className="font-mono text-xs font-bold text-brand-400 bg-brand-950/70 dark:bg-brand-950/70 light:bg-brand-50 border border-brand-800/40 px-2 py-0.5 rounded">
@@ -179,7 +179,7 @@ export const SubjectAttendanceModal: React.FC<SubjectAttendanceModalProps> = ({
         </div>
 
         {/* Content Body */}
-        <div className="p-5 md:p-6 overflow-y-auto space-y-5">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-5">
           {/* Summary Card with Bunk Badge & Metrics */}
           <div className="p-4 md:p-5 rounded-2xl bg-zinc-950/60 dark:bg-zinc-950/60 light:bg-slate-50 border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">

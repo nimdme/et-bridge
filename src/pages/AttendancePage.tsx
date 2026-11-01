@@ -20,12 +20,13 @@ import {
   Filter,
   Eye,
   X,
-  Zap
+  Zap,
+  Trash2
 } from 'lucide-react'
 import { TimetablePeriod, SubjectAttendance } from '../api/types'
 
 export const AttendancePage: React.FC = () => {
-  const { profile, attendance, timetable, dutyLeaves, pendingDutyLeaves, totalPendingDlHours } = useAuth()
+  const { profile, attendance, timetable, dutyLeaves, pendingDutyLeaves, totalPendingDlHours, deletePendingDutyLeave } = useAuth()
   const [activeView, setActiveView] = useState<'by_course' | 'calendar'>('by_course')
   const [selectedSubjectModal, setSelectedSubjectModal] = useState<SubjectAttendance | null>(null)
   const [showLogModal, setShowLogModal] = useState(false)
@@ -161,47 +162,60 @@ export const AttendancePage: React.FC = () => {
   const selectedDayAbsentCount = selectedDayData.sub.filter(p => p.attendance_status === 'absent').length
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-12 space-y-6">
+    <div className="w-full px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-6 pb-28 md:pb-12 space-y-4 sm:space-y-6 max-w-full overflow-hidden">
       {/* Page Title & View Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-black text-white dark:text-white light:text-slate-900 tracking-tight flex items-center gap-2.5">
-            <PieChart className="w-7 h-7 text-brand-400" />
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white dark:text-white light:text-slate-900 tracking-tight flex items-center gap-2">
+            <PieChart className="w-6 h-6 sm:w-7 sm:h-7 text-brand-400 shrink-0" />
             <span>Attendance & Bunk Tracker</span>
           </h1>
-          <p className="text-xs md:text-sm text-zinc-400 dark:text-zinc-400 light:text-slate-600 mt-1">
-            Detailed subject breakdown, safe bunk margins, and day-by-day calendar attendance
+          <p className="text-xs sm:text-sm text-zinc-400 dark:text-zinc-400 light:text-slate-600 mt-0.5">
+            Subject breakdown, 75% cutoff calculation, and duty leave logs
           </p>
         </div>
 
-        {/* View Toggle Tabs */}
-        <div className="flex items-center p-1 rounded-2xl bg-zinc-900/90 dark:bg-zinc-900/90 light:bg-slate-200 border border-zinc-800 dark:border-zinc-800 light:border-slate-300 self-start sm:self-auto">
+        {/* Action Controls */}
+        <div className="flex items-center gap-2 flex-wrap self-start sm:self-auto">
+          {/* Prominent Duty Leave Logging Button on Mobile & Desktop */}
           <button
-            onClick={() => setActiveView('by_course')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-              activeView === 'by_course'
-                ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20'
-                : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
-            }`}
+            type="button"
+            onClick={() => setShowLogModal(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-600/20 to-amber-500/10 border border-amber-500/40 text-amber-300 hover:bg-amber-500/20 font-bold text-xs shadow-sm transition-all active:scale-95"
           >
-            By Course
+            <Clock className="w-3.5 h-3.5 text-amber-400" />
+            <span>+ Log Duty Leave</span>
           </button>
-          <button
-            onClick={() => setActiveView('calendar')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-              activeView === 'calendar'
-                ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20'
-                : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
-            }`}
-          >
-            Calendar
-          </button>
+
+          {/* View Toggle Tabs */}
+          <div className="flex items-center p-1 rounded-2xl bg-zinc-900/90 dark:bg-zinc-900/90 light:bg-slate-200 border border-zinc-800 dark:border-zinc-800 light:border-slate-300">
+            <button
+              onClick={() => setActiveView('by_course')}
+              className={`px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                activeView === 'by_course'
+                  ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20'
+                  : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
+              }`}
+            >
+              By Course
+            </button>
+            <button
+              onClick={() => setActiveView('calendar')}
+              className={`px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                activeView === 'calendar'
+                  ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20'
+                  : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
+              }`}
+            >
+              Calendar
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Semester Overall Summary Card (Matching Screenshot 2 & 3) */}
-      <div className="p-6 rounded-3xl glass-panel border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 relative overflow-hidden shadow-sm">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      {/* Semester Overall Summary Card */}
+      <div className="p-4 sm:p-6 rounded-3xl glass-panel border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 relative overflow-hidden shadow-sm">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-brand-400 block mb-1">
               Semester Summary
@@ -282,6 +296,70 @@ export const AttendancePage: React.FC = () => {
         </div>
       </div>
 
+      {/* Pending Duty Leaves Manager (Self-Reported) */}
+      {pendingDutyLeaves && pendingDutyLeaves.length > 0 && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-amber-950/20 dark:bg-amber-950/20 light:bg-amber-50/70 border border-amber-500/40 space-y-3 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400">
+                <Clock className="w-4 h-4" />
+              </span>
+              <div>
+                <h3 className="text-xs sm:text-sm font-bold text-white dark:text-white light:text-slate-900 flex items-center gap-2">
+                  <span>Self-Reported Duty Leaves</span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-zinc-950">
+                    +{totalPendingDlHours}h projected
+                  </span>
+                </h3>
+                <p className="text-[11px] text-zinc-400 dark:text-zinc-400 light:text-slate-600">
+                  Reflected in projected subject percentages. Auto-reconciles once faculty confirms in ETLab.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowLogModal(true)}
+              className="px-2.5 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-semibold shrink-0 transition-colors"
+            >
+              + Add More
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+            {pendingDutyLeaves.map((pdl) => (
+              <div
+                key={pdl.id}
+                className="p-3 rounded-xl bg-zinc-900/80 dark:bg-zinc-900/80 light:bg-white border border-zinc-800 dark:border-zinc-800 light:border-slate-200 flex items-center justify-between gap-3 shadow-sm"
+              >
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-xs text-white dark:text-white light:text-slate-900 truncate">
+                      {pdl.reason}
+                    </span>
+                    <span className="text-[10px] font-bold text-amber-400 bg-amber-950/60 px-1.5 py-0.2 rounded border border-amber-800/60 shrink-0">
+                      +{pdl.hours}h
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-zinc-400 dark:text-zinc-400 light:text-slate-500 mt-0.5">
+                    {formatIndianDate(pdl.date, 'short')} • Hours {pdl.selectedHours?.join(', ') || pdl.hours}
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => deletePendingDutyLeave(pdl.id)}
+                  title="Remove this pending duty leave"
+                  className="p-1.5 rounded-lg text-zinc-500 hover:text-rose-400 hover:bg-rose-950/30 transition-colors shrink-0"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* VIEW 1: BY COURSE (Matching Screenshot 2) */}
       {activeView === 'by_course' && (
         <div className="space-y-4">
@@ -317,7 +395,7 @@ export const AttendancePage: React.FC = () => {
                   <div
                     key={sub.code || sub.key}
                     onClick={() => setSelectedSubjectModal(sub)}
-                    className="p-5 rounded-2xl glass-panel border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 hover:border-brand-500/50 cursor-pointer transition-all flex flex-col justify-between shadow-sm group hover:-translate-y-0.5"
+                    className="p-4 sm:p-5 rounded-2xl glass-panel border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 hover:border-brand-500/50 cursor-pointer transition-all flex flex-col justify-between shadow-sm group hover:-translate-y-0.5"
                   >
                     <div>
                       {/* Top Code & Percent Pill */}

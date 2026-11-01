@@ -102,28 +102,28 @@ export const AssignmentModal: React.FC<AssignmentModalProps> = ({ assignment, on
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-xl bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+        className="relative w-full max-w-xl bg-zinc-900 dark:bg-zinc-900 light:bg-white border border-zinc-800 dark:border-zinc-800 light:border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-6 border-b border-zinc-800 flex items-start justify-between gap-4">
+        <div className="p-4 sm:p-6 border-b border-zinc-800 dark:border-zinc-800 light:border-slate-200 flex items-start justify-between gap-4">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-2">
-              <span className="text-[11px] font-mono font-bold uppercase text-brand-400 bg-brand-950/60 border border-brand-800/40 px-2 py-0.5 rounded">
+              <span className="text-[11px] font-mono font-bold uppercase text-brand-400 bg-brand-950/60 dark:bg-brand-950/60 light:bg-brand-50 border border-brand-800/40 light:border-brand-200 px-2 py-0.5 rounded">
                 {assignment.subject_code}
               </span>
-              <span className="text-xs text-zinc-400 font-semibold">{assignment.subject_name || assignment.subject}</span>
+              <span className="text-xs text-zinc-400 dark:text-zinc-400 light:text-slate-600 font-semibold">{assignment.subject_name || assignment.subject}</span>
               {assignment.submission_mode && (
                 <span className="text-[10px] font-semibold text-purple-400 bg-purple-950/60 border border-purple-800/40 px-2 py-0.5 rounded-full">
                   {assignment.submission_mode}
                 </span>
               )}
             </div>
-            <h2 className="text-lg md:text-xl font-bold text-white leading-tight">
+            <h2 className="text-lg md:text-xl font-bold text-white dark:text-white light:text-slate-900 leading-tight">
               {assignment.title}
             </h2>
           </div>
@@ -137,11 +137,11 @@ export const AssignmentModal: React.FC<AssignmentModalProps> = ({ assignment, on
         </div>
 
         {/* Scrollable Body */}
-        <div className="p-6 overflow-y-auto space-y-6">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-5 sm:space-y-6">
           {/* Status & Deadline Row */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {/* Status */}
-            <div className="p-3.5 rounded-2xl bg-zinc-950 border border-zinc-800/80">
+            <div className="p-3.5 rounded-2xl bg-zinc-950 dark:bg-zinc-950 light:bg-slate-50 border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200">
               <span className="text-[10px] font-bold uppercase text-zinc-500 block mb-1">Status</span>
               {assignment.mark ? (
                 <span className="text-xs font-black text-emerald-400">
@@ -163,9 +163,9 @@ export const AssignmentModal: React.FC<AssignmentModalProps> = ({ assignment, on
             </div>
 
             {/* Deadline & Remaining Days */}
-            <div className="p-3.5 rounded-2xl bg-zinc-950 border border-zinc-800/80">
+            <div className="p-3.5 rounded-2xl bg-zinc-950 dark:bg-zinc-950 light:bg-slate-50 border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200">
               <span className="text-[10px] font-bold uppercase text-zinc-500 block mb-1">Due Date</span>
-              <span className="text-xs font-bold text-white block truncate">
+              <span className="text-xs font-bold text-white dark:text-white light:text-slate-900 block truncate">
                 {assignment.last_date ? formatIndianDate(assignment.last_date, 'short') : 'No deadline'}
               </span>
               {daysInfo.text && (
@@ -178,9 +178,9 @@ export const AssignmentModal: React.FC<AssignmentModalProps> = ({ assignment, on
             </div>
 
             {/* Max Marks */}
-            <div className="p-3.5 rounded-2xl bg-zinc-950 border border-zinc-800/80 col-span-2 sm:col-span-1">
+            <div className="p-3.5 rounded-2xl bg-zinc-950 dark:bg-zinc-950 light:bg-slate-50 border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 col-span-2 sm:col-span-1">
               <span className="text-[10px] font-bold uppercase text-zinc-500 block mb-1">Maximum Mark</span>
-              <span className="text-xs font-bold text-white block">
+              <span className="text-xs font-bold text-white dark:text-white light:text-slate-900 block">
                 {assignment.max_mark || 'N/A'}
               </span>
             </div>

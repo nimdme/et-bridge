@@ -63,7 +63,7 @@ export const CampusPage: React.FC = () => {
       </div>
 
       {/* Mobile-friendly Horizontal Tabs Rail */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-6 no-scrollbar">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-6 no-scrollbar scrollbar-none max-w-full">
         <button
           onClick={() => handleTabChange('points')}
           className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl whitespace-nowrap transition-all ${

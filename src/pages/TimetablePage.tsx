@@ -163,7 +163,7 @@ export const TimetablePage: React.FC = () => {
       </div>
 
       {/* Week Days Selector Bar */}
-      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+      <div className="grid grid-cols-6 gap-1 sm:gap-2">
         {currentWeekDays.map((d) => {
           const isSelected = d.dateStr === selectedDate
           // Check if this day has any substitutions in timetable
@@ -175,14 +175,14 @@ export const TimetablePage: React.FC = () => {
             <button
               key={d.dateStr}
               onClick={() => setSelectedDate(d.dateStr)}
-              className={`p-3 rounded-2xl border text-center transition-all relative flex flex-col items-center justify-between gap-1 ${
+              className={`p-1.5 sm:p-3 rounded-xl sm:rounded-2xl border text-center transition-all relative flex flex-col items-center justify-between gap-0.5 sm:gap-1 ${
                 isSelected
-                  ? 'bg-brand-600 text-white border-brand-500 shadow-lg shadow-brand-500/20 ring-2 ring-brand-500/30'
+                  ? 'bg-brand-600 text-white border-brand-500 shadow-md shadow-brand-500/20 ring-1 sm:ring-2 ring-brand-500/30'
                   : 'bg-zinc-900/90 dark:bg-zinc-900/90 light:bg-white border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:border-zinc-700 hover:text-white'
               }`}
             >
               {/* Day Name & Today dot */}
-              <div className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider">
+              <div className="flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider">
                 <span>{d.shortDay}</span>
                 {d.isToday && (
                   <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-white' : 'bg-emerald-400 animate-pulse'}`} />
@@ -190,16 +190,16 @@ export const TimetablePage: React.FC = () => {
               </div>
 
               {/* Day Number */}
-              <span className={`text-lg font-black ${
+              <span className={`text-sm sm:text-lg font-black ${
                 isSelected ? 'text-white' : 'text-zinc-100 dark:text-zinc-100 light:text-slate-900'
               }`}>
                 {d.dayNum}
               </span>
 
               {/* Status / Substitution badge on day pill */}
-              <div className="h-4 flex items-center justify-center">
+              <div className="h-3.5 sm:h-4 flex items-center justify-center">
                 {hasSub ? (
-                  <span className={`text-[9px] font-extrabold px-1.5 py-0.2 rounded-full uppercase ${
+                  <span className={`text-[8px] sm:text-[9px] font-extrabold px-1 sm:px-1.5 py-0.2 rounded-full uppercase ${
                     isSelected 
                       ? 'bg-amber-300 text-amber-950 font-black' 
                       : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
@@ -207,7 +207,7 @@ export const TimetablePage: React.FC = () => {
                     Sub
                   </span>
                 ) : isSuspended ? (
-                  <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded-full uppercase ${
+                  <span className={`text-[8px] sm:text-[9px] font-bold px-1 sm:px-1.5 py-0.2 rounded-full uppercase ${
                     isSelected ? 'bg-rose-300 text-rose-950' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
                   }`}>
                     Off

@@ -215,10 +215,10 @@ export const CoursesPage: React.FC = () => {
 
       {/* Interactive Modal for Syllabus / Outcomes / Execution / Source Books */}
       {activeModalType && selectedCourse && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-zinc-900 dark:bg-zinc-900 light:bg-white border border-zinc-800 dark:border-zinc-800 light:border-slate-200 rounded-3xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-zinc-900 dark:bg-zinc-900 light:bg-white border border-zinc-800 dark:border-zinc-800 light:border-slate-200 rounded-3xl w-full max-w-2xl max-h-[88vh] flex flex-col shadow-2xl overflow-hidden">
             {/* Modal Header */}
-            <div className="p-5 border-b border-zinc-800 dark:border-zinc-800 light:border-slate-200 flex items-center justify-between">
+            <div className="p-4 sm:p-5 border-b border-zinc-800 dark:border-zinc-800 light:border-slate-200 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-mono font-bold uppercase text-brand-400 bg-brand-950/60 dark:bg-brand-950/60 light:bg-brand-50 px-2 py-0.5 rounded border border-brand-800/40">
                   {selectedCourse.code}
@@ -237,7 +237,7 @@ export const CoursesPage: React.FC = () => {
             </div>
 
             {/* Modal Content */}
-            <div className="p-6 overflow-y-auto space-y-4">
+            <div className="p-4 sm:p-6 overflow-y-auto space-y-4">
               {loadingDetails ? (
                 <div className="py-12 text-center text-zinc-500 space-y-2">
                   <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto" />

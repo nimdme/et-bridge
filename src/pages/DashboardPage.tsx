@@ -5,6 +5,8 @@ import { AttendanceRing } from '../components/AttendanceRing'
 import { BunkBadge } from '../components/BunkBadge'
 import { SubjectAttendanceModal } from '../components/SubjectAttendanceModal'
 import { AssignmentModal } from '../components/AssignmentModal'
+import { LogDutyLeaveModal } from '../components/LogDutyLeaveModal'
+import { FeedbackModal } from '../components/FeedbackModal'
 import { SubjectAttendance, Assignment, DayTimetable, TimetablePeriod } from '../api/types'
 import { parsePercent, parseNumber, formatPercent, getDaysRemaining, formatSemester, formatIndianDate } from '../utils/format'
 import { calculateSubjectProjection } from '../utils/attendance'
@@ -24,7 +26,9 @@ import {
   CheckCircle2,
   Download,
   FileText,
-  Zap
+  Zap,
+  HelpCircle,
+  Plus
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -32,6 +36,8 @@ export const DashboardPage: React.FC = () => {
   const { profile, attendance, session, timetable, courses, academicAnalysis, evaluations, pendingDutyLeaves, totalPendingDlHours } = useAuth()
   const [selectedSubjectModal, setSelectedSubjectModal] = useState<SubjectAttendance | null>(null)
   const [selectedAssignmentModal, setSelectedAssignmentModal] = useState<Assignment | null>(null)
+  const [showDutyLeaveModal, setShowDutyLeaveModal] = useState(false)
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false)
   const [downloadingAsgId, setDownloadingAsgId] = useState<string | number | null>(null)
   const [semesterTimetable, setSemesterTimetable] = useState<DayTimetable[]>(() => timetable || [])
 
@@ -174,75 +180,113 @@ export const DashboardPage: React.FC = () => {
   const coursesAtRiskCount = academicAnalysis?.courses_at_risk?.length || 0
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-12 space-y-6">
+    <div className="w-full px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-6 pb-28 md:pb-12 space-y-4 sm:space-y-6 max-w-full overflow-hidden">
       {/* Greeting & Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-black text-white dark:text-white light:text-slate-900 tracking-tight">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white dark:text-white light:text-slate-900 tracking-tight truncate">
             Hello, {profile?.name ? profile.name.split(' ')[0] : session?.studentName || 'Student'} 👋
           </h1>
-          <p className="text-xs md:text-sm text-zinc-400 dark:text-zinc-400 light:text-slate-600 mt-1 flex flex-wrap items-center gap-2">
-            <span className="font-medium">{profile?.course || 'Engineering'}</span>
+          <div className="text-xs text-zinc-400 dark:text-zinc-400 light:text-slate-600 mt-0.5 flex items-center gap-1.5 truncate">
+            <span className="font-medium truncate">{profile?.course || 'Engineering'}</span>
             <span>•</span>
-            <span className="font-semibold text-brand-400">
-              {formatSemester(profile?.curnt_sem, 'Semester')}
+            <span className="font-semibold text-brand-400 shrink-0">
+              {formatSemester(profile?.curnt_sem, 'Sem')}
             </span>
             {profile?.roll_no && (
               <>
                 <span>•</span>
-                <span className="font-mono text-zinc-400">Roll: {profile.roll_no}</span>
+                <span className="font-mono text-zinc-400 shrink-0">Roll {profile.roll_no}</span>
               </>
             )}
-            {session?.instituteName && (
-              <>
-                <span>•</span>
-                <span className="text-zinc-400">{session.instituteName}</span>
-              </>
-            )}
-          </p>
+          </div>
         </div>
 
-        {/* Date & Mode Badge */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
-          <div className="flex items-center gap-2 text-xs font-semibold text-zinc-300 dark:text-zinc-300 light:text-slate-700 bg-zinc-900/90 dark:bg-zinc-900/90 light:bg-white border border-zinc-800 dark:border-zinc-800 light:border-slate-300 px-3.5 py-1.5 rounded-xl shadow-sm">
-            <Calendar className="w-3.5 h-3.5 text-brand-400" />
-            <span>
-              {formatIndianDate(new Date(), 'day-short')}
-            </span>
-          </div>
+        {/* Date Badge */}
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-300 dark:text-zinc-300 light:text-slate-700 bg-zinc-900/90 dark:bg-zinc-900/90 light:bg-white border border-zinc-800 dark:border-zinc-800 light:border-slate-300 px-3 py-1.5 rounded-xl shadow-sm shrink-0">
+          <Calendar className="w-3.5 h-3.5 text-brand-400" />
+          <span>
+            {formatIndianDate(new Date(), 'day-short')}
+          </span>
         </div>
       </div>
 
-      {/* Courses At Risk Banner (if any) */}
+      {/* Quick Action Bar for Instant Access on Mobile */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs">
+        {/* Log Duty Leave Button */}
+        <button
+          type="button"
+          onClick={() => setShowDutyLeaveModal(true)}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-amber-600/20 to-amber-500/10 border border-amber-500/40 text-amber-300 hover:bg-amber-500/20 font-bold shrink-0 transition-all active:scale-95 shadow-sm"
+        >
+          <Clock className="w-3.5 h-3.5 text-amber-400" />
+          <span>+ Log Duty Leave</span>
+          {totalPendingDlHours > 0 && (
+            <span className="ml-0.5 px-1.5 py-0.2 rounded-full bg-amber-500 text-zinc-950 text-[10px] font-black">
+              +{totalPendingDlHours}h
+            </span>
+          )}
+        </button>
+
+        {/* Full Schedule shortcut */}
+        <Link
+          to="/timetable"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-zinc-900/80 dark:bg-zinc-900/80 light:bg-slate-100 border border-zinc-800 dark:border-zinc-800 light:border-slate-300 text-zinc-300 dark:text-zinc-300 light:text-slate-700 hover:text-white font-semibold shrink-0 transition-all active:scale-95"
+        >
+          <Calendar className="w-3.5 h-3.5 text-brand-400" />
+          <span>Schedule</span>
+        </Link>
+
+        {/* Attendance shortcut */}
+        <Link
+          to="/attendance"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-zinc-900/80 dark:bg-zinc-900/80 light:bg-slate-100 border border-zinc-800 dark:border-zinc-800 light:border-slate-300 text-zinc-300 dark:text-zinc-300 light:text-slate-700 hover:text-white font-semibold shrink-0 transition-all active:scale-95"
+        >
+          <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+          <span>Attendance ({overallPercentage}%)</span>
+        </Link>
+
+        {/* Something Missing? mobile shortcut */}
+        <button
+          type="button"
+          onClick={() => setShowFeedbackModal(true)}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-zinc-900/50 dark:bg-zinc-900/50 light:bg-slate-100 border border-zinc-800/60 dark:border-zinc-800/60 light:border-slate-300 text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-zinc-200 font-medium shrink-0 transition-all active:scale-95"
+        >
+          <HelpCircle className="w-3.5 h-3.5 text-zinc-500" />
+          <span>Feedback</span>
+        </button>
+      </div>
+
+      {/* Slim Academic Risk Warning Banner (Compact, non-intrusive) */}
       {coursesAtRiskCount > 0 && (
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-rose-950/40 via-amber-950/20 to-transparent border border-rose-800/40 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center shrink-0">
-              <AlertTriangle className="w-5 h-5 text-rose-400" />
+        <Link
+          to="/analysis"
+          className="flex items-center justify-between p-2.5 sm:p-3 rounded-2xl bg-rose-950/30 dark:bg-rose-950/30 light:bg-rose-50 border border-rose-800/40 light:border-rose-200 text-xs text-rose-300 dark:text-rose-300 light:text-rose-900 hover:bg-rose-950/50 transition-colors shadow-sm"
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-4 h-4" />
             </div>
-            <div>
-              <p className="text-sm font-bold text-white dark:text-white light:text-slate-900">
-                {coursesAtRiskCount} course{coursesAtRiskCount > 1 ? 's' : ''} flagged at academic risk
+            <div className="min-w-0">
+              <p className="font-bold truncate text-rose-200 dark:text-rose-200 light:text-rose-950">
+                {coursesAtRiskCount} course{coursesAtRiskCount > 1 ? 's' : ''} at academic risk
               </p>
-              <p className="text-xs text-zinc-400 dark:text-zinc-400 light:text-slate-600">
-                Review attendance bunk warnings and series exam performance to maintain KTU eligibility.
+              <p className="text-[11px] text-rose-400/80 dark:text-rose-400/80 light:text-rose-700 truncate hidden xs:block">
+                Attendance below 75% cutoff or low internal marks
               </p>
             </div>
           </div>
-          <Link
-            to="/analysis"
-            className="shrink-0 px-3 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-semibold flex items-center gap-1 transition-all"
-          >
-            <span>View Analysis</span>
+          <span className="shrink-0 text-[11px] font-bold text-rose-400 dark:text-rose-400 light:text-rose-700 flex items-center gap-0.5 ml-2">
+            <span>Review</span>
             <ChevronRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
+          </span>
+        </Link>
       )}
 
       {/* Top Hero Grid: Live Class Card & Attendance Hero */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Card 1: Timetable & Live Period Status */}
-        <div className="lg:col-span-2 glass-panel rounded-3xl p-6 border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 flex flex-col justify-between relative overflow-hidden shadow-sm">
+        <div className="lg:col-span-2 glass-panel rounded-3xl p-4 sm:p-6 border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 flex flex-col justify-between relative overflow-hidden shadow-sm">
           <div className="absolute top-0 right-0 w-80 h-80 bg-brand-600/5 rounded-full blur-3xl pointer-events-none" />
 
           <div>
@@ -360,7 +404,7 @@ export const DashboardPage: React.FC = () => {
                 <span>{uniquePeriods.length} hours scheduled</span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+              <div className="flex items-stretch gap-2 overflow-x-auto pb-2 scrollbar-none sm:grid sm:grid-cols-6 sm:overflow-visible">
                 {uniquePeriods.map((period) => {
                   const isCurrent = period.hour === activePeriodNumber
                   const isPresent = period.attendance_status === 'present'
@@ -371,7 +415,7 @@ export const DashboardPage: React.FC = () => {
                     <div
                       key={period.hour}
                       title={`${period.subject} - ${period.teacher_name}${isSub && period.regular_subject ? ` (Substitution for ${period.regular_subject})` : ''}`}
-                      className={`p-2.5 rounded-2xl border text-center transition-all ${
+                      className={`p-2.5 rounded-2xl border text-center transition-all min-w-[105px] sm:min-w-0 flex-1 flex flex-col justify-between ${
                         isCurrent
                           ? 'bg-brand-600/25 dark:bg-brand-600/25 light:bg-brand-50 border-brand-500 text-white dark:text-white light:text-brand-900 shadow-md shadow-brand-500/10 ring-1 ring-brand-500/50'
                           : isSub
@@ -421,7 +465,7 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Card 2: Overall Attendance Hero with Quick Link to Details */}
-        <div className="glass-panel rounded-3xl p-6 border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 flex flex-col items-center justify-between text-center relative overflow-hidden shadow-sm">
+        <div className="glass-panel rounded-3xl p-4 sm:p-6 border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 flex flex-col items-center justify-between text-center relative overflow-hidden shadow-sm">
           <div className="w-full flex items-center justify-between mb-2">
             <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-400 light:text-slate-500 flex items-center gap-1.5">
               <TrendingUp className="w-3.5 h-3.5 text-brand-400" />
@@ -437,13 +481,13 @@ export const DashboardPage: React.FC = () => {
           </div>
 
           {/* SVG Ring */}
-          <div className="py-2">
+          <div className="py-1 sm:py-2">
             <AttendanceRing
               percentage={overallPercentage}
               attended={overallAttended}
               total={overallTotal}
-              size={155}
-              strokeWidth={12}
+              size={135}
+              strokeWidth={11}
             />
           </div>
 
@@ -467,6 +511,26 @@ export const DashboardPage: React.FC = () => {
                 </span>
               </div>
             )}
+
+            {/* Direct Quick Action Buttons inside Card 2 */}
+            <div className="w-full pt-2 flex items-center justify-between gap-2 text-xs">
+              <button
+                type="button"
+                onClick={() => setShowDutyLeaveModal(true)}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 font-bold transition-all active:scale-95"
+              >
+                <Clock className="w-3.5 h-3.5 text-amber-400" />
+                <span>+ Duty Leave</span>
+              </button>
+
+              <Link
+                to="/attendance"
+                className="flex-1 flex items-center justify-center gap-1 py-2 px-3 rounded-xl bg-zinc-800/80 hover:bg-zinc-800 text-zinc-200 border border-zinc-700 font-semibold transition-all active:scale-95"
+              >
+                <span>By Subject</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -855,6 +919,18 @@ export const DashboardPage: React.FC = () => {
           onClose={() => setSelectedAssignmentModal(null)}
         />
       )}
+
+      {/* Duty Leave Logging Modal for Mobile and Quick Access */}
+      <LogDutyLeaveModal
+        isOpen={showDutyLeaveModal}
+        onClose={() => setShowDutyLeaveModal(false)}
+      />
+
+      {/* Something Missing Feedback Modal */}
+      <FeedbackModal
+        isOpen={showFeedbackModal}
+        onClose={() => setShowFeedbackModal(false)}
+      />
     </div>
   )
 }
