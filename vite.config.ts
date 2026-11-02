@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png'],
+      includeAssets: ['img/favv.png', 'img/logoo.png', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png'],
       manifest: {
         name: 'ETBridge Student Portal',
         short_name: 'ETBridge',
@@ -19,6 +19,12 @@ export default defineConfig({
         start_url: '/dashboard',
         scope: '/',
         icons: [
+          {
+            src: '/img/logoo.png',
+            sizes: '648x648',
+            type: 'image/png',
+            purpose: 'any'
+          },
           {
             src: '/icon-192.png',
             sizes: '192x192',

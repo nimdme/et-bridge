@@ -49,12 +49,8 @@ export const Navbar: React.FC = () => {
           {/* Left: Minimal Brand */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <Link to="/dashboard" className="flex items-center gap-2 group shrink-0">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-brand-600 via-brand-500 to-indigo-500 p-0.5 shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform flex items-center justify-center">
-                <svg viewBox="0 0 512 512" className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" fill="none">
-                  <path d="M120 340 C180 220, 332 220, 392 340" stroke="currentColor" strokeWidth="48" strokeLinecap="round"/>
-                  <path d="M256 340 L256 240" stroke="currentColor" strokeWidth="36" strokeLinecap="round"/>
-                  <circle cx="256" cy="160" r="36" fill="currentColor"/>
-                </svg>
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl overflow-hidden group-hover:scale-105 transition-transform flex items-center justify-center shrink-0">
+                <img src="/img/logoo.png" alt="ETBridge Logo" className="w-full h-full object-contain" />
               </div>
               <div className="flex items-baseline gap-1">
                 <span className="font-extrabold text-base md:text-lg tracking-tight text-white dark:text-white light:text-slate-900">

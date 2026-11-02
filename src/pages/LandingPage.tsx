@@ -69,14 +69,19 @@ export const LandingPage: React.FC = () => {
 
         {/* Minimal Navigation Bar */}
         <header className="flex items-center justify-between pb-6 border-b border-zinc-800 dark:border-zinc-800 light:border-slate-200">
-          <div className="flex items-center gap-2">
-            <span className="font-extrabold text-base tracking-tight text-white dark:text-white light:text-slate-900 font-mono">
-              ETBridge
-            </span>
-            <span className="text-xs text-zinc-500 dark:text-zinc-500 light:text-slate-400 font-mono">
-              / documentation & app
-            </span>
-          </div>
+          <Link to="/" className="flex items-center gap-2.5">
+            <div className="w-6 h-6 rounded-lg overflow-hidden flex items-center justify-center shrink-0">
+              <img src="/img/logoo.png" alt="ETBridge Logo" className="w-full h-full object-contain" />
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="font-extrabold text-base tracking-tight text-white dark:text-white light:text-slate-900 font-mono">
+                ETBridge
+              </span>
+              <span className="text-xs text-zinc-500 dark:text-zinc-500 light:text-slate-400 font-mono hidden xs:inline">
+                / documentation & app
+              </span>
+            </div>
+          </Link>
 
           <div className="flex items-center gap-3 text-xs">
             <Link

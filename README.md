@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/nimd/etbridge">
-    <img src="public/favicon.svg" width="96" height="96" alt="ETBridge Logo" />
+    <img src="public/img/logoo.png" width="96" height="96" alt="ETBridge Logo" />
   </a>
 </p>
 

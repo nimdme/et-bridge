@@ -89,13 +89,18 @@ export const DocsPage: React.FC = () => {
             <ArrowLeft className="w-4 h-4" />
           </Link>
 
-          <div>
-            <span className="font-extrabold text-sm sm:text-base tracking-tight text-white dark:text-white light:text-slate-900 font-mono">
-              ETBridge / Documentation
-            </span>
-            <span className="hidden sm:inline-block ml-2 text-xs text-zinc-500 font-mono">
-              Technical Reference & Architecture Specification
-            </span>
+          <div className="flex items-center gap-2.5">
+            <div className="w-6 h-6 rounded-lg overflow-hidden flex items-center justify-center shrink-0">
+              <img src="/img/logoo.png" alt="ETBridge Logo" className="w-full h-full object-contain" />
+            </div>
+            <div>
+              <span className="font-extrabold text-sm sm:text-base tracking-tight text-white dark:text-white light:text-slate-900 font-mono">
+                ETBridge / Documentation
+              </span>
+              <span className="hidden sm:inline-block ml-2 text-xs text-zinc-500 font-mono">
+                Technical Reference & Architecture Specification
+              </span>
+            </div>
           </div>
         </div>
 

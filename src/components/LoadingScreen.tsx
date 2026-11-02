@@ -62,12 +62,8 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
         
         {/* Sleek Minimal App Logo */}
         <div className="relative">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center shadow-xl shadow-brand-500/20 ring-1 ring-zinc-800 dark:ring-zinc-800 light:ring-slate-300 animate-pulse">
-            <svg viewBox="0 0 512 512" className="w-7 h-7 text-white" fill="none">
-              <path d="M120 340 C180 220, 332 220, 392 340" stroke="currentColor" strokeWidth="44" strokeLinecap="round"/>
-              <path d="M256 340 L256 240" stroke="currentColor" strokeWidth="34" strokeLinecap="round"/>
-              <circle cx="256" cy="160" r="32" fill="currentColor"/>
-            </svg>
+          <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-xl shadow-brand-500/20 ring-1 ring-zinc-800/80 dark:ring-zinc-800/80 light:ring-slate-200 animate-pulse flex items-center justify-center">
+            <img src="/img/logoo.png" alt="ETBridge Logo" className="w-full h-full object-contain" />
           </div>
         </div>
 
