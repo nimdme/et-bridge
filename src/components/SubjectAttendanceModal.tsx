@@ -289,59 +289,63 @@ export const SubjectAttendanceModal: React.FC<SubjectAttendanceModalProps> = ({
             </div>
           </div>
 
-          {/* Filter Navigation: Absent Records vs Present vs All vs Upcoming */}
+          {/* Filter Navigation: Segmented Control (Grid-based, Zero Scroll Glitch) */}
           <div className="space-y-2">
-            <div className="flex items-center justify-between gap-2 overflow-x-auto scrollbar-none no-scrollbar pb-0.5 max-w-full">
-              <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-zinc-950/80 dark:bg-zinc-950/80 light:bg-slate-100 border border-zinc-800 dark:border-zinc-800 light:border-slate-300 w-fit max-w-full">
+            <div className={`w-full p-1 rounded-2xl bg-zinc-950/80 dark:bg-zinc-950/80 light:bg-slate-100 border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-300 grid ${
+              upcomingRecords.length > 0 ? 'grid-cols-4' : 'grid-cols-3'
+            } gap-1 text-center`}>
+              <button
+                type="button"
+                onClick={() => setFilterMode('absent')}
+                className={`flex items-center justify-center gap-1 sm:gap-1.5 py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all truncate ${
+                  filterMode === 'absent'
+                    ? 'bg-rose-600 text-white shadow-sm'
+                    : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white hover:bg-zinc-900/60'
+                }`}
+              >
+                <XCircle className="w-3.5 h-3.5 shrink-0 hidden xs:inline" />
+                <span className="truncate">Absent ({absentRecords.length})</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setFilterMode('present')}
+                className={`flex items-center justify-center gap-1 sm:gap-1.5 py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all truncate ${
+                  filterMode === 'present'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white hover:bg-zinc-900/60'
+                }`}
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 shrink-0 hidden xs:inline" />
+                <span className="truncate">Attended ({presentRecords.length})</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setFilterMode('all')}
+                className={`flex items-center justify-center gap-1 sm:gap-1.5 py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all truncate ${
+                  filterMode === 'all'
+                    ? 'bg-brand-600 text-white shadow-sm'
+                    : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white hover:bg-zinc-900/60'
+                }`}
+              >
+                <span className="truncate">History ({historyRecords.length})</span>
+              </button>
+
+              {upcomingRecords.length > 0 && (
                 <button
-                  onClick={() => setFilterMode('absent')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
-                    filterMode === 'absent'
-                      ? 'bg-rose-600 text-white shadow-sm'
-                      : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
+                  type="button"
+                  onClick={() => setFilterMode('upcoming')}
+                  className={`flex items-center justify-center gap-1 sm:gap-1.5 py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all truncate ${
+                    filterMode === 'upcoming'
+                      ? 'bg-zinc-700 text-white shadow-sm'
+                      : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white hover:bg-zinc-900/60'
                   }`}
                 >
-                  <XCircle className="w-3.5 h-3.5" />
-                  <span>Absent ({absentRecords.length})</span>
+                  <Clock className="w-3.5 h-3.5 shrink-0 hidden xs:inline" />
+                  <span className="truncate">Upcoming ({upcomingRecords.length})</span>
                 </button>
-
-                <button
-                  onClick={() => setFilterMode('present')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
-                    filterMode === 'present'
-                      ? 'bg-emerald-600 text-white shadow-sm'
-                      : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
-                  }`}
-                >
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Attended ({presentRecords.length})</span>
-                </button>
-
-                <button
-                  onClick={() => setFilterMode('all')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
-                    filterMode === 'all'
-                      ? 'bg-brand-600 text-white shadow-sm'
-                      : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
-                  }`}
-                >
-                  All History ({historyRecords.length})
-                </button>
-
-                {upcomingRecords.length > 0 && (
-                  <button
-                    onClick={() => setFilterMode('upcoming')}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
-                      filterMode === 'upcoming'
-                        ? 'bg-zinc-700 text-white shadow-sm'
-                        : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
-                    }`}
-                  >
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>Upcoming ({upcomingRecords.length})</span>
-                  </button>
-                )}
-              </div>
+              )}
             </div>
 
             {historyRecords.length > 0 && historyRecords.length < total && (

@@ -220,21 +220,6 @@ export const DashboardPage: React.FC = () => {
 
       {/* Quick Action Bar for Instant Access on Mobile */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs">
-        {/* Log Duty Leave Button */}
-        <button
-          type="button"
-          onClick={() => setShowDutyLeaveModal(true)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-amber-600/20 to-amber-500/10 border border-amber-500/40 text-amber-300 hover:bg-amber-500/20 font-bold shrink-0 transition-all active:scale-95 shadow-sm"
-        >
-          <Clock className="w-3.5 h-3.5 text-amber-400" />
-          <span>+ Log Duty Leave</span>
-          {totalPendingDlHours > 0 && (
-            <span className="ml-0.5 px-1.5 py-0.2 rounded-full bg-amber-500 text-zinc-950 text-[10px] font-black">
-              +{totalPendingDlHours}h
-            </span>
-          )}
-        </button>
-
         {/* Full Schedule shortcut */}
         <Link
           to="/timetable"
@@ -519,23 +504,14 @@ export const DashboardPage: React.FC = () => {
               </div>
             )}
 
-            {/* Direct Quick Action Buttons inside Card 2 */}
-            <div className="w-full pt-2 flex items-center justify-between gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => setShowDutyLeaveModal(true)}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 font-bold transition-all active:scale-95"
-              >
-                <Clock className="w-3.5 h-3.5 text-amber-400" />
-                <span>+ Duty Leave</span>
-              </button>
-
+            {/* Direct Quick Action inside Card 2 */}
+            <div className="w-full pt-2">
               <Link
                 to="/attendance"
-                className="flex-1 flex items-center justify-center gap-1 py-2 px-3 rounded-xl bg-zinc-800/80 hover:bg-zinc-800 text-zinc-200 border border-zinc-700 font-semibold transition-all active:scale-95"
+                className="w-full flex items-center justify-between py-2 px-3 rounded-xl bg-zinc-800/80 hover:bg-zinc-800 text-zinc-200 border border-zinc-700 text-xs font-semibold transition-all active:scale-95 group"
               >
-                <span>By Subject</span>
-                <ChevronRight className="w-3.5 h-3.5" />
+                <span>View Subject Breakdown</span>
+                <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
               </Link>
             </div>
           </div>

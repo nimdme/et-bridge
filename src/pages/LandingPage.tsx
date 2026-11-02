@@ -312,49 +312,6 @@ export const LandingPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Supported ETLab Colleges Directory (SEO Optimized) */}
-        <section className="space-y-3 pt-2">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-white dark:text-white light:text-slate-900 font-mono uppercase tracking-wide">
-              Supported ETLab Colleges (KTU)
-            </h2>
-            <span className="text-xs text-zinc-500 font-mono">16+ Institutions</span>
-          </div>
-
-          <p className="text-xs sm:text-sm text-zinc-400 dark:text-zinc-400 light:text-slate-600 leading-relaxed">
-            ETBridge works seamlessly with every institution using the ETLab (etuwa) platform under APJ Abdul Kalam Technological University (KTU). Simply enter your college institute code during login:
-          </p>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono pt-1">
-            {[
-              { code: 'gcek', name: 'GCE Kannur' },
-              { code: 'mace', name: 'MACE Kothamangalam' },
-              { code: 'tkmce', name: 'TKMCE Kollam' },
-              { code: 'rit', name: 'RIT Kottayam' },
-              { code: 'cet', name: 'CET Trivandrum' },
-              { code: 'geck', name: 'GEC Kozhikode' },
-              { code: 'gect', name: 'GEC Thrissur' },
-              { code: 'mec', name: 'Model Engg. MEC' },
-              { code: 'jec', name: 'Jyothi JEC' },
-              { code: 'vjec', name: 'Vimal Jyothi VJEC' },
-              { code: 'rset', name: 'Rajagiri RSET' },
-              { code: 'fisat', name: 'FISAT Angamaly' },
-              { code: 'scms', name: 'SCMS Karukutty' },
-              { code: 'mbcet', name: 'Mar Baselios' },
-              { code: 'carmelcet', name: 'Carmel CCET' },
-              { code: 'christ', name: 'Christ Irinjalakuda' }
-            ].map(col => (
-              <div
-                key={col.code}
-                className="p-2.5 rounded-xl border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 bg-zinc-900/30 dark:bg-zinc-900/30 light:bg-slate-50 flex flex-col justify-between"
-              >
-                <span className="font-bold text-white dark:text-white light:text-slate-900 truncate">{col.name}</span>
-                <span className="text-[10px] text-brand-400 font-bold mt-1">code: {col.code}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-
         {/* Frequently Asked Questions */}
         <section className="space-y-4 pt-2">
           <h2 className="text-base font-bold text-white dark:text-white light:text-slate-900 font-mono uppercase tracking-wide">
@@ -387,7 +344,7 @@ export const LandingPage: React.FC = () => {
 
         {/* Document Footer */}
         <footer className="pt-8 border-t border-zinc-800 dark:border-zinc-800 light:border-slate-200 space-y-4 text-xs font-mono">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-zinc-500 dark:text-zinc-500 light:text-slate-400">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-zinc-500 dark:text-zinc-500 light:text-slate-400">
             <div>
               Made with love by{' '}
               <a
@@ -401,35 +358,38 @@ export const LandingPage: React.FC = () => {
               . Licensed under MIT.
             </div>
 
-            <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex items-center gap-3 sm:gap-4 flex-wrap justify-center text-zinc-400">
               <Link
                 to="/docs"
-                className="hover:underline text-brand-400 hover:text-brand-300 transition-colors font-bold"
+                className="text-brand-400 hover:text-brand-300 font-bold transition-colors"
               >
-                Documentation (/docs)
+                Documentation
               </Link>
+              <span className="text-zinc-700 dark:text-zinc-700 light:text-slate-300">•</span>
               <button
                 type="button"
                 onClick={handleDemoClick}
-                className="hover:underline text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors"
+                className="hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors"
               >
-                Demo Preview
+                Demo
               </button>
+              <span className="text-zinc-700 dark:text-zinc-700 light:text-slate-300">•</span>
               <a
                 href="https://github.com/nimd/etbridge"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:underline flex items-center gap-1 text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors"
+                className="inline-flex items-center gap-1 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors"
               >
-                <span>GitHub Repository</span>
+                <span>GitHub</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
+              <span className="text-zinc-700 dark:text-zinc-700 light:text-slate-300">•</span>
               <button
                 type="button"
                 onClick={() => setShowInstallModal(true)}
-                className="hover:underline text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors"
+                className="hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors"
               >
-                Install App
+                Install
               </button>
             </div>
           </div>

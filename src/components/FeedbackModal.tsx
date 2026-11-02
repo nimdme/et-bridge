@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useAuth } from '../context/AuthContext'
-import { X, Send, CheckCircle2, MessageSquare, AlertCircle } from 'lucide-react'
+import { X, Send, CheckCircle2, MessageSquare, AlertCircle, Loader2 } from 'lucide-react'
 
 interface FeedbackModalProps {
   isOpen: boolean
@@ -14,63 +14,54 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose })
   const { session, profile } = useAuth()
 
   const [category, setCategory] = useState<FeedbackCategory>('missing_feature')
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [contact, setContact] = useState(() => {
-    return profile?.email || profile?.admission_no || session?.username || ''
-  })
+  const [result, setResult] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   if (!isOpen) return null
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-
-    if (!title.trim()) {
-      setError('Please provide a short summary or title.')
-      return
-    }
-
-    if (!description.trim()) {
-      setError('Please provide a description of the issue or missing feature.')
-      return
-    }
-
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setResult('Sending...')
     setIsSubmitting(true)
 
-    // Save report to localStorage for now (backend endpoint will be connected later)
     try {
-      const existing = JSON.parse(localStorage.getItem('etbridge_feedback_reports') || '[]')
-      const newReport = {
-        id: `feedback_${Date.now()}`,
-        timestamp: new Date().toISOString(),
-        category,
-        title: title.trim(),
-        description: description.trim(),
-        contact: contact.trim(),
-        instituteId: session?.instituteId || 'unknown',
-        username: session?.username || 'anonymous'
+      const formData = new FormData(event.currentTarget)
+      formData.append('access_key', '68f7effe-e08f-4fe2-8342-a32019d2db20')
+      formData.append('category', category)
+      if (session?.instituteId) {
+        formData.append('institute', session.instituteId)
       }
-      existing.unshift(newReport)
-      localStorage.setItem('etbridge_feedback_reports', JSON.stringify(existing))
-    } catch (err) {
-      console.warn('Failed saving feedback locally:', err)
-    }
+      if (session?.username) {
+        formData.append('username', session.username)
+      }
+      formData.append('from_name', 'ETBridge Feedback Portal')
+      formData.append('subject', `[ETBridge] ${category.toUpperCase()} - ${session?.instituteId || 'User'}`)
 
-    setTimeout(() => {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: formData
+      })
+
+      const data = await response.json()
+      if (data.success) {
+        setResult('Form Submitted Successfully')
+        setIsSubmitted(true)
+        setIsSubmitting(false)
+      } else {
+        setResult(data.message || 'Error submitting form. Please try again.')
+        setIsSubmitting(false)
+      }
+    } catch (err: any) {
+      setResult('Network error. Please try again later.')
       setIsSubmitting(false)
-      setIsSubmitted(true)
-    }, 400)
+    }
   }
 
   const handleReset = () => {
-    setTitle('')
-    setDescription('')
-    setError(null)
+    setResult('')
     setIsSubmitted(false)
+    setIsSubmitting(false)
     onClose()
   }
 
@@ -82,7 +73,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose })
       <div
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
-        className="w-full max-w-lg bg-zinc-900 dark:bg-zinc-900 light:bg-white border border-zinc-800 dark:border-zinc-800 light:border-slate-300 rounded-3xl p-4 sm:p-7 shadow-2xl relative max-h-[92vh] overflow-y-auto"
+        className="w-full max-w-lg bg-zinc-900 dark:bg-zinc-900 light:bg-white border border-zinc-800 dark:border-zinc-800 light:border-slate-300 rounded-3xl p-5 sm:p-7 shadow-2xl relative max-h-[92vh] overflow-y-auto"
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-4 pb-4 border-b border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200">
@@ -91,12 +82,12 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose })
               <span className="p-1.5 rounded-lg bg-brand-500/10 text-brand-400">
                 <MessageSquare className="w-4 h-4" />
               </span>
-              <h3 className="text-base font-bold text-white dark:text-white light:text-slate-900">
+              <h3 className="text-base font-bold text-white dark:text-white light:text-slate-900 font-mono">
                 Something Missing?
               </h3>
             </div>
             <p className="text-xs text-zinc-400 dark:text-zinc-400 light:text-slate-500 mt-1">
-              Report missing features, attendance calculation errors, or ideas to the admin.
+              Report missing features, attendance calculation errors, or ideas directly to the maintainer.
             </p>
           </div>
 
@@ -115,10 +106,10 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose })
               <CheckCircle2 className="w-6 h-6" />
             </div>
             <h4 className="text-base font-bold text-white dark:text-white light:text-slate-900">
-              Feedback Received
+              Feedback Submitted Successfully
             </h4>
             <p className="text-xs text-zinc-400 dark:text-zinc-400 light:text-slate-600 max-w-sm mx-auto leading-relaxed">
-              Thank you for reporting. Your input has been saved locally and will be forwarded to the admin backend.
+              Thank you for helping improve ETBridge. Your message has been dispatched directly to the development inbox.
             </p>
             <div className="pt-2">
               <button
@@ -131,11 +122,11 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose })
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-            {error && (
+          <form onSubmit={onSubmit} className="space-y-4 pt-4">
+            {result && result !== 'Sending...' && !isSubmitted && (
               <div className="p-3 rounded-xl bg-rose-950/40 border border-rose-800/50 flex items-center gap-2 text-xs text-rose-300">
                 <AlertCircle className="w-4 h-4 shrink-0" />
-                <span>{error}</span>
+                <span>{result}</span>
               </div>
             )}
 
@@ -167,65 +158,77 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose })
               </div>
             </div>
 
-            {/* Title / Summary */}
+            {/* Name */}
             <div className="space-y-1.5">
               <label className="block text-[11px] font-mono uppercase tracking-wider font-bold text-zinc-400 dark:text-zinc-400 light:text-slate-500">
-                Title / Summary
+                Name <span className="text-rose-400">*</span>
               </label>
               <input
                 type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Cannot find elective subjects or duty leave missing"
+                name="name"
+                required
+                defaultValue={profile?.name || session?.studentName || session?.username || ''}
+                placeholder="Your name"
                 className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 dark:bg-zinc-950 light:bg-slate-50 border border-zinc-800 dark:border-zinc-800 light:border-slate-200 text-xs text-white dark:text-white light:text-slate-900 placeholder:text-zinc-500 focus:outline-none focus:border-brand-500"
               />
             </div>
 
-            {/* Description */}
+            {/* Email */}
             <div className="space-y-1.5">
               <label className="block text-[11px] font-mono uppercase tracking-wider font-bold text-zinc-400 dark:text-zinc-400 light:text-slate-500">
-                Description / Details
+                Email Address <span className="text-rose-400">*</span>
+              </label>
+              <input
+                type="email"
+                name="email"
+                required
+                defaultValue={profile?.email || ''}
+                placeholder="you@college.edu or personal email"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 dark:bg-zinc-950 light:bg-slate-50 border border-zinc-800 dark:border-zinc-800 light:border-slate-200 text-xs text-white dark:text-white light:text-slate-900 placeholder:text-zinc-500 focus:outline-none focus:border-brand-500"
+              />
+            </div>
+
+            {/* Message */}
+            <div className="space-y-1.5">
+              <label className="block text-[11px] font-mono uppercase tracking-wider font-bold text-zinc-400 dark:text-zinc-400 light:text-slate-500">
+                Message / Description <span className="text-rose-400">*</span>
               </label>
               <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={3}
-                placeholder="Explain what is missing or what you expected to see..."
+                name="message"
+                required
+                rows={4}
+                placeholder="Explain what is missing, any calculation discrepancies, or features you'd like to see..."
                 className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 dark:bg-zinc-950 light:bg-slate-50 border border-zinc-800 dark:border-zinc-800 light:border-slate-200 text-xs text-white dark:text-white light:text-slate-900 placeholder:text-zinc-500 focus:outline-none focus:border-brand-500 resize-none"
               />
             </div>
 
-            {/* Optional Contact */}
-            <div className="space-y-1.5">
-              <label className="block text-[11px] font-mono uppercase tracking-wider font-bold text-zinc-400 dark:text-zinc-400 light:text-slate-500">
-                Contact (Optional)
-              </label>
-              <input
-                type="text"
-                value={contact}
-                onChange={(e) => setContact(e.target.value)}
-                placeholder="Email or Admission Number"
-                className="w-full px-3.5 py-2 rounded-xl bg-zinc-950 dark:bg-zinc-950 light:bg-slate-50 border border-zinc-800 dark:border-zinc-800 light:border-slate-200 text-xs text-white dark:text-white light:text-slate-900 placeholder:text-zinc-500 focus:outline-none focus:border-brand-500"
-              />
-            </div>
-
             {/* Actions */}
-            <div className="flex items-center justify-end gap-2.5 pt-2">
-              <button
-                type="button"
-                onClick={handleReset}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-sm transition-all disabled:opacity-50"
-              >
-                <Send className="w-3.5 h-3.5" />
-                <span>{isSubmitting ? 'Submitting...' : 'Submit to Admin'}</span>
-              </button>
+            <div className="flex items-center justify-between pt-2">
+              <span className="text-[11px] text-zinc-500 font-mono">
+                {result === 'Sending...' ? 'Sending message...' : ''}
+              </span>
+
+              <div className="flex items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-sm transition-all disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Send className="w-3.5 h-3.5" />
+                  )}
+                  <span>{isSubmitting ? 'Sending...' : 'Submit Form'}</span>
+                </button>
+              </div>
             </div>
           </form>
         )}

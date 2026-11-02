@@ -171,27 +171,29 @@ export const BottomNav: React.FC = () => {
             )}
           </NavLink>
 
-          {/* Item 3: Center Inline Accent Menu Button */}
+          {/* Item 3: Center Inline Distinct Accent Menu Button */}
           <button
             type="button"
             onClick={() => setIsMenuOpen(prev => !prev)}
             aria-label="Toggle Navigation Menu"
-            className={`flex flex-col items-center justify-center py-0.5 px-2 rounded-xl transition-all relative ${
-              isSecondaryActive || isMenuOpen
-                ? 'text-brand-400 font-bold'
-                : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-zinc-200 font-medium'
-            }`}
+            className="flex flex-col items-center justify-center py-0.5 px-1 rounded-xl transition-all relative group"
           >
-            <div className={`p-1 rounded-xl transition-all ${
+            <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center transition-all duration-200 shadow-md ${
               isSecondaryActive || isMenuOpen
-                ? 'bg-gradient-to-tr from-brand-600 to-indigo-600 text-white shadow-md shadow-brand-500/25 scale-105'
-                : 'bg-brand-500/15 text-brand-400 dark:text-brand-400 light:text-brand-600 hover:bg-brand-500/25'
+                ? 'bg-gradient-to-tr from-brand-500 via-indigo-500 to-brand-600 text-white shadow-brand-500/40 scale-105 border border-brand-300/50 ring-2 ring-brand-400/40'
+                : 'bg-gradient-to-tr from-brand-600 via-indigo-600 to-brand-500 text-white shadow-brand-600/30 border border-brand-400/30 hover:scale-105 active:scale-95'
             }`}>
-              <Menu className={`w-5 h-5 transition-transform duration-200 ${isMenuOpen ? 'rotate-90' : ''}`} />
+              <Menu className={`w-5 h-5 text-white transition-transform duration-200 ${isMenuOpen ? 'rotate-90' : ''}`} />
             </div>
-            <span className="text-[10px] mt-0.5 tracking-tight font-medium">Menu</span>
+            <span className={`text-[10px] mt-0.5 tracking-tight font-extrabold ${
+              isSecondaryActive || isMenuOpen
+                ? 'text-brand-400'
+                : 'text-brand-400 dark:text-brand-400 light:text-brand-600'
+            }`}>
+              Menu
+            </span>
             {totalPendingDlHours > 0 && (
-              <span className="absolute top-0.5 right-3 w-2 h-2 rounded-full bg-amber-400 ring-2 ring-zinc-950 dark:ring-zinc-950 light:ring-white animate-pulse" />
+              <span className="absolute top-0 right-2 w-2.5 h-2.5 rounded-full bg-amber-400 border-2 border-zinc-950 dark:border-zinc-950 light:border-white animate-pulse" />
             )}
           </button>
 
@@ -399,7 +401,7 @@ export const BottomNav: React.FC = () => {
                 </button>
 
                 <p className="text-[10px] text-center text-zinc-500 dark:text-zinc-500 light:text-slate-500">
-                  ETBridge v2.0 • Independent client. Not affiliated with ETLab or Etuwa Concepts.
+                  ETBridge • Independent client. Not affiliated with ETLab or Etuwa Concepts.
                 </p>
               </div>
             </div>

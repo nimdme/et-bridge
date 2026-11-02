@@ -60,7 +60,6 @@ export const Navbar: React.FC = () => {
                 <span className="font-extrabold text-base md:text-lg tracking-tight text-white dark:text-white light:text-slate-900">
                   ET<span className="text-brand-400">Bridge</span>
                 </span>
-                <span className="text-[10px] font-semibold tracking-wider uppercase text-zinc-500 dark:text-zinc-500 light:text-slate-400 hidden xs:inline">v2.0</span>
               </div>
             </Link>
 

@@ -40,6 +40,42 @@ export const DocsPage: React.FC = () => {
     { id: 'build-your-own', label: '7. How to Build Your Own Client', icon: Smartphone },
   ]
 
+  // Track active section dynamically based on window scroll position
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 130
+      const sectionElements = navItems
+        .map(item => ({ id: item.id, el: document.getElementById(item.id) }))
+        .filter((s): s is { id: string; el: HTMLElement } => s.el !== null)
+
+      for (let i = sectionElements.length - 1; i >= 0; i--) {
+        const { id, el } = sectionElements[i]
+        if (el.offsetTop <= scrollPosition) {
+          setActiveSection(id)
+          return
+        }
+      }
+      if (sectionElements.length > 0) {
+        setActiveSection(sectionElements[0].id)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault()
+    const element = document.getElementById(id)
+    if (element) {
+      const yOffset = -90
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+      window.scrollTo({ top: y, behavior: 'smooth' })
+      setActiveSection(id)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 dark:bg-zinc-950 dark:text-zinc-100 light:bg-slate-50 light:text-slate-900 transition-colors">
       {/* Top Navbar */}
@@ -108,7 +144,7 @@ export const DocsPage: React.FC = () => {
                   <a
                     key={item.id}
                     href={`#${item.id}`}
-                    onClick={() => setActiveSection(item.id)}
+                    onClick={(e) => scrollToSection(e, item.id)}
                     className={`flex items-center gap-2 px-2.5 py-2 rounded-xl transition-all ${
                       isActive
                         ? 'bg-brand-500/15 text-brand-400 font-bold'
@@ -129,7 +165,7 @@ export const DocsPage: React.FC = () => {
             {/* Title Section */}
             <section className="space-y-3 pb-6 border-b border-zinc-800 dark:border-zinc-800 light:border-slate-200">
               <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-brand-950/70 dark:bg-brand-950/70 light:bg-brand-50 border border-brand-800/50 text-[11px] font-mono text-brand-400 font-bold">
-                <span>Version 2.0.0 Specification</span>
+                <span>Architecture Specification</span>
               </div>
               <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white dark:text-white light:text-slate-900 font-mono">
                 ETBridge Technical Architecture & API Documentation
