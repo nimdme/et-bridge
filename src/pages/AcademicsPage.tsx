@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { Assignment, SeriesExam, StudyMaterial } from '../api/types'
 import { AssignmentModal } from '../components/AssignmentModal'
 import { getDaysRemaining, formatIndianDate } from '../utils/format'
+import { EtlabImage } from '../components/EtlabImage'
 import { downloadFileWithAuth } from '../utils/download'
 import { 
   GraduationCap, 
@@ -522,11 +523,6 @@ export const AcademicsPage: React.FC = () => {
               const isLead = t.is_hod || t.is_staff_advisor
               const initials = t.name.split(' ').map(p => p[0]).filter(Boolean).slice(0, 2).join('')
 
-              // Photo URL
-              const photoUrl = t.photo ? (
-                t.photo.startsWith('http') ? t.photo : `https://api.students.etlab.app/uploads/${t.photo.replace(/^\/+/, '')}`
-              ) : null
-
               return (
                 <div
                   key={t.id}
@@ -537,18 +533,12 @@ export const AcademicsPage: React.FC = () => {
                   <div className="flex items-start gap-3.5 mb-2">
                     {/* Faculty Photo / Avatar */}
                     <div className="relative w-12 h-12 rounded-2xl overflow-hidden bg-brand-950/80 border border-brand-800/60 text-brand-300 font-bold text-sm flex items-center justify-center shrink-0">
-                      {photoUrl ? (
-                        <img
-                          src={photoUrl}
-                          alt={t.name}
-                          loading="lazy"
-                          className="w-full h-full object-cover object-top"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none'
-                          }}
-                        />
-                      ) : null}
-                      <span className="uppercase">{initials || 'FC'}</span>
+                      <EtlabImage
+                        src={t.photo}
+                        alt={t.name}
+                        className="w-full h-full object-cover object-top"
+                        fallback={<span className="uppercase">{initials || 'FC'}</span>}
+                      />
                     </div>
 
                     <div className="min-w-0 flex-1">

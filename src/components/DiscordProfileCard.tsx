@@ -15,6 +15,7 @@ import {
   GraduationCap 
 } from 'lucide-react'
 import { InstallModal } from './InstallModal'
+import { EtlabImage } from './EtlabImage'
 import { formatSemester } from '../utils/format'
 
 interface DiscordProfileCardProps {
@@ -87,10 +88,14 @@ export const DiscordProfileCard: React.FC<DiscordProfileCardProps> = ({ onClose,
       <div className="px-5 pt-0 pb-4 relative">
         <div className="flex items-end justify-between -mt-9 mb-2">
           <div className="relative">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-700 text-white font-black text-lg flex items-center justify-center uppercase shadow-lg ring-4 ring-zinc-900 dark:ring-zinc-900 light:ring-white always-white">
-              {studentInitials}
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-700 text-white font-black text-lg flex items-center justify-center uppercase shadow-lg ring-4 ring-zinc-900 dark:ring-zinc-900 light:ring-white always-white overflow-hidden">
+              <EtlabImage
+                src={profile?.photo || profile?.image || profile?.avatar}
+                alt={studentName}
+                fallback={<span className="always-white">{studentInitials}</span>}
+              />
             </div>
-            <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 ring-4 ring-zinc-900 dark:ring-zinc-900 light:ring-white" />
+            <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 ring-4 ring-zinc-900 dark:ring-zinc-900 light:ring-white z-10" />
           </div>
 
           <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/80 border border-emerald-800/80 px-2 py-0.5 rounded-full shrink-0 whitespace-nowrap">

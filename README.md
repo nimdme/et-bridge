@@ -28,6 +28,9 @@
   <a href="https://web.dev/progressive-web-apps/">
     <img src="https://img.shields.io/badge/PWA-Ready-5A0FC8?style=flat-square&logo=pwa&logoColor=white" alt="PWA Ready" />
   </a>
+  <a href="https://etbridge.pages.dev/docs">
+    <img src="https://img.shields.io/badge/Docs-Technical%20Reference-6366f1?style=flat-square" alt="Documentation" />
+  </a>
   <a href="https://github.com/nimd/etbridge">
     <img src="https://img.shields.io/badge/Backend-Zero--Knowledge%20(Direct%20API)-10b981?style=flat-square" alt="Zero Backend" />
   </a>
@@ -39,6 +42,7 @@
 
 - [Overview](#overview)
 - [Motivation](#motivation)
+- [Technical Documentation (/docs)](#technical-documentation)
 - [Architecture & Security](#architecture--security)
 - [Key Features](#key-features)
   - [Attendance & 75% Cutoff Calculation](#attendance--75-cutoff-calculation)
@@ -72,6 +76,22 @@ The official ETLab mobile application has long suffered from stability, performa
 - Complete unavailability during brief network drops in lecture halls.
 
 ETBridge was built to provide a clean, modern alternative: instantaneous cold starts, transparent attendance calculations, offline caching, and respectful zero-knowledge data handling.
+
+---
+
+## Technical Documentation
+
+A comprehensive, developer-focused technical specification explaining the zero-backend architecture, reverse-engineered ETLab REST endpoints, mathematical attendance formulas, and guide to creating your own client is available at:
+
+**[https://etbridge.pages.dev/docs](https://etbridge.pages.dev/docs)** (or route `/docs` locally)
+
+Topics covered in the documentation:
+- **System Architecture & Zero-Backend Design**: Direct browser-to-API communication with `https://api.students.etlab.app/api/v1` without intermediary proxies.
+- **Reverse-Engineered ETLab REST API Dictionary**: Detailed schemas for `/login`, `/profile`, `/attendancebysubject`, `/timetablenew`, `/evaluations`, `/teachers`, `/dutyleaves`, `/studymaterials`, `/fees`, and `/syllabus`.
+- **75% Attendance & Bunk Margin Algebra**: Mathematical equations for calculating maximum bunk allowance and minimum attendance recovery classes.
+- **Self-Reported Duty Leave Engine**: Hour-level claiming and automatic reconciliation state machine.
+- **Offline Caching & PWA Architecture**: Stale-while-revalidate partitioning across localStorage keys.
+- **Developer Guide**: Step-by-step instructions for building independent ETLab clients in Flutter, Swift, React Native, or Python.
 
 ---
 

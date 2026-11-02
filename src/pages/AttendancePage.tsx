@@ -91,6 +91,8 @@ export const AttendancePage: React.FC = () => {
   const projectedRawPercentage = overallTotal > 0 ? (projectedAttended / overallTotal) * 100 : rawPercentage
   const projectedPercentage = formatPercent(Math.min(100, projectedRawPercentage))
 
+  const todayStr = useMemo(() => formatLocalDate(new Date()), [])
+
   // Month navigation helpers
   const handlePrevMonth = () => {
     setCurrentDate(prev => {
@@ -602,7 +604,7 @@ export const AttendancePage: React.FC = () => {
             </div>
 
             {/* Legend */}
-            <div className="flex items-center justify-center gap-6 text-xs text-zinc-400 pt-1">
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-zinc-400 pt-1">
               <span className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                 <span>All Present</span>
@@ -614,6 +616,10 @@ export const AttendancePage: React.FC = () => {
               <span className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
                 <span>All Absent</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-zinc-500 dark:bg-zinc-500 light:bg-slate-400" />
+                <span>Upcoming / Scheduled</span>
               </span>
             </div>
           </div>
@@ -645,19 +651,33 @@ export const AttendancePage: React.FC = () => {
                   const dayOfWeek = (firstDayIndex + i) % 7
                   const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
 
+                  const isFuture = dateStr > todayStr
+
                   // Determine status dot
                   let dotColor = ''
-                  if (dayData && dayData.sub && dayData.sub.length > 0) {
+                  if (isFuture) {
+                    // Future dates: indicate scheduled classes with neutral gray dot
+                    if (!isWeekend) {
+                      dotColor = 'bg-zinc-500 dark:bg-zinc-500 light:bg-slate-400'
+                    }
+                  } else if (dayData && dayData.sub && dayData.sub.length > 0) {
                     const present = dayData.sub.filter((p: TimetablePeriod) => p.attendance_status === 'present').length
                     const absent = dayData.sub.filter((p: TimetablePeriod) => p.attendance_status === 'absent').length
-                    if (absent === 0) dotColor = 'bg-emerald-500'
-                    else if (present > 0 && absent > 0) dotColor = 'bg-amber-500'
-                    else dotColor = 'bg-rose-500'
-                  } else if (dayNum === 1) {
-                    // Demo fallback for Oct 1 (matching Screenshot 3 where Thu 1 Oct has amber dot)
+                    const duty = dayData.sub.filter((p: TimetablePeriod) => p.attendance_status === 'duty_leave').length
+
+                    if (present === 0 && absent === 0 && duty === 0) {
+                      // Scheduled or unmarked past/today periods
+                      dotColor = 'bg-zinc-500 dark:bg-zinc-500 light:bg-slate-400'
+                    } else if (absent === 0 && (present > 0 || duty > 0)) {
+                      dotColor = 'bg-emerald-500'
+                    } else if (present > 0 && absent > 0) {
+                      dotColor = 'bg-amber-500'
+                    } else {
+                      dotColor = 'bg-rose-500'
+                    }
+                  } else if (dayNum === 1 && !isWeekend) {
+                    // Demo fallback for Oct 1
                     dotColor = 'bg-amber-500'
-                  } else if (!isWeekend && dayNum <= 28) {
-                    dotColor = dayNum % 7 === 2 ? 'bg-amber-500' : 'bg-emerald-500'
                   }
 
                   return (

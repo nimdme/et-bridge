@@ -5,10 +5,105 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     
-    <!-- PWA primary meta -->
-    <title>ETBridge — Clean ETLab Client</title>
-    <meta name="title" content="ETBridge — Clean ETLab Client" />
-    <meta name="description" content="A blazing fast, distraction-free, privacy-first student portal for ETLab colleges with attendance bunk margin and real-time schedules." />
+    <!-- Primary Meta Tags -->
+    <title>ETLab Login, Student Portal & Attendance Calculator | ETBridge</title>
+    <meta name="title" content="ETLab Login, Student Portal & Attendance Calculator | ETBridge" />
+    <meta name="description" content="A blazing fast, distraction-free, privacy-first student portal for ETLab colleges. Direct KTU ETLab login, 75% attendance bunk calculator, duty leave projections, live timetables, and offline PWA." />
+    <meta name="keywords" content="ETLab, ETLab login, ETLab student portal, ETLab client, KTU ETLab, ETLab app, ETLab attendance calculator, KTU attendance tracker, college attendance calculator, 75% attendance bunk calculator, safe bunk margin, Kerala Technological University, APJ Abdul Kalam Technological University, CET ETLab, TKMCE ETLab, GECK ETLab, GECT ETLab, MACE ETLab, RIT ETLab, JEC ETLab, VJEC ETLab, Model Engineering College, MEC, FISAT, SCMS, RSET, Mar Baselios, Carmel College, Christ College, etlab.app, api.students.etlab.app, modern etlab client, open source etlab, student portal PWA, KTU internal marks, etbridge" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="author" content="NiMD" />
+    <link rel="canonical" href="https://etbridge.pages.dev" />
+
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ETBridge — Clean ETLab Client" />
+    <meta property="og:url" content="https://etbridge.pages.dev" />
+    <meta property="og:title" content="ETLab Login, Student Portal & Attendance Calculator | ETBridge" />
+    <meta property="og:description" content="A blazing fast, privacy-first, zero-backend student client for ETLab. Check 75% bunk margins, timetables, internal marks, and track self-reported duty leaves." />
+    <meta property="og:image" content="https://etbridge.pages.dev/og-image.png" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://etbridge.pages.dev" />
+    <meta name="twitter:title" content="ETLab Login, Student Portal & Attendance Calculator | ETBridge" />
+    <meta name="twitter:description" content="A blazing fast, privacy-first, zero-backend student client for ETLab. Check 75% bunk margins, timetables, internal marks, and track self-reported duty leaves." />
+    <meta name="twitter:image" content="https://etbridge.pages.dev/og-image.png" />
+    <meta name="twitter:creator" content="@nimdme" />
+
+    <!-- JSON-LD Structured Data Schema (WebApplication & FAQPage) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "name": "ETBridge",
+            "url": "https://etbridge.pages.dev",
+            "description": "Blazing fast, open-source student portal client for colleges using ETLab with 75% attendance bunk calculator and live class schedules.",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "All (Web, iOS, Android, Windows, macOS, Linux)",
+            "browserRequirements": "Requires JavaScript. Requires HTML5.",
+            "softwareVersion": "2.0.0",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "INR"
+            },
+            "author": {
+              "@type": "Person",
+              "name": "NiMD",
+              "url": "https://nimd.me"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "How do I log into ETLab with ETBridge?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Enter your college institute code (for example: gcek for Kannur, mace for Kothamangalam, rit for Kottayam) along with your regular ETLab admission number or username and password. The authentication request is made directly to ETLab without any middleman proxy."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is my password or student data stored on any server?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. ETBridge is a 100% static client-side application. There are no intermediate servers, databases, or tracking proxies. All API requests go directly from your browser to ETLab's official API (api.students.etlab.app), and your authentication token is kept only in your browser's local storage."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How does the 75% attendance bunk calculator work?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "The calculation uses the standard university attendance target of 75%. If your attendance is currently at or above 75%, it calculates how many classes you can skip without dropping below 75%. If your attendance is below 75%, it calculates how many consecutive hours you must attend to cross the 75% threshold."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How does self-reported duty leave work?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Faculty often take several days or weeks to enter approved duty leaves into the ETLab portal. ETBridge lets you toggle the specific hours you were on duty (e.g. Hours 4, 5, 6) to project your true attendance and bunk margins. It clearly labels these as self-reported, and automatically reconciles once faculty inputs the official approval."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Which colleges are supported by ETBridge?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Any university or college that uses ETLab's student portal (including GCEK, MACE, TKMCE, JEC, VJEC, RIT, GECK, CET, MEC, and others across Kerala Technological University)."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
     
     <meta name="theme-color" content="#09090b" />
     <meta name="mobile-web-app-capable" content="yes" />

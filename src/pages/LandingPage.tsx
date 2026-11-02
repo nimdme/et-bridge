@@ -79,6 +79,13 @@ export const LandingPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3 text-xs">
+            <Link
+              to="/docs"
+              className="text-zinc-400 hover:text-white dark:hover:text-white light:text-slate-600 light:hover:text-slate-900 transition-colors font-mono font-semibold"
+            >
+              Docs
+            </Link>
+
             <a
               href="https://github.com/nimd/etbridge"
               target="_blank"
@@ -115,13 +122,17 @@ export const LandingPage: React.FC = () => {
           </div>
         </header>
 
-        {/* Title and Summary */}
+        {/* Title and Summary (SEO Optimized) */}
         <section className="space-y-4">
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white dark:text-white light:text-slate-900 font-mono">
-            ETBridge
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold text-brand-400 bg-brand-950/60 border border-brand-800/60">
+            <span>Client for ETLab Student Portals (KTU)</span>
+          </div>
+
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white dark:text-white light:text-slate-900 font-mono">
+            ETBridge: Fast ETLab Client & Attendance Calculator
           </h1>
           <p className="text-base sm:text-lg text-zinc-300 dark:text-zinc-300 light:text-slate-700 leading-relaxed">
-            An open-source, client-side web interface for students using the ETLab portal. Fast, clean, offline-ready, with automated bunk margin calculations and self-reported duty leave tracking.
+            The open-source, privacy-first web client and Progressive Web App for students using the ETLab portal across Kerala Technological University (KTU) colleges. Instant login, 75% attendance bunk margin calculator, real-time timetable routine, internal series exam analysis, and offline caching.
           </p>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
@@ -276,6 +287,74 @@ export const LandingPage: React.FC = () => {
           </div>
         </section>
 
+        {/* Technical Architecture & API Documentation Link */}
+        <section className="p-5 sm:p-6 rounded-2xl border border-zinc-800 dark:border-zinc-800 light:border-slate-200 bg-zinc-900/40 dark:bg-zinc-900/40 light:bg-white space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-brand-400">
+                Developer Specification & Architecture
+              </span>
+              <h2 className="text-base sm:text-lg font-bold text-white dark:text-white light:text-slate-900 font-mono">
+                How ETBridge Works Behind the Scenes
+              </h2>
+              <p className="text-xs sm:text-sm text-zinc-400 dark:text-zinc-400 light:text-slate-600 leading-relaxed max-w-xl">
+                Explore the technical documentation covering reverse-engineered ETLab REST endpoints, bearer token auth, 75% attendance margin algebra, and how to build your own ETLab mobile or web client.
+              </p>
+            </div>
+
+            <Link
+              to="/docs"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-zinc-100 text-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 light:bg-slate-900 light:text-white font-mono font-bold text-xs transition-all hover:bg-zinc-200 shrink-0"
+            >
+              <span>Explore /docs</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </section>
+
+        {/* Supported ETLab Colleges Directory (SEO Optimized) */}
+        <section className="space-y-3 pt-2">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-bold text-white dark:text-white light:text-slate-900 font-mono uppercase tracking-wide">
+              Supported ETLab Colleges (KTU)
+            </h2>
+            <span className="text-xs text-zinc-500 font-mono">16+ Institutions</span>
+          </div>
+
+          <p className="text-xs sm:text-sm text-zinc-400 dark:text-zinc-400 light:text-slate-600 leading-relaxed">
+            ETBridge works seamlessly with every institution using the ETLab (etuwa) platform under APJ Abdul Kalam Technological University (KTU). Simply enter your college institute code during login:
+          </p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono pt-1">
+            {[
+              { code: 'gcek', name: 'GCE Kannur' },
+              { code: 'mace', name: 'MACE Kothamangalam' },
+              { code: 'tkmce', name: 'TKMCE Kollam' },
+              { code: 'rit', name: 'RIT Kottayam' },
+              { code: 'cet', name: 'CET Trivandrum' },
+              { code: 'geck', name: 'GEC Kozhikode' },
+              { code: 'gect', name: 'GEC Thrissur' },
+              { code: 'mec', name: 'Model Engg. MEC' },
+              { code: 'jec', name: 'Jyothi JEC' },
+              { code: 'vjec', name: 'Vimal Jyothi VJEC' },
+              { code: 'rset', name: 'Rajagiri RSET' },
+              { code: 'fisat', name: 'FISAT Angamaly' },
+              { code: 'scms', name: 'SCMS Karukutty' },
+              { code: 'mbcet', name: 'Mar Baselios' },
+              { code: 'carmelcet', name: 'Carmel CCET' },
+              { code: 'christ', name: 'Christ Irinjalakuda' }
+            ].map(col => (
+              <div
+                key={col.code}
+                className="p-2.5 rounded-xl border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 bg-zinc-900/30 dark:bg-zinc-900/30 light:bg-slate-50 flex flex-col justify-between"
+              >
+                <span className="font-bold text-white dark:text-white light:text-slate-900 truncate">{col.name}</span>
+                <span className="text-[10px] text-brand-400 font-bold mt-1">code: {col.code}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* Frequently Asked Questions */}
         <section className="space-y-4 pt-2">
           <h2 className="text-base font-bold text-white dark:text-white light:text-slate-900 font-mono uppercase tracking-wide">
@@ -323,6 +402,12 @@ export const LandingPage: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-4 flex-wrap">
+              <Link
+                to="/docs"
+                className="hover:underline text-brand-400 hover:text-brand-300 transition-colors font-bold"
+              >
+                Documentation (/docs)
+              </Link>
               <button
                 type="button"
                 onClick={handleDemoClick}

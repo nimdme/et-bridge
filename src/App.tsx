@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { LandingPage } from './pages/LandingPage'
 import { LoginPage } from './pages/LoginPage'
+import { DocsPage } from './pages/DocsPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { AttendancePage } from './pages/AttendancePage'
 import { TimetablePage } from './pages/TimetablePage'
@@ -92,6 +93,7 @@ export const App: React.FC = () => {
               {/* Public / Smart entry */}
               <Route path="/" element={<SmartRoot />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/docs" element={<DocsPage />} />
 
               {/* Protected Application Routes */}
               <Route

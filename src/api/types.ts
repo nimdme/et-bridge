@@ -54,6 +54,9 @@ export interface StudentProfile {
   email: string
   phone: string
   gender?: string
+  photo?: string
+  image?: string
+  avatar?: string
   attendance: {
     total_classes: number
     classes_attended: number

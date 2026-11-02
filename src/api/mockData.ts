@@ -45,6 +45,7 @@ export const DEMO_PROFILE: StudentProfile = {
   email: 'arjun.cs22@engg.edu.in',
   phone: '+91 98765 43210',
   gender: 'Male',
+  photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
   attendance: {
     total_classes: 184,
     classes_attended: 154,
@@ -1282,7 +1283,7 @@ export const DEMO_MONTH_TIMETABLE: DayTimetable[] = [
         "subject": "Management of Software Systems",
         "subject_code": "CST307",
         "teacher_name": "Dr. Radhika P.",
-        "attendance_status": "present",
+        "attendance_status": "absent",
         "covered_topics": [
           "Software maintenance and configuration management tools (Git)"
         ]
@@ -1574,6 +1575,7 @@ export const DEMO_TEACHERS: Teacher[] = [
     subject: 'Department of Computer Science',
     role_label: 'Head of Department',
     is_hod: true,
+    photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
     email: 'akhilam@engg.edu.in',
     phone: '+91 94978 28473'
   },
@@ -1583,6 +1585,7 @@ export const DEMO_TEACHERS: Teacher[] = [
     subject: 'Computer Science & Engineering',
     role_label: 'Staff Advisor',
     is_staff_advisor: true,
+    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
     email: 'shibili.t@engg.edu.in',
     phone: '+91 98478 41673'
   },
@@ -1591,6 +1594,7 @@ export const DEMO_TEACHERS: Teacher[] = [
     name: 'Dr. Suresh Kumar',
     subject: 'Formal Languages and Automata Theory (CST301)',
     role_label: 'Faculty',
+    photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
     email: 'suresh.kumar@engg.edu.in',
     phone: '+91 94471 23456'
   },
@@ -1599,6 +1603,7 @@ export const DEMO_TEACHERS: Teacher[] = [
     name: 'Prof. Anjali Nair',
     subject: 'Computer Networks (CST303)',
     role_label: 'Faculty',
+    photo: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80',
     email: 'anjali.nair@engg.edu.in',
     phone: '+91 98952 34567'
   },
@@ -1607,6 +1612,7 @@ export const DEMO_TEACHERS: Teacher[] = [
     name: 'Dr. Manoj V.',
     subject: 'System Software (CST305)',
     role_label: 'Faculty',
+    photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
     email: 'manoj.v@engg.edu.in',
     phone: '+91 97443 45678'
   },
@@ -1615,6 +1621,7 @@ export const DEMO_TEACHERS: Teacher[] = [
     name: 'Dr. Radhika P.',
     subject: 'Management of Software Systems (CST307)',
     role_label: 'Faculty',
+    photo: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
     email: 'radhika.p@engg.edu.in',
     phone: '+91 94964 56789'
   }

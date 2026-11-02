@@ -48,7 +48,7 @@ export const SubjectAttendanceModal: React.FC<SubjectAttendanceModalProps> = ({
   onClose
 }) => {
   const { timetable, pendingDutyLeaves } = useAuth()
-  const [filterMode, setFilterMode] = useState<'absent' | 'present' | 'all'>('absent')
+  const [filterMode, setFilterMode] = useState<'absent' | 'present' | 'all' | 'upcoming'>('absent')
 
   if (!subject) return null
 
@@ -187,15 +187,27 @@ export const SubjectAttendanceModal: React.FC<SubjectAttendanceModalProps> = ({
     return b.hour - a.hour
   })
 
-  // Separate absent vs present vs duty leave
-  const absentRecords = allRecords.filter(r => r.statusType === 'absent')
-  const presentRecords = allRecords.filter(r => r.statusType === 'present')
-  const dutyLeaveRecords = allRecords.filter(r => r.statusType === 'duty_leave')
+  const now = new Date()
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+
+  // Strictly separate conducted past/today history from upcoming/scheduled classes
+  const historyRecords = allRecords.filter(
+    r => r.date <= todayStr && r.attendance_status !== 'not_marked' && r.attendance_status !== 'scheduled'
+  )
+  const upcomingRecords = allRecords.filter(
+    r => r.date > todayStr || (r.date === todayStr && (r.attendance_status === 'not_marked' || r.attendance_status === 'scheduled'))
+  )
+
+  // Separate absent vs present vs duty leave strictly from past history
+  const absentRecords = historyRecords.filter(r => r.statusType === 'absent')
+  const presentRecords = historyRecords.filter(r => r.statusType === 'present')
+  const dutyLeaveRecords = historyRecords.filter(r => r.statusType === 'duty_leave')
 
   const displayedRecords =
     filterMode === 'absent' ? absentRecords :
     filterMode === 'present' ? presentRecords :
-    allRecords
+    filterMode === 'upcoming' ? upcomingRecords :
+    historyRecords
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
@@ -277,44 +289,66 @@ export const SubjectAttendanceModal: React.FC<SubjectAttendanceModalProps> = ({
             </div>
           </div>
 
-          {/* Filter Navigation: Absent Records vs Present vs All */}
-          <div className="flex items-center justify-between gap-2 overflow-x-auto scrollbar-none no-scrollbar pb-0.5 max-w-full">
-            <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-zinc-950/80 dark:bg-zinc-950/80 light:bg-slate-100 border border-zinc-800 dark:border-zinc-800 light:border-slate-300 w-fit max-w-full">
-              <button
-                onClick={() => setFilterMode('absent')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
-                  filterMode === 'absent'
-                    ? 'bg-rose-600 text-white shadow-sm'
-                    : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
-                }`}
-              >
-                <XCircle className="w-3.5 h-3.5" />
-                <span>Absent Dates ({absentRecords.length})</span>
-              </button>
+          {/* Filter Navigation: Absent Records vs Present vs All vs Upcoming */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between gap-2 overflow-x-auto scrollbar-none no-scrollbar pb-0.5 max-w-full">
+              <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-zinc-950/80 dark:bg-zinc-950/80 light:bg-slate-100 border border-zinc-800 dark:border-zinc-800 light:border-slate-300 w-fit max-w-full">
+                <button
+                  onClick={() => setFilterMode('absent')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
+                    filterMode === 'absent'
+                      ? 'bg-rose-600 text-white shadow-sm'
+                      : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
+                  }`}
+                >
+                  <XCircle className="w-3.5 h-3.5" />
+                  <span>Absent ({absentRecords.length})</span>
+                </button>
 
-              <button
-                onClick={() => setFilterMode('present')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
-                  filterMode === 'present'
-                    ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
-                }`}
-              >
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Attended ({presentRecords.length})</span>
-              </button>
+                <button
+                  onClick={() => setFilterMode('present')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
+                    filterMode === 'present'
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
+                  }`}
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Attended ({presentRecords.length})</span>
+                </button>
 
-              <button
-                onClick={() => setFilterMode('all')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
-                  filterMode === 'all'
-                    ? 'bg-brand-600 text-white shadow-sm'
-                    : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
-                }`}
-              >
-                All History ({allRecords.length})
-              </button>
+                <button
+                  onClick={() => setFilterMode('all')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
+                    filterMode === 'all'
+                      ? 'bg-brand-600 text-white shadow-sm'
+                      : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
+                  }`}
+                >
+                  All History ({historyRecords.length})
+                </button>
+
+                {upcomingRecords.length > 0 && (
+                  <button
+                    onClick={() => setFilterMode('upcoming')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
+                      filterMode === 'upcoming'
+                        ? 'bg-zinc-700 text-white shadow-sm'
+                        : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white'
+                    }`}
+                  >
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>Upcoming ({upcomingRecords.length})</span>
+                  </button>
+                )}
+              </div>
             </div>
+
+            {historyRecords.length > 0 && historyRecords.length < total && (
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-500 light:text-slate-500 px-1">
+                Showing {historyRecords.length} recorded class sessions from recent timetable entries ({attended} of {total} total semester classes attended).
+              </p>
+            )}
           </div>
 
           {/* Records Timeline List */}
@@ -383,7 +417,7 @@ export const SubjectAttendanceModal: React.FC<SubjectAttendanceModalProps> = ({
                           ? 'bg-emerald-950/80 border-emerald-700 text-emerald-300'
                           : 'bg-zinc-800 border-zinc-700 text-zinc-400'
                       }`}>
-                        {record.attendance_status}
+                        {record.date > todayStr ? 'Scheduled' : record.attendance_status}
                       </span>
                     </div>
 
@@ -401,7 +435,8 @@ export const SubjectAttendanceModal: React.FC<SubjectAttendanceModalProps> = ({
                     {(record.change === 'substitution' || record.regular_subject || record.in_place_of) && (
                       <div className="mt-2.5 pt-2 border-t border-zinc-800/60 dark:border-zinc-800/60 light:border-slate-200 flex flex-wrap items-center gap-2">
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-amber-500/15 border border-amber-500/40 text-amber-400 dark:text-amber-300 light:text-amber-800 flex items-center gap-1">
-                          <span>🔄 Substitution</span>
+                          <Layers className="w-3 h-3" />
+                          <span>Substitution</span>
                         </span>
                         {record.regular_subject && (
                           <span className="text-[11px] text-zinc-400 dark:text-zinc-400 light:text-slate-600">

@@ -107,7 +107,7 @@ class EtlabApiClient {
     return demoSession
   }
 
-  private getHeaders(): HeadersInit {
+  public getHeaders(): HeadersInit {
     const headers: Record<string, string> = {
       'Accept': 'application/json',
       'Content-Type': 'application/json'

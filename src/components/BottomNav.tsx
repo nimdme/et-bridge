@@ -62,17 +62,6 @@ export const BottomNav: React.FC = () => {
   const secondaryPaths = ['/courses', '/analysis', '/campus', '/notices']
   const isSecondaryActive = secondaryPaths.includes(location.pathname)
 
-  // 4 Regular items + 1 Center Accent Button
-  const leftItems = [
-    { to: '/dashboard', label: 'Home', icon: LayoutDashboard },
-    { to: '/attendance', label: 'Attendance', icon: PieChart },
-  ]
-
-  const rightItems = [
-    { to: '/timetable', label: 'Schedule', icon: CalendarDays },
-    { to: '/academics', label: 'Academics', icon: GraduationCap },
-  ]
-
   // Exact sections matching desktop Sidebar.tsx for 1:1 parity and easy maintenance
   const navSections = [
     {
@@ -135,92 +124,122 @@ export const BottomNav: React.FC = () => {
         style={{ paddingBottom: 'max(0.375rem, env(safe-area-inset-bottom))' }}
         className="fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/95 dark:bg-zinc-950/95 light:bg-white/95 backdrop-blur-md border-t border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 px-3 pt-1.5 md:hidden transition-colors shadow-lg"
       >
-        <div className="flex items-end justify-between max-w-md mx-auto relative">
-          {/* Left 2 Items: Home, Attendance */}
-          <div className="flex items-center justify-around flex-1">
-            {leftItems.map((item) => {
-              const Icon = item.icon
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={({ isActive }) =>
-                    `flex flex-col items-center justify-center py-0.5 px-2 rounded-xl transition-all ${
-                      isActive
-                        ? 'text-brand-400 font-bold'
-                        : 'text-zinc-500 dark:text-zinc-500 light:text-slate-500 hover:text-zinc-300 font-medium'
-                    }`
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      <div className={`p-1 rounded-xl transition-all ${
-                        isActive ? 'bg-brand-500/15 text-brand-400 scale-105' : ''
-                      }`}>
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <span className="text-[10px] mt-0.5 tracking-tight font-medium">{item.label}</span>
-                    </>
-                  )}
-                </NavLink>
-              )
-            })}
-          </div>
+        <div className="grid grid-cols-5 items-center max-w-md mx-auto">
+          {/* Item 1: Home */}
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              `flex flex-col items-center justify-center py-0.5 px-2 rounded-xl transition-all ${
+                isActive
+                  ? 'text-brand-400 font-bold'
+                  : 'text-zinc-500 dark:text-zinc-500 light:text-slate-500 hover:text-zinc-300 font-medium'
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <div className={`p-1 rounded-xl transition-all ${
+                  isActive ? 'bg-brand-500/15 text-brand-400 scale-105' : ''
+                }`}>
+                  <LayoutDashboard className="w-5 h-5" />
+                </div>
+                <span className="text-[10px] mt-0.5 tracking-tight font-medium">Home</span>
+              </>
+            )}
+          </NavLink>
 
-          {/* Center: Accent Elevated Water Drop / Inverted Notch Menu Button */}
-          <div className="relative -top-4 flex flex-col items-center shrink-0 px-2">
-            <button
-              type="button"
-              onClick={() => setIsMenuOpen(prev => !prev)}
-              aria-label="Toggle Navigation Menu"
-              className={`w-12 h-12 rounded-[1.25rem] flex items-center justify-center transition-all duration-200 shadow-xl ${
-                isSecondaryActive || isMenuOpen
-                  ? 'bg-gradient-to-tr from-brand-500 via-indigo-500 to-brand-600 text-white shadow-brand-500/50 scale-105 ring-4 ring-zinc-950 dark:ring-zinc-950 light:ring-white'
-                  : 'bg-gradient-to-tr from-brand-600 via-indigo-600 to-brand-500 text-white shadow-brand-600/35 ring-4 ring-zinc-950 dark:ring-zinc-950 light:ring-white hover:scale-105 active:scale-95'
-              }`}
-            >
-              <Menu className={`w-5 h-5 text-white transition-transform duration-200 ${isMenuOpen ? 'rotate-90' : ''}`} />
-              {totalPendingDlHours > 0 && (
-                <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-zinc-950 animate-pulse" />
-              )}
-            </button>
-            <span className={`text-[10px] mt-0.5 font-bold tracking-tight ${
-              isSecondaryActive || isMenuOpen ? 'text-brand-400' : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600'
+          {/* Item 2: Attendance */}
+          <NavLink
+            to="/attendance"
+            className={({ isActive }) =>
+              `flex flex-col items-center justify-center py-0.5 px-2 rounded-xl transition-all ${
+                isActive
+                  ? 'text-brand-400 font-bold'
+                  : 'text-zinc-500 dark:text-zinc-500 light:text-slate-500 hover:text-zinc-300 font-medium'
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <div className={`p-1 rounded-xl transition-all ${
+                  isActive ? 'bg-brand-500/15 text-brand-400 scale-105' : ''
+                }`}>
+                  <PieChart className="w-5 h-5" />
+                </div>
+                <span className="text-[10px] mt-0.5 tracking-tight font-medium">Attendance</span>
+              </>
+            )}
+          </NavLink>
+
+          {/* Item 3: Center Inline Accent Menu Button */}
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen(prev => !prev)}
+            aria-label="Toggle Navigation Menu"
+            className={`flex flex-col items-center justify-center py-0.5 px-2 rounded-xl transition-all relative ${
+              isSecondaryActive || isMenuOpen
+                ? 'text-brand-400 font-bold'
+                : 'text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-zinc-200 font-medium'
+            }`}
+          >
+            <div className={`p-1 rounded-xl transition-all ${
+              isSecondaryActive || isMenuOpen
+                ? 'bg-gradient-to-tr from-brand-600 to-indigo-600 text-white shadow-md shadow-brand-500/25 scale-105'
+                : 'bg-brand-500/15 text-brand-400 dark:text-brand-400 light:text-brand-600 hover:bg-brand-500/25'
             }`}>
-              Menu
-            </span>
-          </div>
+              <Menu className={`w-5 h-5 transition-transform duration-200 ${isMenuOpen ? 'rotate-90' : ''}`} />
+            </div>
+            <span className="text-[10px] mt-0.5 tracking-tight font-medium">Menu</span>
+            {totalPendingDlHours > 0 && (
+              <span className="absolute top-0.5 right-3 w-2 h-2 rounded-full bg-amber-400 ring-2 ring-zinc-950 dark:ring-zinc-950 light:ring-white animate-pulse" />
+            )}
+          </button>
 
-          {/* Right 2 Items: Schedule, Academics */}
-          <div className="flex items-center justify-around flex-1">
-            {rightItems.map((item) => {
-              const Icon = item.icon
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={({ isActive }) =>
-                    `flex flex-col items-center justify-center py-0.5 px-2 rounded-xl transition-all ${
-                      isActive
-                        ? 'text-brand-400 font-bold'
-                        : 'text-zinc-500 dark:text-zinc-500 light:text-slate-500 hover:text-zinc-300 font-medium'
-                    }`
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      <div className={`p-1 rounded-xl transition-all ${
-                        isActive ? 'bg-brand-500/15 text-brand-400 scale-105' : ''
-                      }`}>
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <span className="text-[10px] mt-0.5 tracking-tight font-medium">{item.label}</span>
-                    </>
-                  )}
-                </NavLink>
-              )
-            })}
-          </div>
+          {/* Item 4: Schedule */}
+          <NavLink
+            to="/timetable"
+            className={({ isActive }) =>
+              `flex flex-col items-center justify-center py-0.5 px-2 rounded-xl transition-all ${
+                isActive
+                  ? 'text-brand-400 font-bold'
+                  : 'text-zinc-500 dark:text-zinc-500 light:text-slate-500 hover:text-zinc-300 font-medium'
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <div className={`p-1 rounded-xl transition-all ${
+                  isActive ? 'bg-brand-500/15 text-brand-400 scale-105' : ''
+                }`}>
+                  <CalendarDays className="w-5 h-5" />
+                </div>
+                <span className="text-[10px] mt-0.5 tracking-tight font-medium">Schedule</span>
+              </>
+            )}
+          </NavLink>
+
+          {/* Item 5: Academics */}
+          <NavLink
+            to="/academics"
+            className={({ isActive }) =>
+              `flex flex-col items-center justify-center py-0.5 px-2 rounded-xl transition-all ${
+                isActive
+                  ? 'text-brand-400 font-bold'
+                  : 'text-zinc-500 dark:text-zinc-500 light:text-slate-500 hover:text-zinc-300 font-medium'
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <div className={`p-1 rounded-xl transition-all ${
+                  isActive ? 'bg-brand-500/15 text-brand-400 scale-105' : ''
+                }`}>
+                  <GraduationCap className="w-5 h-5" />
+                </div>
+                <span className="text-[10px] mt-0.5 tracking-tight font-medium">Academics</span>
+              </>
+            )}
+          </NavLink>
         </div>
       </nav>
 

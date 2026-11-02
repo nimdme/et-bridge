@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { InstallModal } from './InstallModal'
 import { DiscordProfileCard } from './DiscordProfileCard'
+import { EtlabImage } from './EtlabImage'
 
 export const Navbar: React.FC = () => {
   const { session, profile, isDemo, refreshData, loading, openCommandPalette } = useAuth()
@@ -136,9 +137,13 @@ export const Navbar: React.FC = () => {
                 type="button"
                 onClick={() => setShowMobileProfile(true)}
                 title="Open Profile Card"
-                className="md:hidden flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white font-bold text-xs uppercase shadow-sm ring-1 ring-zinc-700/60 shrink-0 always-white ml-0.5 active:scale-95 transition-transform"
+                className="md:hidden flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white font-bold text-xs uppercase shadow-sm ring-1 ring-zinc-700/60 shrink-0 always-white ml-0.5 active:scale-95 transition-transform overflow-hidden"
               >
-                {studentInitials}
+                <EtlabImage
+                  src={profile?.photo || profile?.image || profile?.avatar}
+                  alt={studentName}
+                  fallback={<span className="always-white">{studentInitials}</span>}
+                />
               </button>
             )}
           </div>
