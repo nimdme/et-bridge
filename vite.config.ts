@@ -7,7 +7,20 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['img/favv.png', 'img/logoo.png', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png'],
+      includeAssets: [
+        'favicon.ico',
+        'apple-touch-icon.png',
+        'icon-192.png',
+        'icon-512.png',
+        'img/favicon/favicon.ico',
+        'img/favicon/favicon-16x16.png',
+        'img/favicon/favicon-32x32.png',
+        'img/favicon/apple-touch-icon.png',
+        'img/favicon/android-chrome-192x192.png',
+        'img/favicon/android-chrome-512x512.png',
+        'img/logo/logo-dark.png',
+        'img/logo/logo-light.png'
+      ],
       manifest: {
         name: 'ETBridge Student Portal',
         short_name: 'ETBridge',
@@ -20,8 +33,20 @@ export default defineConfig({
         scope: '/',
         icons: [
           {
-            src: '/img/logoo.png',
-            sizes: '648x648',
+            src: '/img/favicon/android-chrome-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
+          {
+            src: '/img/favicon/android-chrome-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
+          {
+            src: '/img/favicon/apple-touch-icon.png',
+            sizes: '180x180',
             type: 'image/png',
             purpose: 'any'
           },

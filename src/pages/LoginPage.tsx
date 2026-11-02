@@ -17,6 +17,7 @@ import {
   Check
 } from 'lucide-react'
 import { LoadingScreen } from '../components/LoadingScreen'
+import { BrandLogo } from '../components/BrandLogo'
 
 export const LoginPage: React.FC = () => {
   const { login, loginDemo, isAuthenticated } = useAuth()
@@ -139,7 +140,7 @@ export const LoginPage: React.FC = () => {
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2.5 mb-4 group">
             <div className="w-11 h-11 rounded-2xl overflow-hidden shadow-lg shadow-brand-500/25 group-hover:scale-105 transition-transform flex items-center justify-center shrink-0">
-              <img src="/img/logoo.png" alt="ETBridge Logo" className="w-full h-full object-contain" />
+              <BrandLogo variant="dark" className="w-full h-full object-contain" />
             </div>
             <span className="font-extrabold text-2xl tracking-tight text-white">ETBridge</span>
           </Link>

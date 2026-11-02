@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext'
+import { BrandLogo } from '../components/BrandLogo'
 import { 
   ArrowLeft, 
   ExternalLink, 
@@ -91,7 +92,7 @@ export const DocsPage: React.FC = () => {
 
           <div className="flex items-center gap-2.5">
             <div className="w-6 h-6 rounded-lg overflow-hidden flex items-center justify-center shrink-0">
-              <img src="/img/logoo.png" alt="ETBridge Logo" className="w-full h-full object-contain" />
+              <BrandLogo className="w-full h-full object-contain" />
             </div>
             <div>
               <span className="font-extrabold text-sm sm:text-base tracking-tight text-white dark:text-white light:text-slate-900 font-mono">

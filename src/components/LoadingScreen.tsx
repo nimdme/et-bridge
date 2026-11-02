@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { AlertCircle } from 'lucide-react'
+import { BrandLogo } from './BrandLogo'
 
 export interface LoadingScreenProps {
   mode?: 'reload' | 'login' | 'sync'
@@ -63,7 +64,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
         {/* Sleek Minimal App Logo */}
         <div className="relative">
           <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-xl shadow-brand-500/20 ring-1 ring-zinc-800/80 dark:ring-zinc-800/80 light:ring-slate-200 animate-pulse flex items-center justify-center">
-            <img src="/img/logoo.png" alt="ETBridge Logo" className="w-full h-full object-contain" />
+            <BrandLogo className="w-full h-full object-contain" />
           </div>
         </div>
 

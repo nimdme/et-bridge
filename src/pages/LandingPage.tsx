@@ -14,6 +14,7 @@ import {
   Download
 } from 'lucide-react'
 import { InstallModal } from '../components/InstallModal'
+import { BrandLogo } from '../components/BrandLogo'
 
 interface FAQItem {
   question: string
@@ -71,7 +72,7 @@ export const LandingPage: React.FC = () => {
         <header className="flex items-center justify-between pb-6 border-b border-zinc-800 dark:border-zinc-800 light:border-slate-200">
           <Link to="/" className="flex items-center gap-2.5">
             <div className="w-6 h-6 rounded-lg overflow-hidden flex items-center justify-center shrink-0">
-              <img src="/img/logoo.png" alt="ETBridge Logo" className="w-full h-full object-contain" />
+              <BrandLogo className="w-full h-full object-contain" />
             </div>
             <div className="flex items-baseline gap-2">
               <span className="font-extrabold text-base tracking-tight text-white dark:text-white light:text-slate-900 font-mono">

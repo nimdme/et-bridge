@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
+import { BrandLogo } from './BrandLogo'
 import { 
   RotateCw, 
   Smartphone, 
@@ -50,7 +51,7 @@ export const Navbar: React.FC = () => {
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <Link to="/dashboard" className="flex items-center gap-2 group shrink-0">
               <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl overflow-hidden group-hover:scale-105 transition-transform flex items-center justify-center shrink-0">
-                <img src="/img/logoo.png" alt="ETBridge Logo" className="w-full h-full object-contain" />
+                <BrandLogo className="w-full h-full object-contain" />
               </div>
               <div className="flex items-baseline gap-1">
                 <span className="font-extrabold text-base md:text-lg tracking-tight text-white dark:text-white light:text-slate-900">

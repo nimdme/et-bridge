@@ -1,6 +1,10 @@
 <p align="center">
   <a href="https://github.com/nimd/etbridge">
-    <img src="public/img/logoo.png" width="96" height="96" alt="ETBridge Logo" />
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="public/img/logo/logo-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="public/img/logo/logo-light.png">
+      <img alt="ETBridge Logo" src="public/img/logo/logo-dark.png" width="96" height="96">
+    </picture>
   </a>
 </p>
 
