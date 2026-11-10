@@ -52,8 +52,10 @@ export async function onRequest(context) {
 
       const imgHeaders = new Headers();
       imgHeaders.set('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
-      imgHeaders.set('Referer', `${OFFICIAL_WEB_ORIGIN}/`);
-      imgHeaders.set('Origin', OFFICIAL_WEB_ORIGIN);
+      
+      const refererOrigin = parsed.origin;
+      imgHeaders.set('Referer', `${refererOrigin}/`);
+      imgHeaders.set('Origin', refererOrigin);
 
       const token = url.searchParams.get('token') || request.headers.get('Authorization');
       if (token) {
@@ -65,10 +67,33 @@ export async function onRequest(context) {
         imgHeaders.set('X-Institute-ID', inst);
       }
 
-      const imgRes = await fetch(targetUrl, {
+      let imgRes = await fetch(targetUrl, {
         method: 'GET',
         headers: imgHeaders
       });
+
+      // Intelligent Host Fallback:
+      // If targetUrl was on api.students.etlab.app and returned 404/403, try the institute's subdomain
+      if (!imgRes.ok && inst && parsed.hostname === 'api.students.etlab.app') {
+        const altUrl = targetUrl.replace('api.students.etlab.app', `${inst}.etlab.app`);
+        const altHeaders = new Headers(imgHeaders);
+        altHeaders.set('Referer', `https://${inst}.etlab.app/`);
+        altHeaders.set('Origin', `https://${inst}.etlab.app`);
+        const altRes = await fetch(altUrl, { method: 'GET', headers: altHeaders }).catch(() => null);
+        if (altRes && altRes.ok) {
+          imgRes = altRes;
+        }
+      } else if (!imgRes.ok && inst && parsed.hostname.includes(`${inst}.etlab.app`)) {
+        // Vice versa: if institute subdomain returned 404/403, try api.students.etlab.app
+        const altUrl = targetUrl.replace(`${inst}.etlab.app`, 'api.students.etlab.app');
+        const altHeaders = new Headers(imgHeaders);
+        altHeaders.set('Referer', `https://api.students.etlab.app/`);
+        altHeaders.set('Origin', `https://api.students.etlab.app`);
+        const altRes = await fetch(altUrl, { method: 'GET', headers: altHeaders }).catch(() => null);
+        if (altRes && altRes.ok) {
+          imgRes = altRes;
+        }
+      }
 
       if (!imgRes.ok) {
         return new Response(imgRes.body, {

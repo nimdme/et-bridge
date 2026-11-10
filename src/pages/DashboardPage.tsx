@@ -192,7 +192,7 @@ export const DashboardPage: React.FC = () => {
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white dark:text-white light:text-slate-900 tracking-tight truncate">
-            Hello, {profile?.name ? profile.name.split(' ')[0] : session?.studentName || 'Student'} 👋
+            Hello, {profile?.name ? profile.name.split(' ')[0] : session?.studentName || 'Student'}
           </h1>
           <div className="text-xs text-zinc-400 dark:text-zinc-400 light:text-slate-600 mt-0.5 flex items-center gap-1.5 truncate">
             <span className="font-medium truncate">{profile?.course || 'Engineering'}</span>

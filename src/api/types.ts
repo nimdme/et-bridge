@@ -13,6 +13,7 @@ export interface AuthSession {
   instituteName: string
   username: string
   studentName?: string
+  studentPhoto?: string
 }
 
 export interface TimetablePeriod {

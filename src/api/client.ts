@@ -261,12 +261,14 @@ class EtlabApiClient {
       throw new Error(data.error || 'Invalid username or password.')
     }
 
+    const studentPhoto = data.photo || data.image || data.student_photo || data.student?.photo || data.student?.image || undefined
     const session: AuthSession = {
       token: data.token,
       instituteId,
       instituteName: instituteName || instituteId.toUpperCase(),
       username: username.trim(),
-      studentName: data.name || username
+      studentName: data.name || data.student?.name || username,
+      studentPhoto
     }
 
     this.setSession(session)
@@ -295,12 +297,16 @@ class EtlabApiClient {
       }
 
       const raw: any = await res.json()
+      const rawStudent = raw.student || {}
+      const rawPhoto = raw.photo || raw.image || raw.student_photo || raw.profile_photo || raw.avatar || rawStudent.photo || rawStudent.image || rawStudent.student_photo || rawStudent.avatar || null
+
       const data: StudentProfile = {
         ...raw,
+        photo: rawPhoto || raw.photo || undefined,
         attendance: {
-          total_classes: parseNumber(raw.attendance?.total_classes),
-          classes_attended: parseNumber(raw.attendance?.classes_attended),
-          percentage: parsePercent(raw.attendance?.percentage)
+          total_classes: parseNumber(raw.attendance?.total_classes ?? rawStudent.attendance?.total_classes),
+          classes_attended: parseNumber(raw.attendance?.classes_attended ?? rawStudent.attendance?.classes_attended),
+          percentage: parsePercent(raw.attendance?.percentage ?? rawStudent.attendance?.percentage)
         },
         timetable: Array.isArray(raw.timetable) ? raw.timetable : []
       }

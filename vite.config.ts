@@ -19,16 +19,29 @@ function devImageProxyPlugin(): Plugin {
 
             const token = urlObj.searchParams.get('token')
             const inst = urlObj.searchParams.get('inst')
+            const parsedTarget = new URL(targetUrl)
 
             const forwardHeaders: Record<string, string> = {
               'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-              'Referer': 'https://students.etlab.app/',
-              'Origin': 'https://students.etlab.app'
+              'Referer': `${parsedTarget.origin}/`,
+              'Origin': parsedTarget.origin
             }
             if (token) forwardHeaders['Authorization'] = token.startsWith('Bearer ') ? token : `Bearer ${token}`
             if (inst) forwardHeaders['X-Institute-ID'] = inst
 
-            const response = await fetch(targetUrl, { headers: forwardHeaders })
+            let response = await fetch(targetUrl, { headers: forwardHeaders })
+
+            if (!response.ok && inst && parsedTarget.hostname === 'api.students.etlab.app') {
+              const altUrl = targetUrl.replace('api.students.etlab.app', `${inst}.etlab.app`)
+              const altHeaders = { ...forwardHeaders, Referer: `https://${inst}.etlab.app/`, Origin: `https://${inst}.etlab.app` }
+              const altRes = await fetch(altUrl, { headers: altHeaders }).catch(() => null)
+              if (altRes && altRes.ok) response = altRes
+            } else if (!response.ok && inst && parsedTarget.hostname.includes(`${inst}.etlab.app`)) {
+              const altUrl = targetUrl.replace(`${inst}.etlab.app`, 'api.students.etlab.app')
+              const altHeaders = { ...forwardHeaders, Referer: `https://api.students.etlab.app/`, Origin: `https://api.students.etlab.app` }
+              const altRes = await fetch(altUrl, { headers: altHeaders }).catch(() => null)
+              if (altRes && altRes.ok) response = altRes
+            }
             res.statusCode = response.status
             const contentType = response.headers.get('content-type') || (targetUrl.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg')
             res.setHeader('Content-Type', contentType)

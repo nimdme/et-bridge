@@ -32,6 +32,7 @@ import { useTheme } from '../context/ThemeContext'
 import { LogDutyLeaveModal } from './LogDutyLeaveModal'
 import { FeedbackModal } from './FeedbackModal'
 import { InstallModal } from './InstallModal'
+import { EtlabImage } from './EtlabImage'
 import { formatSemester } from '../utils/format'
 
 export const BottomNav: React.FC = () => {
@@ -262,8 +263,12 @@ export const BottomNav: React.FC = () => {
             {/* Sheet Header: Student Info */}
             <div className="px-5 pb-3 border-b border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-sm ring-1 ring-white/10">
-                  {studentInitials}
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-sm ring-1 ring-white/10 overflow-hidden">
+                  <EtlabImage
+                    src={profile?.photo || profile?.image || profile?.avatar || session?.studentPhoto}
+                    alt={studentName}
+                    fallback={<span className="always-white">{studentInitials}</span>}
+                  />
                 </div>
                 <div className="min-w-0">
                   <h3 className="text-sm font-extrabold text-white dark:text-white light:text-slate-900 truncate">

@@ -38,17 +38,21 @@ export const EtlabImage: React.FC<EtlabImageProps> = ({
     }
 
     // 2. Resolve absolute URL
-    let fullUrl = trimmed
-    const cleanPath = trimmed.replace(/^\/+/, '')
+    let fullUrl = trimmed.replace(/\\/g, '')
+    const cleanPath = fullUrl.replace(/^\/+/, '')
     const session = etlabClient.getSession()
     const institute = session?.instituteId
 
-    if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
-      fullUrl = cleanPath.startsWith('uploads/')
-        ? `https://api.students.etlab.app/${cleanPath}`
-        : institute
-        ? `https://${institute}.etlab.app/uploads/${cleanPath}`
-        : `https://api.students.etlab.app/uploads/${cleanPath}`
+    if (!fullUrl.startsWith('http://') && !fullUrl.startsWith('https://')) {
+      if (institute) {
+        fullUrl = cleanPath.startsWith('uploads/')
+          ? `https://${institute}.etlab.app/${cleanPath}`
+          : `https://${institute}.etlab.app/uploads/${cleanPath}`
+      } else {
+        fullUrl = `https://api.students.etlab.app/${cleanPath.startsWith('uploads/') ? cleanPath : `uploads/${cleanPath}`}`
+      }
+    } else if (fullUrl.startsWith('http://')) {
+      fullUrl = fullUrl.replace(/^http:\/\//i, 'https://')
     }
 
     // 3. For ETLab hosted assets, use edge image proxy with auth & caching
@@ -64,9 +68,22 @@ export const EtlabImage: React.FC<EtlabImageProps> = ({
   }, [src])
 
   const handleError = async () => {
-    // If direct load failed and we haven't tried authenticated fetch yet
-    if (!attemptedAuthFetch && resolvedSrc && resolvedSrc.startsWith('http')) {
+    // Stage 1: If proxy route failed, try direct target URL with no-referrer
+    if (!attemptedAuthFetch && resolvedSrc && resolvedSrc.includes('/api/image-proxy')) {
       setAttemptedAuthFetch(true)
+      try {
+        const urlParams = new URL(resolvedSrc, window.location.origin)
+        const directUrl = urlParams.searchParams.get('url')
+        if (directUrl) {
+          setResolvedSrc(directUrl)
+          setHasError(false)
+          return
+        }
+      } catch {}
+    }
+
+    // Stage 2: If direct load failed, try authenticated fetch
+    if (resolvedSrc && resolvedSrc.startsWith('http')) {
       try {
         const headers = etlabClient.getHeaders()
         const res = await fetch(resolvedSrc, {
@@ -85,9 +102,7 @@ export const EtlabImage: React.FC<EtlabImageProps> = ({
             return
           }
         }
-      } catch (err) {
-        // Authenticated fetch failed or blocked
-      }
+      } catch {}
     }
 
     setHasError(true)
