@@ -14,9 +14,10 @@ import {
 import { InstallModal } from './InstallModal'
 import { DiscordProfileCard } from './DiscordProfileCard'
 import { EtlabImage } from './EtlabImage'
+import { formatRelativeTime } from '../utils/format'
 
 export const Navbar: React.FC = () => {
-  const { session, profile, isDemo, refreshData, loading, openCommandPalette } = useAuth()
+  const { session, profile, isDemo, refreshData, loading, openCommandPalette, lastSyncTime } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [showInstallModal, setShowInstallModal] = useState(false)
@@ -121,7 +122,11 @@ export const Navbar: React.FC = () => {
             <button
               onClick={handleRefresh}
               disabled={loading || isRefreshing}
-              title="Refresh Data"
+              title={
+                lastSyncTime
+                  ? `Last synced ${formatRelativeTime(lastSyncTime)} • Click to refresh`
+                  : 'Refresh Data'
+              }
               className="p-2 rounded-xl text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white dark:hover:text-white light:hover:text-slate-900 hover:bg-zinc-800/80 dark:hover:bg-zinc-800/80 light:hover:bg-slate-200 transition-colors disabled:opacity-50"
             >
               <RotateCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-brand-400' : ''}`} />

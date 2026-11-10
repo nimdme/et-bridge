@@ -201,3 +201,22 @@ export function formatSemester(value: unknown, prefix = 'Semester'): string {
   return prefix ? `${prefix} ${cleaned}` : cleaned
 }
 
+/**
+ * Formats a timestamp into friendly relative time (e.g. "just now", "15m ago", "2h ago")
+ */
+export function formatRelativeTime(input: unknown): string {
+  if (!input) return ''
+  const time = input instanceof Date ? input.getTime() : typeof input === 'number' ? input : new Date(String(input)).getTime()
+  if (isNaN(time) || time <= 0) return ''
+
+  const diffSec = Math.floor((Date.now() - time) / 1000)
+  if (diffSec < 60) return 'just now'
+  const diffMin = Math.floor(diffSec / 60)
+  if (diffMin < 60) return `${diffMin}m ago`
+  const diffHour = Math.floor(diffMin / 60)
+  if (diffHour < 24) return `${diffHour}h ago`
+  const diffDay = Math.floor(diffHour / 24)
+  return `${diffDay}d ago`
+}
+
+

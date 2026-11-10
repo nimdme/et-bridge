@@ -42,8 +42,95 @@ class EtlabApiClient {
   private session: AuthSession | null = null
   private isDemoMode: boolean = false
 
+  public static readonly CACHE_MAX_AGE_MS = 4 * 60 * 60 * 1000 // 4 hours in milliseconds
+
   constructor() {
     this.loadSession()
+  }
+
+  public isCacheFresh(cacheKey: string, maxAgeMs = EtlabApiClient.CACHE_MAX_AGE_MS): boolean {
+    try {
+      const timeStr = localStorage.getItem(`${cacheKey}_time`)
+      if (!timeStr) return false
+      const timestamp = parseInt(timeStr, 10)
+      if (isNaN(timestamp)) return false
+      return (Date.now() - timestamp) < maxAgeMs
+    } catch {
+      return false
+    }
+  }
+
+  public setCache(cacheKey: string, data: any): void {
+    try {
+      const now = Date.now().toString()
+      localStorage.setItem(cacheKey, JSON.stringify(data))
+      localStorage.setItem(`${cacheKey}_time`, now)
+      localStorage.setItem('etbridge_last_sync_time', now)
+    } catch (e) {
+      console.warn('Failed to save to localStorage:', e)
+    }
+  }
+
+  public getCachedData<T>(cacheKey: string, allowStale = false): T | null {
+    try {
+      if (!allowStale && !this.isCacheFresh(cacheKey)) {
+        return null // Stale: Older than 4 hours
+      }
+      const cached = localStorage.getItem(cacheKey)
+      if (cached) {
+        return JSON.parse(cached) as T
+      }
+    } catch {}
+    return null
+  }
+
+  public getLastSyncTime(): number | null {
+    try {
+      const val = localStorage.getItem('etbridge_last_sync_time')
+      return val ? parseInt(val, 10) : null
+    } catch {
+      return null
+    }
+  }
+
+  public isSyncStale(maxAgeMs = EtlabApiClient.CACHE_MAX_AGE_MS): boolean {
+    const last = this.getLastSyncTime()
+    if (!last) return true
+    return (Date.now() - last) >= maxAgeMs
+  }
+
+  public clearAllCache(): void {
+    const keys = [
+      'etbridge_cached_profile',
+      'etbridge_cached_attendance',
+      'etbridge_cached_timetable',
+      'etbridge_cached_semester_timetable',
+      'etbridge_cached_evaluations',
+      'etbridge_cached_teachers',
+      'etbridge_cached_materials',
+      'etbridge_cached_fees',
+      'etbridge_cached_activity_points',
+      'etbridge_cached_courses',
+      'etbridge_cached_analysis',
+      'etbridge_cached_dutyleaves',
+      'etbridge_cached_surveys',
+      'etbridge_cached_resultsuniversity',
+      'etbridge_last_sync_time'
+    ]
+    keys.forEach(k => {
+      try {
+        localStorage.removeItem(k)
+        localStorage.removeItem(`${k}_time`)
+      } catch {}
+    })
+    try {
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const k = localStorage.key(i)
+        if (k && (k.startsWith('etbridge_cached_') || k.startsWith('etbridge_last_sync'))) {
+          localStorage.removeItem(k)
+        }
+      }
+    } catch {}
   }
 
   private getEndpointUrl(endpoint: string): URL {
@@ -74,19 +161,7 @@ class EtlabApiClient {
       localStorage.setItem('etbridge_session', JSON.stringify(session))
     } else {
       localStorage.removeItem('etbridge_session')
-      localStorage.removeItem('etbridge_cached_profile')
-      localStorage.removeItem('etbridge_cached_attendance')
-      localStorage.removeItem('etbridge_cached_timetable')
-      localStorage.removeItem('etbridge_cached_evaluations')
-      localStorage.removeItem('etbridge_cached_teachers')
-      localStorage.removeItem('etbridge_cached_materials')
-      localStorage.removeItem('etbridge_cached_fees')
-      localStorage.removeItem('etbridge_cached_activity_points')
-      localStorage.removeItem('etbridge_cached_courses')
-      localStorage.removeItem('etbridge_cached_analysis')
-      localStorage.removeItem('etbridge_cached_dutyleaves')
-      localStorage.removeItem('etbridge_cached_surveys')
-      localStorage.removeItem('etbridge_cached_resultsuniversity')
+      this.clearAllCache()
     }
   }
 
@@ -206,36 +281,37 @@ class EtlabApiClient {
 
     const cacheKey = 'etbridge_cached_profile'
     if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey)
-      if (cached) {
-        try { return JSON.parse(cached) } catch {}
-      }
-    }
-
-    const res = await fetch(`${API_BASE_URL}/profile`, {
-      headers: this.getHeaders()
-    })
-
-    if (!res.ok) {
-      throw new Error(`Failed to load profile (${res.status})`)
-    }
-
-    const raw: any = await res.json()
-    const data: StudentProfile = {
-      ...raw,
-      attendance: {
-        total_classes: parseNumber(raw.attendance?.total_classes),
-        classes_attended: parseNumber(raw.attendance?.classes_attended),
-        percentage: parsePercent(raw.attendance?.percentage)
-      },
-      timetable: Array.isArray(raw.timetable) ? raw.timetable : []
+      const cached = this.getCachedData<StudentProfile>(cacheKey)
+      if (cached) return cached
     }
 
     try {
-      localStorage.setItem(cacheKey, JSON.stringify(data))
-    } catch {}
+      const res = await fetch(`${API_BASE_URL}/profile`, {
+        headers: this.getHeaders()
+      })
 
-    return data
+      if (!res.ok) {
+        throw new Error(`Failed to load profile (${res.status})`)
+      }
+
+      const raw: any = await res.json()
+      const data: StudentProfile = {
+        ...raw,
+        attendance: {
+          total_classes: parseNumber(raw.attendance?.total_classes),
+          classes_attended: parseNumber(raw.attendance?.classes_attended),
+          percentage: parsePercent(raw.attendance?.percentage)
+        },
+        timetable: Array.isArray(raw.timetable) ? raw.timetable : []
+      }
+
+      this.setCache(cacheKey, data)
+      return data
+    } catch (err) {
+      const stale = this.getCachedData<StudentProfile>(cacheKey, true)
+      if (stale) return stale
+      throw err
+    }
   }
 
   // --- 4. Subject Attendance ---
@@ -244,42 +320,43 @@ class EtlabApiClient {
       return DEMO_ATTENDANCE
     }
 
-    const cacheKey = 'etbridge_cached_attendance'
+    const cacheKey = semId ? `etbridge_cached_attendance_${semId}` : 'etbridge_cached_attendance'
     if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey)
-      if (cached) {
-        try { return JSON.parse(cached) } catch {}
-      }
+      const cached = this.getCachedData<SubjectAttendance[]>(cacheKey)
+      if (cached) return cached
     }
-
-    const url = this.getEndpointUrl('/attendancebysubject')
-    if (semId) url.searchParams.set('sem_id', String(semId))
-
-    const res = await fetch(url.toString(), {
-      headers: this.getHeaders()
-    })
-
-    if (!res.ok) {
-      throw new Error(`Failed to load attendance (${res.status})`)
-    }
-
-    const rawList: any[] = await res.json()
-    const data: SubjectAttendance[] = (Array.isArray(rawList) ? rawList : []).map(sub => ({
-      ...sub,
-      class_attended: parseNumber(sub.class_attended),
-      total_classes: parseNumber(sub.total_classes),
-      percentage: parsePercent(sub.percentage),
-      attendance_target: parseNumber(sub.attendance_target, 75),
-      can_miss_hours: parseNumber(sub.can_miss_hours, 0),
-      must_attend_hours: parseNumber(sub.must_attend_hours, 0),
-      absent_hours: parseNumber(sub.absent_hours, 0)
-    }))
 
     try {
-      localStorage.setItem(cacheKey, JSON.stringify(data))
-    } catch {}
+      const url = this.getEndpointUrl('/attendancebysubject')
+      if (semId) url.searchParams.set('sem_id', String(semId))
 
-    return data
+      const res = await fetch(url.toString(), {
+        headers: this.getHeaders()
+      })
+
+      if (!res.ok) {
+        throw new Error(`Failed to load attendance (${res.status})`)
+      }
+
+      const rawList: any[] = await res.json()
+      const data: SubjectAttendance[] = (Array.isArray(rawList) ? rawList : []).map(sub => ({
+        ...sub,
+        class_attended: parseNumber(sub.class_attended),
+        total_classes: parseNumber(sub.total_classes),
+        percentage: parsePercent(sub.percentage),
+        attendance_target: parseNumber(sub.attendance_target, 75),
+        can_miss_hours: parseNumber(sub.can_miss_hours, 0),
+        must_attend_hours: parseNumber(sub.must_attend_hours, 0),
+        absent_hours: parseNumber(sub.absent_hours, 0)
+      }))
+
+      this.setCache(cacheKey, data)
+      return data
+    } catch (err) {
+      const stale = this.getCachedData<SubjectAttendance[]>(cacheKey, true)
+      if (stale) return stale
+      throw err
+    }
   }
 
   // --- 5. Monthly Timetable ---
@@ -293,10 +370,8 @@ class EtlabApiClient {
     const cacheKey = `etbridge_cached_timetable_${month}`
 
     if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey)
-      if (cached) {
-        try { return JSON.parse(cached) } catch {}
-      }
+      const cached = this.getCachedData<DayTimetable[]>(cacheKey)
+      if (cached) return cached
     }
 
     try {
@@ -307,19 +382,15 @@ class EtlabApiClient {
       if (res.ok) {
         const data = await res.json()
         const timetable: DayTimetable[] = data.timetable || []
-        try {
-          localStorage.setItem(cacheKey, JSON.stringify(timetable))
-        } catch {}
+        this.setCache(cacheKey, timetable)
         return timetable
       }
     } catch (err) {
       console.warn('Failed to load monthly timetable, using cached fallback:', err)
     }
 
-    const cached = localStorage.getItem(cacheKey)
-    if (cached) {
-      try { return JSON.parse(cached) } catch {}
-    }
+    const cached = this.getCachedData<DayTimetable[]>(cacheKey, true)
+    if (cached) return cached
     return []
   }
 
@@ -331,10 +402,8 @@ class EtlabApiClient {
 
     const cacheKey = 'etbridge_cached_semester_timetable'
     if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey)
-      if (cached) {
-        try { return JSON.parse(cached) } catch {}
-      }
+      const cached = this.getCachedData<DayTimetable[]>(cacheKey)
+      if (cached) return cached
     }
 
     const now = new Date()
@@ -371,17 +440,15 @@ class EtlabApiClient {
 
       const combined = Array.from(mergedMap.values()).sort((a, b) => b.date.localeCompare(a.date))
       if (combined.length > 0) {
-        try { localStorage.setItem(cacheKey, JSON.stringify(combined)) } catch {}
+        this.setCache(cacheKey, combined)
         return combined
       }
     } catch (err) {
       console.warn('Failed to fetch semester timetable:', err)
     }
 
-    const cached = localStorage.getItem(cacheKey)
-    if (cached) {
-      try { return JSON.parse(cached) } catch {}
-    }
+    const cached = this.getCachedData<DayTimetable[]>(cacheKey, true)
+    if (cached) return cached
     return []
   }
 
@@ -391,12 +458,10 @@ class EtlabApiClient {
       return DEMO_EVALUATIONS
     }
 
-    const cacheKey = 'etbridge_cached_evaluations'
+    const cacheKey = semId ? `etbridge_cached_evaluations_${semId}` : 'etbridge_cached_evaluations'
     if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey)
-      if (cached) {
-        try { return JSON.parse(cached) } catch {}
-      }
+      const cached = this.getCachedData<EvaluationsData>(cacheKey)
+      if (cached) return cached
     }
 
     const url = this.getEndpointUrl('/evaluations')
@@ -409,20 +474,15 @@ class EtlabApiClient {
 
       if (res.ok) {
         const data: EvaluationsData = await res.json()
-        try {
-          localStorage.setItem(cacheKey, JSON.stringify(data))
-        } catch {}
+        this.setCache(cacheKey, data)
         return data
       }
     } catch (err) {
       console.warn('Failed to load evaluations:', err)
     }
 
-    const cached = localStorage.getItem(cacheKey)
-    if (cached) {
-      try { return JSON.parse(cached) } catch {}
-    }
-
+    const cached = this.getCachedData<EvaluationsData>(cacheKey, true)
+    if (cached) return cached
     return { login: true, series_exams: [], assignments: [] }
   }
 
@@ -481,10 +541,8 @@ class EtlabApiClient {
 
     const cacheKey = 'etbridge_cached_teachers'
     if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey)
-      if (cached) {
-        try { return JSON.parse(cached) } catch {}
-      }
+      const cached = this.getCachedData<Teacher[]>(cacheKey)
+      if (cached) return cached
     }
 
     try {
@@ -493,17 +551,15 @@ class EtlabApiClient {
       })
       if (res.ok) {
         const data: Teacher[] = await res.json()
-        try { localStorage.setItem(cacheKey, JSON.stringify(data)) } catch {}
+        this.setCache(cacheKey, data)
         return data
       }
     } catch (err) {
       console.warn('Failed to load teachers:', err)
     }
 
-    const cached = localStorage.getItem(cacheKey)
-    if (cached) {
-      try { return JSON.parse(cached) } catch {}
-    }
+    const cached = this.getCachedData<Teacher[]>(cacheKey, true)
+    if (cached) return cached
     return DEMO_TEACHERS
   }
 
@@ -515,10 +571,8 @@ class EtlabApiClient {
 
     const cacheKey = 'etbridge_cached_materials'
     if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey)
-      if (cached) {
-        try { return JSON.parse(cached) } catch {}
-      }
+      const cached = this.getCachedData<StudyMaterial[]>(cacheKey)
+      if (cached) return cached
     }
 
     try {
@@ -531,17 +585,15 @@ class EtlabApiClient {
           ...m,
           link: m.file_name ? (m.file_name.startsWith('http') ? m.file_name : `https://api.students.etlab.app${m.file_name}`) : '#'
         }))
-        try { localStorage.setItem(cacheKey, JSON.stringify(data)) } catch {}
+        this.setCache(cacheKey, data)
         return data
       }
     } catch (err) {
       console.warn('Failed to load study materials:', err)
     }
 
-    const cached = localStorage.getItem(cacheKey)
-    if (cached) {
-      try { return JSON.parse(cached) } catch {}
-    }
+    const cached = this.getCachedData<StudyMaterial[]>(cacheKey, true)
+    if (cached) return cached
     return []
   }
 
@@ -553,10 +605,8 @@ class EtlabApiClient {
 
     const cacheKey = 'etbridge_cached_fees'
     if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey)
-      if (cached) {
-        try { return JSON.parse(cached) } catch {}
-      }
+      const cached = this.getCachedData<FeesData>(cacheKey)
+      if (cached) return cached
     }
 
     try {
@@ -565,17 +615,15 @@ class EtlabApiClient {
       })
       if (res.ok) {
         const data: FeesData = await res.json()
-        try { localStorage.setItem(cacheKey, JSON.stringify(data)) } catch {}
+        this.setCache(cacheKey, data)
         return data
       }
     } catch (err) {
       console.warn('Failed to load fees:', err)
     }
 
-    const cached = localStorage.getItem(cacheKey)
-    if (cached) {
-      try { return JSON.parse(cached) } catch {}
-    }
+    const cached = this.getCachedData<FeesData>(cacheKey, true)
+    if (cached) return cached
     return DEMO_FEES
   }
 
@@ -587,10 +635,8 @@ class EtlabApiClient {
 
     const cacheKey = 'etbridge_cached_activity_points'
     if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey)
-      if (cached) {
-        try { return JSON.parse(cached) } catch {}
-      }
+      const cached = this.getCachedData<ActivityPointsData>(cacheKey)
+      if (cached) return cached
     }
 
     try {
@@ -599,17 +645,15 @@ class EtlabApiClient {
       })
       if (res.ok) {
         const data: ActivityPointsData = await res.json()
-        try { localStorage.setItem(cacheKey, JSON.stringify(data)) } catch {}
+        this.setCache(cacheKey, data)
         return data
       }
     } catch (err) {
       console.warn('Failed to load activity points:', err)
     }
 
-    const cached = localStorage.getItem(cacheKey)
-    if (cached) {
-      try { return JSON.parse(cached) } catch {}
-    }
+    const cached = this.getCachedData<ActivityPointsData>(cacheKey, true)
+    if (cached) return cached
     return DEMO_ACTIVITY_POINTS
   }
 
@@ -621,10 +665,8 @@ class EtlabApiClient {
 
     const cacheKey = 'etbridge_cached_dutyleaves'
     if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey)
-      if (cached) {
-        try { return JSON.parse(cached) } catch {}
-      }
+      const cached = this.getCachedData<DutyLeave[]>(cacheKey)
+      if (cached) return cached
     }
 
     try {
@@ -634,12 +676,15 @@ class EtlabApiClient {
       if (res.ok) {
         const data = await res.json()
         const list = Array.isArray(data) ? data : []
-        try { localStorage.setItem(cacheKey, JSON.stringify(list)) } catch {}
+        this.setCache(cacheKey, list)
         return list
       }
     } catch (err) {
       console.warn('Failed to load duty leaves:', err)
     }
+
+    const cached = this.getCachedData<DutyLeave[]>(cacheKey, true)
+    if (cached) return cached
     return []
   }
 
@@ -651,10 +696,8 @@ class EtlabApiClient {
 
     const cacheKey = 'etbridge_cached_surveys'
     if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey)
-      if (cached) {
-        try { return JSON.parse(cached) } catch {}
-      }
+      const cached = this.getCachedData<SurveyItem[]>(cacheKey)
+      if (cached) return cached
     }
 
     try {
@@ -664,12 +707,15 @@ class EtlabApiClient {
       if (res.ok) {
         const data = await res.json()
         const list = Array.isArray(data) ? data : []
-        try { localStorage.setItem(cacheKey, JSON.stringify(list)) } catch {}
+        this.setCache(cacheKey, list)
         return list
       }
     } catch (err) {
       console.warn('Failed to load surveys:', err)
     }
+
+    const cached = this.getCachedData<SurveyItem[]>(cacheKey, true)
+    if (cached) return cached
     return []
   }
 
@@ -681,10 +727,8 @@ class EtlabApiClient {
 
     const cacheKey = 'etbridge_cached_resultsuniversity'
     if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey)
-      if (cached) {
-        try { return JSON.parse(cached) } catch {}
-      }
+      const cached = this.getCachedData<UniversityResult[]>(cacheKey)
+      if (cached) return cached
     }
 
     try {
@@ -694,12 +738,15 @@ class EtlabApiClient {
       if (res.ok) {
         const data = await res.json()
         const list = Array.isArray(data.results) ? data.results : []
-        try { localStorage.setItem(cacheKey, JSON.stringify(list)) } catch {}
+        this.setCache(cacheKey, list)
         return list
       }
     } catch (err) {
       console.warn('Failed to load university results:', err)
     }
+
+    const cached = this.getCachedData<UniversityResult[]>(cacheKey, true)
+    if (cached) return cached
     return []
   }
 
@@ -734,10 +781,8 @@ class EtlabApiClient {
 
     const cacheKey = 'etbridge_cached_courses'
     if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey)
-      if (cached) {
-        try { return JSON.parse(cached) } catch {}
-      }
+      const cached = this.getCachedData<Course[]>(cacheKey)
+      if (cached) return cached
     }
 
     try {
@@ -751,17 +796,15 @@ class EtlabApiClient {
           atten_per: parsePercent(c.atten_per),
           credits: parseNumber(c.credits)
         }))
-        try { localStorage.setItem(cacheKey, JSON.stringify(data)) } catch {}
+        this.setCache(cacheKey, data)
         return data
       }
     } catch (err) {
       console.warn('Failed to load courses from API:', err)
     }
 
-    const cached = localStorage.getItem(cacheKey)
-    if (cached) {
-      try { return JSON.parse(cached) } catch {}
-    }
+    const cached = this.getCachedData<Course[]>(cacheKey, true)
+    if (cached) return cached
     return DEMO_COURSES
   }
 
@@ -834,10 +877,8 @@ class EtlabApiClient {
 
     const cacheKey = 'etbridge_cached_analysis'
     if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey)
-      if (cached) {
-        try { return JSON.parse(cached) } catch {}
-      }
+      const cached = this.getCachedData<AcademicAnalysis>(cacheKey)
+      if (cached) return cached
     }
 
     try {
@@ -876,17 +917,15 @@ class EtlabApiClient {
           }
           data.courses_at_risk = risks.length > 0 ? risks : DEMO_ACADEMIC_ANALYSIS.courses_at_risk
         }
-        try { localStorage.setItem(cacheKey, JSON.stringify(data)) } catch {}
+        this.setCache(cacheKey, data)
         return data
       }
     } catch (err) {
       console.warn('Failed to load academic analysis:', err)
     }
 
-    const cached = localStorage.getItem(cacheKey)
-    if (cached) {
-      try { return JSON.parse(cached) } catch {}
-    }
+    const cached = this.getCachedData<AcademicAnalysis>(cacheKey, true)
+    if (cached) return cached
     return DEMO_ACADEMIC_ANALYSIS
   }
 }

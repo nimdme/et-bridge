@@ -458,7 +458,7 @@ y = ceil( (0.75 * T - A) / 0.25 )`}</pre>
 
               <div className="space-y-3 text-xs sm:text-sm text-zinc-300 dark:text-zinc-300 light:text-slate-700 leading-relaxed">
                 <p>
-                  Campuses frequently experience dead spots or degraded Wi-Fi. ETBridge employs a <strong>stale-while-revalidate caching pattern</strong> with partitioned local storage keys:
+                  Campuses frequently experience dead spots or degraded Wi-Fi. ETBridge employs a <strong>stale-while-revalidate caching pattern</strong> with a 4-hour cache TTL policy and partitioned local storage keys:
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-xs">
@@ -475,10 +475,14 @@ y = ceil( (0.75 * T - A) / 0.25 )`}</pre>
                     <p className="text-[11px] text-zinc-400 font-sans mt-0.5">Partitioned monthly timetable periods and teacher logs.</p>
                   </div>
                   <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800">
-                    <span className="text-brand-400 font-bold">etbridge_pending_duty_leaves</span>
-                    <p className="text-[11px] text-zinc-400 font-sans mt-0.5">Self-reported duty leaves and selected hours.</p>
+                    <span className="text-brand-400 font-bold">etbridge_last_sync_time</span>
+                    <p className="text-[11px] text-zinc-400 font-sans mt-0.5">Timestamp used to invalidate data &gt; 4 hours old and trigger auto-resync.</p>
                   </div>
                 </div>
+
+                <p>
+                  Data older than 4 hours is automatically flagged as stale. When you launch the app, refocus the tab, or leave it running, ETBridge silently re-syncs fresh metrics from upstream ETLab endpoints while falling back gracefully to cached data if connectivity is severed.
+                </p>
 
                 <p>
                   The Progressive Web App includes a web app manifest and Service Worker that pre-caches all static JS and CSS bundles, enabling instant startup even when completely disconnected from the network.

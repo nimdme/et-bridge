@@ -49,6 +49,7 @@ interface AuthContextType {
   loginDemo: () => void
   logout: () => void
   refreshData: (force?: boolean) => Promise<void>
+  lastSyncTime: number | null
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -78,6 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [universityResults, setUniversityResults] = useState<UniversityResult[]>([])
   const [courses, setCourses] = useState<Course[]>([])
   const [academicAnalysis, setAcademicAnalysis] = useState<AcademicAnalysis | null>(null)
+  const [lastSyncTime, setLastSyncTime] = useState<number | null>(() => etlabClient.getLastSyncTime())
   
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false)
 
@@ -193,22 +195,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return
     }
 
+    const shouldForce = force || etlabClient.isSyncStale()
+
     try {
       setLoading(true)
       // Stream and hydrate each endpoint as soon as it resolves
-      const profPromise = etlabClient.getProfile(force).then(data => { if (data) setProfile(data); return data }).catch(() => null)
-      const attPromise = etlabClient.getAttendance(undefined, force).then(data => { if (data) setAttendance(data); return data }).catch(() => null)
-      const ttPromise = etlabClient.getMonthlyTimetable(undefined, force).then(data => { if (data) setTimetable(data); return data }).catch(() => null)
-      const evPromise = etlabClient.getEvaluations(undefined, force).then(data => { if (data) setEvaluations(data); return data }).catch(() => null)
-      const teachersPromise = etlabClient.getTeachers(force).then(data => { if (data) setTeachers(data); return data }).catch(() => [])
-      const materialsPromise = etlabClient.getStudyMaterials(force).then(data => { if (data) setMaterials(data); return data }).catch(() => [])
-      const feesPromise = etlabClient.getFees(force).then(data => { if (data) setFees(data); return data }).catch(() => null)
-      const actPromise = etlabClient.getActivityPoints(force).then(data => { if (data) setActivityPoints(data); return data }).catch(() => null)
-      const dutyPromise = etlabClient.getDutyLeaves(force).then(data => { if (data) setDutyLeaves(data); return data }).catch(() => [])
-      const surveyPromise = etlabClient.getSurveys(force).then(data => { if (data) setSurveys(data); return data }).catch(() => [])
-      const resPromise = etlabClient.getUniversityResults(force).then(data => { if (data) setUniversityResults(data); return data }).catch(() => [])
-      const coursesPromise = etlabClient.getCourses(force).then(data => { if (data) setCourses(data); return data }).catch(() => [])
-      const analysisPromise = etlabClient.getAcademicAnalysis(force).then(data => { if (data) setAcademicAnalysis(data); return data }).catch(() => null)
+      const profPromise = etlabClient.getProfile(shouldForce).then(data => { if (data) setProfile(data); return data }).catch(() => null)
+      const attPromise = etlabClient.getAttendance(undefined, shouldForce).then(data => { if (data) setAttendance(data); return data }).catch(() => null)
+      const ttPromise = etlabClient.getMonthlyTimetable(undefined, shouldForce).then(data => { if (data) setTimetable(data); return data }).catch(() => null)
+      const evPromise = etlabClient.getEvaluations(undefined, shouldForce).then(data => { if (data) setEvaluations(data); return data }).catch(() => null)
+      const teachersPromise = etlabClient.getTeachers(shouldForce).then(data => { if (data) setTeachers(data); return data }).catch(() => [])
+      const materialsPromise = etlabClient.getStudyMaterials(shouldForce).then(data => { if (data) setMaterials(data); return data }).catch(() => [])
+      const feesPromise = etlabClient.getFees(shouldForce).then(data => { if (data) setFees(data); return data }).catch(() => null)
+      const actPromise = etlabClient.getActivityPoints(shouldForce).then(data => { if (data) setActivityPoints(data); return data }).catch(() => null)
+      const dutyPromise = etlabClient.getDutyLeaves(shouldForce).then(data => { if (data) setDutyLeaves(data); return data }).catch(() => [])
+      const surveyPromise = etlabClient.getSurveys(shouldForce).then(data => { if (data) setSurveys(data); return data }).catch(() => [])
+      const resPromise = etlabClient.getUniversityResults(shouldForce).then(data => { if (data) setUniversityResults(data); return data }).catch(() => [])
+      const coursesPromise = etlabClient.getCourses(shouldForce).then(data => { if (data) setCourses(data); return data }).catch(() => [])
+      const analysisPromise = etlabClient.getAcademicAnalysis(shouldForce).then(data => { if (data) setAcademicAnalysis(data); return data }).catch(() => null)
 
       // Ensure core dashboard metrics settle first
       await Promise.allSettled([profPromise, attPromise, ttPromise, evPromise])
@@ -224,6 +228,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         coursesPromise,
         analysisPromise
       ])
+      setLastSyncTime(etlabClient.getLastSyncTime() || Date.now())
     } catch (err) {
       console.error('Error refreshing student data:', err)
     } finally {
@@ -236,6 +241,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       refreshData(false)
     } else {
       setLoading(false)
+    }
+  }, [session, refreshData])
+
+  // Automatic Background Resync:
+  // If data is older than 4 hours, automatically trigger a refresh on tab visibility/focus or every 15m.
+  useEffect(() => {
+    if (!session) return
+
+    const checkAndResync = () => {
+      if (etlabClient.isSyncStale()) {
+        refreshData(true)
+      }
+    }
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkAndResync()
+      }
+    }
+
+    const onFocus = () => {
+      checkAndResync()
+    }
+
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    window.addEventListener('focus', onFocus)
+
+    // Periodic check every 15 minutes while app tab remains open
+    const intervalId = setInterval(checkAndResync, 15 * 60 * 1000)
+
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+      window.removeEventListener('focus', onFocus)
+      clearInterval(intervalId)
     }
   }, [session, refreshData])
 
@@ -270,6 +309,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setDutyLeaves([])
     setSurveys([])
     setUniversityResults([])
+    setLastSyncTime(null)
   }
 
   return (
@@ -304,7 +344,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login,
         loginDemo,
         logout,
-        refreshData
+        refreshData,
+        lastSyncTime
       }}
     >
       {children}
