@@ -1,10 +1,62 @@
-import { defineConfig } from 'vite'
+import { defineConfig, Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+
+function devImageProxyPlugin(): Plugin {
+  return {
+    name: 'dev-image-proxy',
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        if (req.url && (req.url.startsWith('/api/image-proxy') || req.url.startsWith('/api/file-proxy') || req.url.startsWith('/api/proxy'))) {
+          try {
+            const urlObj = new URL(req.url, 'http://localhost')
+            const targetUrl = urlObj.searchParams.get('url')
+            if (!targetUrl) {
+              res.statusCode = 400
+              res.end(JSON.stringify({ error: 'Missing url parameter' }))
+              return
+            }
+
+            const token = urlObj.searchParams.get('token')
+            const inst = urlObj.searchParams.get('inst')
+
+            const forwardHeaders: Record<string, string> = {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+              'Referer': 'https://students.etlab.app/',
+              'Origin': 'https://students.etlab.app'
+            }
+            if (token) forwardHeaders['Authorization'] = token.startsWith('Bearer ') ? token : `Bearer ${token}`
+            if (inst) forwardHeaders['X-Institute-ID'] = inst
+
+            const response = await fetch(targetUrl, { headers: forwardHeaders })
+            res.statusCode = response.status
+            const contentType = response.headers.get('content-type') || (targetUrl.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg')
+            res.setHeader('Content-Type', contentType)
+            const disposition = response.headers.get('content-disposition')
+            if (disposition) res.setHeader('Content-Disposition', disposition)
+            res.setHeader('Access-Control-Allow-Origin', '*')
+            res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
+            res.setHeader('Cache-Control', 'public, max-age=86400')
+
+            const arrayBuffer = await response.arrayBuffer()
+            res.end(Buffer.from(arrayBuffer))
+            return
+          } catch (err: any) {
+            res.statusCode = 502
+            res.end(JSON.stringify({ error: 'Proxy error', details: err?.message }))
+            return
+          }
+        }
+        next()
+      })
+    }
+  }
+}
 
 export default defineConfig({
   plugins: [
     react(),
+    devImageProxyPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: [
@@ -68,5 +120,17 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg}']
       }
     })
-  ]
+  ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://api.students.etlab.app',
+        changeOrigin: true,
+        headers: {
+          'Origin': 'https://students.etlab.app',
+          'Referer': 'https://students.etlab.app/'
+        }
+      }
+    }
+  }
 })

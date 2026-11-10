@@ -36,7 +36,7 @@ import {
 } from './mockData'
 import { parsePercent, parseNumber } from '../utils/format'
 
-const API_BASE_URL = 'https://api.students.etlab.app/api/v1'
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1'
 
 class EtlabApiClient {
   private session: AuthSession | null = null
@@ -44,6 +44,13 @@ class EtlabApiClient {
 
   constructor() {
     this.loadSession()
+  }
+
+  private getEndpointUrl(endpoint: string): URL {
+    const base = API_BASE_URL.startsWith('http')
+      ? API_BASE_URL
+      : `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost'}${API_BASE_URL}`
+    return new URL(`${base}${endpoint}`)
   }
 
   public loadSession(): AuthSession | null {
@@ -164,7 +171,14 @@ class EtlabApiClient {
     })
 
     if (!res.ok) {
-      throw new Error(`Server returned error HTTP ${res.status}`)
+      const errText = await res.text().catch(() => '')
+      let errMsg = `Server returned error HTTP ${res.status}`
+      try {
+        const errJson = JSON.parse(errText)
+        if (errJson.error) errMsg = errJson.error
+        else if (errJson.message) errMsg = errJson.message
+      } catch {}
+      throw new Error(errMsg)
     }
 
     const data = await res.json()
@@ -238,7 +252,7 @@ class EtlabApiClient {
       }
     }
 
-    const url = new URL(`${API_BASE_URL}/attendancebysubject`)
+    const url = this.getEndpointUrl('/attendancebysubject')
     if (semId) url.searchParams.set('sem_id', String(semId))
 
     const res = await fetch(url.toString(), {
@@ -385,7 +399,7 @@ class EtlabApiClient {
       }
     }
 
-    const url = new URL(`${API_BASE_URL}/evaluations`)
+    const url = this.getEndpointUrl('/evaluations')
     if (semId) url.searchParams.set('sem_id', String(semId))
 
     try {

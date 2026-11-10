@@ -31,23 +31,34 @@ export const EtlabImage: React.FC<EtlabImageProps> = ({
 
     const trimmed = src.trim()
 
-    // 1. Direct URLs (data, blob, https://)
-    if (trimmed.startsWith('data:') || trimmed.startsWith('blob:') || trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    // 1. Direct data or blob URLs
+    if (trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
       setResolvedSrc(trimmed)
       return
     }
 
-    // 2. Relative ETLab uploads path
+    // 2. Resolve absolute URL
+    let fullUrl = trimmed
     const cleanPath = trimmed.replace(/^\/+/, '')
     const session = etlabClient.getSession()
     const institute = session?.instituteId
 
-    // Try primary student API origin or college subdomain
-    const fullUrl = cleanPath.startsWith('uploads/')
-      ? `https://api.students.etlab.app/${cleanPath}`
-      : institute
-      ? `https://${institute}.etlab.app/uploads/${cleanPath}`
-      : `https://api.students.etlab.app/uploads/${cleanPath}`
+    if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
+      fullUrl = cleanPath.startsWith('uploads/')
+        ? `https://api.students.etlab.app/${cleanPath}`
+        : institute
+        ? `https://${institute}.etlab.app/uploads/${cleanPath}`
+        : `https://api.students.etlab.app/uploads/${cleanPath}`
+    }
+
+    // 3. For ETLab hosted assets, use edge image proxy with auth & caching
+    if (fullUrl.includes('etlab.app')) {
+      const token = session?.token ? encodeURIComponent(session.token) : ''
+      const inst = institute ? encodeURIComponent(institute) : ''
+      const proxyUrl = `/api/image-proxy?url=${encodeURIComponent(fullUrl)}${token ? `&token=${token}` : ''}${inst ? `&inst=${inst}` : ''}`
+      setResolvedSrc(proxyUrl)
+      return
+    }
 
     setResolvedSrc(fullUrl)
   }, [src])

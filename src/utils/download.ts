@@ -39,7 +39,12 @@ export async function downloadFileWithAuth(url: string, suggestedFilename?: stri
     headers['X-Institute-ID'] = session.instituteId
   }
 
-  const response = await fetch(fullUrl, {
+  // Route through proxy to prevent browser CORS blocks
+  const targetEndpoint = fullUrl.includes('etlab.app')
+    ? `/api/file-proxy?url=${encodeURIComponent(fullUrl)}`
+    : fullUrl
+
+  const response = await fetch(targetEndpoint, {
     method: 'GET',
     headers
   })
