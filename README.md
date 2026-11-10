@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/nimd/etbridge">
+  <a href="https://github.com/nimdme/et-bridge">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="public/img/logo/logo-dark.png">
       <source media="(prefers-color-scheme: light)" srcset="public/img/logo/logo-light.png">
@@ -13,7 +13,7 @@
 <p align="center">
   An open-source, client-side web interface and Progressive Web App for students using the ETLab portal.
   <br />
-  Fast, clean, offline-ready, with automated 75% bunk margin calculations and self-reported duty leave tracking.
+  Fast, clean, offline-ready, with automated 75% bunk margin calculations, self-reported duty leave tracking, and 4-hour background auto-sync.
 </p>
 
 <p align="center">
@@ -35,7 +35,7 @@
   <a href="https://etbridge.pages.dev/docs">
     <img src="https://img.shields.io/badge/Docs-Technical%20Reference-6366f1?style=flat-square" alt="Documentation" />
   </a>
-  <a href="https://github.com/nimd/etbridge">
+  <a href="https://github.com/nimdme/et-bridge">
     <img src="https://img.shields.io/badge/Backend-Zero--Knowledge%20(Direct%20API)-10b981?style=flat-square" alt="Zero Backend" />
   </a>
 </p>
@@ -159,10 +159,12 @@ Official duty leave entries submitted to faculty coordinators often take days or
 - Identifies faculty substitution assignments and flags altered routines clearly.
 - Day-wise routine viewer formatted to Indian academic timetable conventions (`DD/MM/YYYY`).
 
-### Offline Caching
+### Offline Caching & 4-Hour Auto-Sync
 
-- Built with a Service Worker caching engine via `vite-plugin-pwa` and Workbox.
-- Timetable schedules, recent attendance records, and student profiles remain readable even when cell reception drops inside thick campus buildings.
+- **Stale-While-Revalidate Engine:** Timetable schedules, recent attendance records, internal evaluations, and profiles are cached in partitioned localStorage with timestamp metadata.
+- **4-Hour Staleness Threshold:** Data older than 4 hours is automatically flagged as stale. ETBridge queries the upstream API silently in the background on app open, tab refocus, or via a 15-minute periodic watchdog timer.
+- **Offline Fault Tolerance:** If network connectivity drops inside lecture halls, the client automatically falls back to cached data, avoiding blank screens or error banners.
+- **Full PWA Shell:** Built with a Service Worker caching engine via `vite-plugin-pwa` and Workbox for instant cold starts.
 
 ---
 
@@ -196,8 +198,8 @@ ETBridge is a Progressive Web App (PWA). It does not require downloading from th
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/nimd/etbridge.git
-cd etbridge
+git clone https://github.com/nimdme/et-bridge.git
+cd et-bridge
 
 # 2. Install dependencies
 pnpm install
@@ -221,19 +223,19 @@ The development server will spin up at `http://localhost:5173`.
 
 ## Deployment
 
-Because ETBridge is a client-side single-page application with zero server dependencies, it can be hosted on static hosting services:
+ETBridge compiles into a static single-page application with optional Cloudflare Pages edge functions:
 
-### Cloudflare Pages
+### Cloudflare Pages (Recommended)
 1. Link your GitHub repository in the Cloudflare Pages dashboard.
 2. Build command: `pnpm build`
 3. Output directory: `dist`
 4. Root directory: `/`
+5. The included serverless edge function at `functions/api/[[path]].js` transparently proxies `/api/v1/*` requests to ETLab, resolving cross-origin browser policies across any custom domain.
 
-### Vercel
-1. Import the repository into Vercel.
-2. Vercel automatically detects Vite.
-3. Build command: `pnpm build`
-4. Output directory: `dist`
+### Vercel / Netlify / Static Host
+1. Import the repository.
+2. Build command: `pnpm build`
+3. Output directory: `dist`
 
 ---
 
@@ -258,7 +260,7 @@ To sign in, select or enter your college's institute code alongside your normal 
 
 Created and maintained by [NiMD](https://nimd.me) (Niranjan M D).
 
-If you encounter a bug, have a feature suggestion, or would like to contribute, please [open an issue](https://github.com/nimd/etbridge/issues) or submit a pull request on GitHub.
+If you encounter a bug, have a feature suggestion, or would like to contribute, please [open an issue](https://github.com/nimdme/et-bridge/issues) or submit a pull request on GitHub.
 
 ---
 

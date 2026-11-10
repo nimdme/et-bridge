@@ -93,7 +93,7 @@ export const LandingPage: React.FC = () => {
             </Link>
 
             <a
-              href="https://github.com/nimd/etbridge"
+              href="https://github.com/nimdme/et-bridge"
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:inline-flex items-center gap-1 text-zinc-400 hover:text-white dark:hover:text-white light:text-slate-600 light:hover:text-slate-900 transition-colors font-mono"
@@ -151,7 +151,7 @@ export const LandingPage: React.FC = () => {
             </Link>
 
             <a
-              href="https://github.com/nimd/etbridge"
+              href="https://github.com/nimdme/et-bridge"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl border border-zinc-800 dark:border-zinc-800 light:border-slate-300 bg-zinc-900/60 dark:bg-zinc-900/60 light:bg-white text-zinc-200 dark:text-zinc-200 light:text-slate-800 hover:bg-zinc-800 dark:hover:bg-zinc-800 light:hover:bg-slate-100 text-xs sm:text-sm font-semibold transition-all active:scale-95 group"
@@ -281,7 +281,7 @@ export const LandingPage: React.FC = () => {
 
             <div className="pt-2 text-xs">
               <a
-                href="https://github.com/nimd/etbridge"
+                href="https://github.com/nimdme/et-bridge"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-brand-400 hover:underline font-mono"
@@ -381,7 +381,7 @@ export const LandingPage: React.FC = () => {
               </button>
               <span className="text-zinc-700 dark:text-zinc-700 light:text-slate-300">•</span>
               <a
-                href="https://github.com/nimd/etbridge"
+                href="https://github.com/nimdme/et-bridge"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors"

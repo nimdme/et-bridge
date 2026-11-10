@@ -107,7 +107,7 @@ export const DocsPage: React.FC = () => {
 
         <div className="flex items-center gap-3 text-xs font-mono">
           <a
-            href="https://github.com/nimd/etbridge"
+            href="https://github.com/nimdme/et-bridge"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 text-zinc-400 hover:text-white dark:hover:text-white light:text-slate-600 light:hover:text-slate-900 transition-colors"
@@ -213,9 +213,9 @@ export const DocsPage: React.FC = () => {
                 </div>
 
                 <ul className="list-disc pl-5 space-y-1.5 text-zinc-400 dark:text-zinc-400 light:text-slate-600">
-                  <li><strong>Security & Privacy:</strong> User credentials and Bearer tokens never touch third-party servers. All requests go directly to ETLab's official endpoints.</li>
-                  <li><strong>Hosting Simplicity:</strong> The entire application compiles into static HTML, CSS, and JavaScript, deployable on Cloudflare Pages, GitHub Pages, or Vercel with zero server maintenance costs.</li>
-                  <li><strong>CORS Handling:</strong> ETLab's mobile API gateway (`api.students.etlab.app`) natively permits CORS requests from browser origins, enabling direct client-side consumption without reverse proxies.</li>
+                  <li><strong>Security & Privacy:</strong> Student credentials and Bearer tokens never touch third-party servers or databases. All requests flow directly to ETLab's official infrastructure.</li>
+                  <li><strong>Hosting Simplicity:</strong> The entire application compiles into static HTML, CSS, and JavaScript, deployable on Cloudflare Pages or any static edge CDN with zero maintenance overhead.</li>
+                  <li><strong>Edge CORS Proxying:</strong> While local development uses Vite's local dev server proxy, production deployments on Cloudflare Pages route through a lightweight serverless edge function (`/functions/api/[[path]].js`) that transparently relays calls to `api.students.etlab.app` with standard CORS headers, avoiding webview restrictions across any custom domain.</li>
                 </ul>
               </div>
             </section>
@@ -452,13 +452,13 @@ y = ceil( (0.75 * T - A) / 0.25 )`}</pre>
               <div className="flex items-center gap-2">
                 <Database className="w-5 h-5 text-cyan-400" />
                 <h2 className="text-lg sm:text-xl font-bold text-white dark:text-white light:text-slate-900 font-mono">
-                  6. Offline Caching Strategy & PWA Architecture
+                  6. Offline Caching Strategy & 4-Hour Auto-Resync Engine
                 </h2>
               </div>
 
               <div className="space-y-3 text-xs sm:text-sm text-zinc-300 dark:text-zinc-300 light:text-slate-700 leading-relaxed">
                 <p>
-                  Campuses frequently experience dead spots or degraded Wi-Fi. ETBridge employs a <strong>stale-while-revalidate caching pattern</strong> with a 4-hour cache TTL policy and partitioned local storage keys:
+                  Campuses frequently experience dead spots or degraded Wi-Fi. ETBridge employs a <strong>stale-while-revalidate caching pattern</strong> with a 4-hour TTL (Time-To-Live) policy and partitioned local storage keys:
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-xs">
@@ -480,12 +480,18 @@ y = ceil( (0.75 * T - A) / 0.25 )`}</pre>
                   </div>
                 </div>
 
-                <p>
-                  Data older than 4 hours is automatically flagged as stale. When you launch the app, refocus the tab, or leave it running, ETBridge silently re-syncs fresh metrics from upstream ETLab endpoints while falling back gracefully to cached data if connectivity is severed.
-                </p>
+                <div className="p-4 rounded-2xl bg-zinc-900/80 border border-zinc-800 space-y-2">
+                  <h4 className="text-sm font-bold text-white font-mono">Autonomous Synchronization Triggers</h4>
+                  <ul className="list-disc pl-5 space-y-1.5 text-zinc-400">
+                    <li><strong className="text-zinc-200">On Mount / Session Start:</strong> If `Date.now() - etbridge_last_sync_time &gt;= 4 hours`, the client automatically bypasses local storage and queries ETLab directly.</li>
+                    <li><strong className="text-zinc-200">Tab Refocus & Visibility Change:</strong> When returning to the app after lectures or lock screen periods via `visibilitychange` or `window.focus`, ETBridge evaluates data age and initiates a background refresh.</li>
+                    <li><strong className="text-zinc-200">Periodic Interval:</strong> A 15-minute background watchdog checks timestamp staleness while the app remains open in an active tab.</li>
+                    <li><strong className="text-zinc-200">Stale-While-Revalidate Fallback:</strong> If network connectivity is lost (e.g. offline inside a basement lab), the client catches network exceptions and smoothly falls back to the existing cache, guaranteeing zero whiteout error screens.</li>
+                  </ul>
+                </div>
 
                 <p>
-                  The Progressive Web App includes a web app manifest and Service Worker that pre-caches all static JS and CSS bundles, enabling instant startup even when completely disconnected from the network.
+                  The Progressive Web App includes a web app manifest and Service Worker generated via Workbox that pre-caches all static bundles, enabling instantaneous cold starts regardless of network conditions.
                 </p>
               </div>
             </section>
@@ -530,6 +536,13 @@ y = ceil( (0.75 * T - A) / 0.25 )`}</pre>
                     <span className="text-brand-400 font-bold">Step 4: Handle Media & Image Hotlinking</span>
                     <p className="font-sans text-zinc-400 text-xs">
                       When displaying faculty photos or uploads, remember that ETLab servers reject foreign <code className="text-white">Referer</code> headers. Set <code className="text-white">referrerPolicy="no-referrer"</code> or fetch image bytes using authenticated GET requests.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-zinc-900/80 border border-zinc-800 space-y-2">
+                    <span className="text-brand-400 font-bold">Step 5: Implement 4-Hour Stale-While-Revalidate Sync</span>
+                    <p className="font-sans text-zinc-400 text-xs">
+                      Store fetch timestamps alongside cached payloads. If data is older than 4 hours, trigger a background network fetch while keeping the UI responsive with cached data, and update storage upon receipt.
                     </p>
                   </div>
                 </div>
