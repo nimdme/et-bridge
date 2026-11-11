@@ -25,13 +25,14 @@ import {
   Sun,
   Moon,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  Check
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
+import { usePWA } from '../context/PWAContext'
 import { LogDutyLeaveModal } from './LogDutyLeaveModal'
 import { FeedbackModal } from './FeedbackModal'
-import { InstallModal } from './InstallModal'
 import { EtlabImage } from './EtlabImage'
 import { formatSemester } from '../utils/format'
 
@@ -40,11 +41,11 @@ export const BottomNav: React.FC = () => {
   const navigate = useNavigate()
   const { session, profile, totalPendingDlHours, academicAnalysis, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
+  const { isInstalled, triggerInstall } = usePWA()
 
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [showLogModal, setShowLogModal] = useState(false)
   const [showFeedbackModal, setShowFeedbackModal] = useState(false)
-  const [showInstallModal, setShowInstallModal] = useState(false)
 
   const studentName = profile?.name || session?.studentName || session?.username || 'Student'
   const admissionNo = profile?.admission_no || session?.username || ''
@@ -351,14 +352,23 @@ export const BottomNav: React.FC = () => {
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    onClick={() => {
+                    onClick={async () => {
                       setIsMenuOpen(false)
-                      setShowInstallModal(true)
+                      await triggerInstall()
                     }}
                     className="p-2.5 rounded-xl bg-zinc-950/60 dark:bg-zinc-950/60 light:bg-slate-50 border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 text-zinc-300 dark:text-zinc-300 light:text-slate-700 hover:bg-zinc-800/60 flex items-center justify-center gap-2 text-xs font-semibold transition-colors"
                   >
-                    <Smartphone className="w-3.5 h-3.5 text-brand-400" />
-                    <span>Install App</span>
+                    {isInstalled ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Installed</span>
+                      </>
+                    ) : (
+                      <>
+                        <Smartphone className="w-3.5 h-3.5 text-brand-400" />
+                        <span>Install App</span>
+                      </>
+                    )}
                   </button>
 
                   <button
@@ -425,12 +435,6 @@ export const BottomNav: React.FC = () => {
       <FeedbackModal
         isOpen={showFeedbackModal}
         onClose={() => setShowFeedbackModal(false)}
-      />
-
-      {/* Install Modal mounted globally */}
-      <InstallModal
-        isOpen={showInstallModal}
-        onClose={() => setShowInstallModal(false)}
       />
     </>
   )

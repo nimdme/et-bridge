@@ -19,6 +19,9 @@ import { BottomNav } from './components/BottomNav'
 import { CommandPalette } from './components/CommandPalette'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { LoadingScreen } from './components/LoadingScreen'
+import { PWAProvider } from './context/PWAContext'
+import { InstallModal } from './components/InstallModal'
+import { MobileInstallBanner } from './components/MobileInstallBanner'
 
 // Smart Root Route Component
 const SmartRoot: React.FC = () => {
@@ -78,6 +81,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </main>
       </div>
       <BottomNav />
+      <MobileInstallBanner />
       <CommandPalette />
     </div>
   )
@@ -89,7 +93,8 @@ export const App: React.FC = () => {
       <ThemeProvider>
         <BrowserRouter>
           <AuthProvider>
-            <Routes>
+            <PWAProvider>
+              <Routes>
               {/* Public / Smart entry */}
               <Route path="/" element={<SmartRoot />} />
               <Route path="/login" element={<LoginPage />} />
@@ -164,7 +169,9 @@ export const App: React.FC = () => {
               {/* Catch-all */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
-          </AuthProvider>
+            <InstallModal />
+          </PWAProvider>
+        </AuthProvider>
         </BrowserRouter>
       </ThemeProvider>
     </ErrorBoundary>

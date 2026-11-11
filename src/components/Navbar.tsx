@@ -11,16 +11,16 @@ import {
   Sun, 
   Moon
 } from 'lucide-react'
-import { InstallModal } from './InstallModal'
 import { DiscordProfileCard } from './DiscordProfileCard'
 import { EtlabImage } from './EtlabImage'
 import { formatRelativeTime } from '../utils/format'
+import { usePWA } from '../context/PWAContext'
 
 export const Navbar: React.FC = () => {
   const { session, profile, isDemo, refreshData, loading, openCommandPalette, lastSyncTime } = useAuth()
   const { theme, toggleTheme } = useTheme()
+  const { isInstalled, triggerInstall } = usePWA()
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const [showInstallModal, setShowInstallModal] = useState(false)
   const [showMobileProfile, setShowMobileProfile] = useState(false)
 
   const studentName = profile?.name || session?.studentName || session?.username || 'Student'
@@ -109,14 +109,16 @@ export const Navbar: React.FC = () => {
               )}
             </button>
 
-            {/* Install PWA Button */}
-            <button
-              onClick={() => setShowInstallModal(true)}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900/80 dark:bg-zinc-900/80 light:bg-slate-100 hover:bg-zinc-800 dark:hover:bg-zinc-800 light:hover:bg-slate-200 border border-zinc-800 dark:border-zinc-800 light:border-slate-300 text-xs font-medium text-zinc-200 dark:text-zinc-200 light:text-slate-800 transition-colors"
-            >
-              <Smartphone className="w-3.5 h-3.5 text-brand-400" />
-              <span>Install App</span>
-            </button>
+            {/* Install PWA Button (Hidden if already installed or on mobile) */}
+            {!isInstalled && (
+              <button
+                onClick={() => triggerInstall()}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900/80 dark:bg-zinc-900/80 light:bg-slate-100 hover:bg-zinc-800 dark:hover:bg-zinc-800 light:hover:bg-slate-200 border border-zinc-800 dark:border-zinc-800 light:border-slate-300 text-xs font-medium text-zinc-200 dark:text-zinc-200 light:text-slate-800 transition-colors"
+              >
+                <Smartphone className="w-3.5 h-3.5 text-brand-400" />
+                <span>Install App</span>
+              </button>
+            )}
 
             {/* Refresh Data Button */}
             <button
@@ -150,9 +152,6 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
       </header>
-
-      {/* Install Modal */}
-      <InstallModal isOpen={showInstallModal} onClose={() => setShowInstallModal(false)} />
 
       {/* Mobile Discord Profile Card Modal */}
       {showMobileProfile && (

@@ -1,60 +1,49 @@
 import React, { useState, useEffect } from 'react'
 import { Download, X, Share, PlusSquare, MoreVertical, Smartphone, Check } from 'lucide-react'
+import { usePWA } from '../context/PWAContext'
 
 interface InstallModalProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen?: boolean
+  onClose?: () => void
 }
 
 export const InstallModal: React.FC<InstallModalProps> = ({ isOpen, onClose }) => {
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
-  const [isInstalled, setIsInstalled] = useState(false)
+  const { isInstallModalOpen, closeInstallModal, deferredPrompt, triggerInstall, isInstalled } = usePWA()
   const [activeTab, setActiveTab] = useState<'android' | 'ios'>('android')
 
+  const effectiveIsOpen = isOpen !== undefined ? isOpen : isInstallModalOpen
+
+  const handleClose = () => {
+    if (onClose) onClose()
+    closeInstallModal()
+  }
+
   useEffect(() => {
-    // Detect OS for default tab
-    const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera
-    if (/iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream) {
-      setActiveTab('ios')
-    }
-
-    const handleBeforeInstall = (e: any) => {
-      e.preventDefault()
-      setDeferredPrompt(e)
-    }
-
-    const handleAppInstalled = () => {
-      setIsInstalled(true)
-      setDeferredPrompt(null)
-    }
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstall)
-    window.addEventListener('appinstalled', handleAppInstalled)
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstall)
-      window.removeEventListener('appinstalled', handleAppInstalled)
+    // Detect iOS for default tab
+    if (typeof window !== 'undefined') {
+      const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera || ''
+      if (/iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream) {
+        setActiveTab('ios')
+      }
     }
   }, [])
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return
-    deferredPrompt.prompt()
-    const { outcome } = await deferredPrompt.userChoice
-    if (outcome === 'accepted') {
-      setIsInstalled(true)
-    }
-    setDeferredPrompt(null)
+    await triggerInstall()
   }
 
-  if (!isOpen) return null
+  if (!effectiveIsOpen) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-md bg-zinc-900 dark:bg-zinc-900 light:bg-white border border-zinc-800 dark:border-zinc-800 light:border-slate-300 rounded-2xl p-6 shadow-2xl overflow-hidden">
+      <div 
+        className="relative w-full max-w-md bg-zinc-900 dark:bg-zinc-900 light:bg-white border border-zinc-800 dark:border-zinc-800 light:border-slate-300 rounded-2xl p-6 shadow-2xl overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Close Button */}
         <button
-          onClick={onClose}
+          onClick={handleClose}
+          aria-label="Close installation dialog"
           className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-slate-900 rounded-lg hover:bg-zinc-800 dark:hover:bg-zinc-800 light:hover:bg-slate-100 transition-colors"
         >
           <X className="w-5 h-5" />
@@ -71,7 +60,7 @@ export const InstallModal: React.FC<InstallModalProps> = ({ isOpen, onClose }) =
           </div>
         </div>
 
-        {/* One-click button if Chrome supported */}
+        {/* One-click button if Chrome/Edge native prompt available */}
         {deferredPrompt && !isInstalled && (
           <div className="mb-5">
             <button

@@ -13,8 +13,8 @@ import {
   Shield,
   Download
 } from 'lucide-react'
-import { InstallModal } from '../components/InstallModal'
 import { BrandLogo } from '../components/BrandLogo'
+import { usePWA } from '../context/PWAContext'
 
 interface FAQItem {
   question: string
@@ -51,8 +51,8 @@ const FAQ_ITEMS: FAQItem[] = [
 export const LandingPage: React.FC = () => {
   const { isAuthenticated, loginDemo } = useAuth()
   const { theme, toggleTheme } = useTheme()
+  const { openInstallModal } = usePWA()
   const navigate = useNavigate()
-  const [showInstallModal, setShowInstallModal] = useState(false)
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null)
 
   const handleDemoClick = () => {
@@ -186,7 +186,7 @@ export const LandingPage: React.FC = () => {
           </div>
 
           <button
-            onClick={() => setShowInstallModal(true)}
+            onClick={() => openInstallModal()}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs transition-all shadow-sm"
           >
             <Download className="w-4 h-4" />
@@ -392,7 +392,7 @@ export const LandingPage: React.FC = () => {
               <span className="text-zinc-700 dark:text-zinc-700 light:text-slate-300">•</span>
               <button
                 type="button"
-                onClick={() => setShowInstallModal(true)}
+                onClick={() => openInstallModal()}
                 className="hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors"
               >
                 Install
@@ -409,9 +409,6 @@ export const LandingPage: React.FC = () => {
         </footer>
 
       </div>
-
-      {/* Install Modal */}
-      <InstallModal isOpen={showInstallModal} onClose={() => setShowInstallModal(false)} />
     </div>
   )
 }

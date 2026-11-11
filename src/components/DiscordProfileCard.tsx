@@ -16,9 +16,9 @@ import {
   Mail,
   PieChart
 } from 'lucide-react'
-import { InstallModal } from './InstallModal'
 import { EtlabImage } from './EtlabImage'
 import { formatSemester } from '../utils/format'
+import { usePWA } from '../context/PWAContext'
 
 interface DiscordProfileCardProps {
   onClose: () => void
@@ -28,10 +28,17 @@ interface DiscordProfileCardProps {
 export const DiscordProfileCard: React.FC<DiscordProfileCardProps> = ({ onClose, isMobileModal = false }) => {
   const { session, profile, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
+  const { isInstalled, triggerInstall } = usePWA()
   const navigate = useNavigate()
 
   const [copiedAdmission, setCopiedAdmission] = useState(false)
-  const [showInstallModal, setShowInstallModal] = useState(false)
+
+  const handleInstallClick = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    onClose()
+    await triggerInstall()
+  }
 
   const handleLogout = (e?: React.MouseEvent) => {
     if (e) {
@@ -205,18 +212,28 @@ export const DiscordProfileCard: React.FC<DiscordProfileCardProps> = ({ onClose,
             <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">{theme}</span>
           </button>
 
-          {/* Install PWA Button */}
-          <button
-            type="button"
-            onClick={() => {
-              onClose()
-              setShowInstallModal(true)
-            }}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 dark:bg-zinc-800/50 dark:hover:bg-zinc-800 light:bg-slate-100 light:hover:bg-slate-200 text-xs font-semibold text-zinc-200 dark:text-zinc-200 light:text-slate-700 transition-colors text-left"
-          >
-            <Smartphone className="w-4 h-4 text-brand-400" />
-            <span>Install App on Device</span>
-          </button>
+          {/* Install PWA Button / Status */}
+          {isInstalled ? (
+            <div className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-zinc-800/40 dark:bg-zinc-800/40 light:bg-slate-100 border border-zinc-800 dark:border-zinc-800 light:border-slate-200 text-xs font-semibold text-zinc-300 dark:text-zinc-300 light:text-slate-700">
+              <span className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Installed on this device</span>
+              </span>
+              <span className="text-[10px] uppercase font-mono font-bold text-emerald-400">PWA Active</span>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={handleInstallClick}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 dark:bg-zinc-800/50 dark:hover:bg-zinc-800 light:bg-slate-100 light:hover:bg-slate-200 text-xs font-semibold text-zinc-200 dark:text-zinc-200 light:text-slate-700 transition-colors text-left group"
+            >
+              <span className="flex items-center gap-2">
+                <Smartphone className="w-4 h-4 text-brand-400 group-hover:scale-110 transition-transform" />
+                <span>Install App on Device</span>
+              </span>
+              <span className="text-[10px] text-brand-400 font-bold uppercase tracking-wider">Fast & Offline</span>
+            </button>
+          )}
 
           {/* Sign out */}
           <button
@@ -229,9 +246,6 @@ export const DiscordProfileCard: React.FC<DiscordProfileCardProps> = ({ onClose,
           </button>
         </div>
       </div>
-
-      {/* PWA Install Modal nested if triggered */}
-      <InstallModal isOpen={showInstallModal} onClose={() => setShowInstallModal(false)} />
     </div>
   )
 
