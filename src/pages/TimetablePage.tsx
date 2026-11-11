@@ -1,5 +1,7 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { etlabClient } from '../api/client'
+import { DayTimetable, TimetablePeriod } from '../api/types'
 import { formatIndianDate } from '../utils/format'
 import { 
   CalendarDays, 
@@ -16,8 +18,35 @@ import {
   AlertTriangle
 } from 'lucide-react'
 
+// Robust substitution checker
+export const isSubstitutionPeriod = (p?: TimetablePeriod | null): boolean => {
+  if (!p) return false
+  const ch = String(p.change || '').toLowerCase().trim()
+  return ch === 'substitution' || Boolean(p.regular_subject) || Boolean(p.in_place_of)
+}
+
 export const TimetablePage: React.FC = () => {
   const { timetable, profile, loading } = useAuth()
+  const [semesterTimetable, setSemesterTimetable] = useState<DayTimetable[]>(() => timetable || [])
+
+  // Fetch full semester timetable (current month + 3 preceding months) for multi-month coverage
+  useEffect(() => {
+    let isMounted = true
+    etlabClient.getSemesterTimetable().then(data => {
+      if (isMounted && Array.isArray(data) && data.length > 0) {
+        setSemesterTimetable(data)
+      }
+    }).catch(console.warn)
+    return () => { isMounted = false }
+  }, [timetable])
+
+  // Merge loaded monthly and multi-month semester timetable entries
+  const allTimetableEntries: DayTimetable[] = useMemo(() => {
+    const map = new Map<string, DayTimetable>()
+    ;(semesterTimetable || []).forEach(d => { if (d && d.date) map.set(d.date, d) })
+    ;(timetable || []).forEach(d => { if (d && d.date) map.set(d.date, d) })
+    return Array.from(map.values())
+  }, [timetable, semesterTimetable])
 
   // Helper for safe local YYYY-MM-DD
   const getLocalDateStr = (d: Date = new Date()) => {
@@ -77,11 +106,60 @@ export const TimetablePage: React.FC = () => {
     return days
   }, [weekOffset, todayDateStr])
 
-  // Resolve active schedule for selectedDate
+  // If user navigates to a week in a month not yet loaded in allTimetableEntries, fetch on-demand
+  useEffect(() => {
+    if (currentWeekDays.length === 0) return
+    const monthsInWeek = Array.from(new Set(currentWeekDays.map(d => d.dateStr.slice(0, 7))))
+    monthsInWeek.forEach(m => {
+      const hasMonth = allTimetableEntries.some(d => d.date.startsWith(m))
+      if (!hasMonth) {
+        etlabClient.getMonthlyTimetable(m).then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            setSemesterTimetable(prev => {
+              const map = new Map<string, DayTimetable>()
+              ;(prev || []).forEach(d => { if (d.date) map.set(d.date, d) })
+              data.forEach(d => { if (d.date) map.set(d.date, d) })
+              return Array.from(map.values())
+            })
+          }
+        }).catch(() => {})
+      }
+    })
+  }, [currentWeekDays, allTimetableEntries])
+
+  // Week change handler: updates weekOffset and synchronizes selectedDate
+  const handleWeekChange = (newOffset: number) => {
+    setWeekOffset(newOffset)
+    const targetDate = new Date()
+    targetDate.setDate(targetDate.getDate() + newOffset * 7)
+
+    const currentSelected = new Date(selectedDate)
+    const selectedDayOfWeek = !isNaN(currentSelected.getTime()) ? currentSelected.getDay() : targetDate.getDay()
+
+    const day = targetDate.getDay() // 0 = Sun, 1 = Mon...
+    const diffToMonday = targetDate.getDate() - day + (day === 0 ? -6 : 1)
+    const monday = new Date(targetDate)
+    monday.setDate(diffToMonday)
+
+    // Preserve the active weekday if valid (Mon-Sat: 1-6 -> index 0-5), otherwise Monday
+    let dayIndex = selectedDayOfWeek === 0 ? 0 : selectedDayOfWeek - 1
+    if (dayIndex < 0 || dayIndex > 5) dayIndex = 0
+
+    const newSelectedDay = new Date(monday)
+    newSelectedDay.setDate(monday.getDate() + dayIndex)
+    setSelectedDate(getLocalDateStr(newSelectedDay))
+  }
+
+  const handleGoToToday = () => {
+    setWeekOffset(0)
+    setSelectedDate(todayDateStr)
+  }
+
+  // Resolve active schedule for selectedDate from complete multi-month timetable
   const activeDayEntry = useMemo(() => {
-    if (!timetable || timetable.length === 0) return null
-    return timetable.find(d => d.date === selectedDate)
-  }, [timetable, selectedDate])
+    if (!allTimetableEntries || allTimetableEntries.length === 0) return null
+    return allTimetableEntries.find(d => d.date === selectedDate)
+  }, [allTimetableEntries, selectedDate])
 
   const selectedDayInfo = useMemo(() => {
     return currentWeekDays.find(d => d.dateStr === selectedDate) || {
@@ -98,8 +176,8 @@ export const TimetablePage: React.FC = () => {
     if (activeDayEntry && Array.isArray(activeDayEntry.sub) && activeDayEntry.sub.length > 0) {
       return activeDayEntry.sub
     }
-    // Fallback: match by day name from monthly timetable
-    const byDayName = (timetable || []).filter(d => d.day?.toLowerCase() === selectedDayInfo.dayName?.toLowerCase())
+    // Fallback: match by day name from loaded multi-month timetable
+    const byDayName = (allTimetableEntries || []).filter(d => d.day?.toLowerCase() === selectedDayInfo.dayName?.toLowerCase())
     if (byDayName.length > 0) {
       return byDayName[byDayName.length - 1].sub
     }
@@ -108,9 +186,9 @@ export const TimetablePage: React.FC = () => {
       return profile.timetable
     }
     return []
-  }, [activeDayEntry, timetable, selectedDayInfo, profile])
+  }, [activeDayEntry, allTimetableEntries, selectedDayInfo, profile])
 
-  const substitutionsCount = displayPeriods.filter(p => p.change === 'substitution' || p.regular_subject).length
+  const substitutionsCount = displayPeriods.filter(p => isSubstitutionPeriod(p)).length
 
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-12 space-y-6">
@@ -130,7 +208,7 @@ export const TimetablePage: React.FC = () => {
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <div className="flex items-center gap-1 bg-zinc-900/90 dark:bg-zinc-900/90 light:bg-slate-100 border border-zinc-800 dark:border-zinc-800 light:border-slate-300 p-1 rounded-2xl shadow-sm">
             <button
-              onClick={() => setWeekOffset(prev => prev - 1)}
+              onClick={() => handleWeekChange(weekOffset - 1)}
               title="Previous Week"
               className="p-1.5 rounded-xl hover:bg-zinc-800 dark:hover:bg-zinc-800 light:hover:bg-slate-200 text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors"
             >
@@ -138,10 +216,7 @@ export const TimetablePage: React.FC = () => {
             </button>
 
             <button
-              onClick={() => {
-                setWeekOffset(0)
-                setSelectedDate(todayDateStr)
-              }}
+              onClick={handleGoToToday}
               className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
                 weekOffset === 0 && selectedDate === todayDateStr
                   ? 'bg-brand-600 text-white shadow-sm'
@@ -152,7 +227,7 @@ export const TimetablePage: React.FC = () => {
             </button>
 
             <button
-              onClick={() => setWeekOffset(prev => prev + 1)}
+              onClick={() => handleWeekChange(weekOffset + 1)}
               title="Next Week"
               className="p-1.5 rounded-xl hover:bg-zinc-800 dark:hover:bg-zinc-800 light:hover:bg-slate-200 text-zinc-400 dark:text-zinc-400 light:text-slate-600 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors"
             >
@@ -167,8 +242,8 @@ export const TimetablePage: React.FC = () => {
         {currentWeekDays.map((d) => {
           const isSelected = d.dateStr === selectedDate
           // Check if this day has any substitutions in timetable
-          const matchingEntry = timetable?.find(t => t.date === d.dateStr)
-          const hasSub = matchingEntry?.sub?.some(p => p.change === 'substitution' || p.regular_subject)
+          const matchingEntry = allTimetableEntries?.find(t => t.date === d.dateStr)
+          const hasSub = matchingEntry?.sub?.some(p => isSubstitutionPeriod(p))
           const isSuspended = matchingEntry?.all_hours_suspended || matchingEntry?.sub?.every(p => p.suspended)
 
           return (
@@ -265,8 +340,8 @@ export const TimetablePage: React.FC = () => {
           displayPeriods.map((period, idx) => {
             const timeSlot = periodTimes[period.hour] || `Hour ${period.hour}`
             const status = period.attendance_status
-            const isSub = period.change === 'substitution' || !!period.regular_subject
-            const isSpecial = period.change === 'special'
+            const isSub = isSubstitutionPeriod(period)
+            const isSpecial = String(period.change || '').toLowerCase().trim() === 'special'
             const isSuspended = period.suspended
 
             let statusBadge = (
@@ -371,11 +446,13 @@ export const TimetablePage: React.FC = () => {
                       <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-extrabold uppercase tracking-wide bg-amber-100 dark:bg-amber-950/80 border border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-300 shadow-sm shrink-0">
                         Substitution
                       </span>
-                      {period.regular_subject && (
+                      {(period.regular_subject || period.in_place_of) && (
                         <span className="text-xs text-zinc-400 dark:text-zinc-400 light:text-slate-600">
-                          was: <strong className="text-zinc-200 dark:text-zinc-200 light:text-slate-800 font-semibold">{period.regular_subject}</strong>
+                          {period.regular_subject && (
+                            <>was: <strong className="text-zinc-200 dark:text-zinc-200 light:text-slate-800 font-semibold">{period.regular_subject}</strong></>
+                          )}
                           {period.in_place_of && (
-                            <span className="opacity-80"> (in place of {period.in_place_of})</span>
+                            <span className="opacity-80">{period.regular_subject ? ' ' : ''}(in place of {period.in_place_of})</span>
                           )}
                         </span>
                       )}

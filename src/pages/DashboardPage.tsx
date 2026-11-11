@@ -11,6 +11,7 @@ import { SubjectAttendance, Assignment, DayTimetable, TimetablePeriod } from '..
 import { parsePercent, parseNumber, formatPercent, getDaysRemaining, formatSemester, formatIndianDate } from '../utils/format'
 import { calculateSubjectProjection } from '../utils/attendance'
 import { downloadFileWithAuth } from '../utils/download'
+import { isSubstitutionPeriod } from './TimetablePage'
 import { 
   Clock, 
   Calendar, 
@@ -308,7 +309,7 @@ export const DashboardPage: React.FC = () => {
                       <span className="text-[11px] font-bold text-brand-400 uppercase tracking-wider">
                         Period {activePeriod.hour} • Currently In Progress
                       </span>
-                      {(activePeriod.change === 'substitution' || activePeriod.regular_subject) && (
+                      {isSubstitutionPeriod(activePeriod) && (
                         <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-400 dark:text-amber-300 light:text-amber-800">
                           Substitution
                         </span>
@@ -317,10 +318,14 @@ export const DashboardPage: React.FC = () => {
                     <h3 className="text-lg md:text-xl font-extrabold text-white dark:text-white light:text-slate-900 mt-1">
                       {activePeriod.subject}
                     </h3>
-                    {(activePeriod.change === 'substitution' || activePeriod.regular_subject) && activePeriod.regular_subject && (
+                    {isSubstitutionPeriod(activePeriod) && (activePeriod.regular_subject || activePeriod.in_place_of) && (
                       <p className="text-xs text-amber-400 dark:text-amber-300 light:text-amber-800 font-medium mt-1 flex items-center gap-1.5">
-                        <span>was: <strong className="font-bold">{activePeriod.regular_subject}</strong></span>
-                        {activePeriod.in_place_of && <span className="opacity-80"> (in place of {activePeriod.in_place_of})</span>}
+                        {activePeriod.regular_subject && (
+                          <span>was: <strong className="font-bold">{activePeriod.regular_subject}</strong></span>
+                        )}
+                        {activePeriod.in_place_of && (
+                          <span className="opacity-80">({activePeriod.regular_subject ? 'in place of ' : 'in place of '}{activePeriod.in_place_of})</span>
+                        )}
                       </p>
                     )}
                     <p className="text-xs text-zinc-400 dark:text-zinc-400 light:text-slate-600 mt-1.5 flex flex-wrap items-center gap-2">
@@ -352,7 +357,7 @@ export const DashboardPage: React.FC = () => {
                       <span className="text-[11px] font-bold text-zinc-400 dark:text-zinc-400 light:text-slate-500 uppercase tracking-wider">
                         {isShowingTomorrow ? `Tomorrow • Hour ${nextPeriod.hour}` : `Next Period • Hour ${nextPeriod.hour}`}
                       </span>
-                      {(nextPeriod.change === 'substitution' || nextPeriod.regular_subject) && (
+                      {isSubstitutionPeriod(nextPeriod) && (
                         <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-400 dark:text-amber-300 light:text-amber-800">
                           Substitution
                         </span>
@@ -361,10 +366,14 @@ export const DashboardPage: React.FC = () => {
                     <h3 className="text-base md:text-lg font-bold text-white dark:text-white light:text-slate-900 mt-1">
                       {nextPeriod.subject}
                     </h3>
-                    {(nextPeriod.change === 'substitution' || nextPeriod.regular_subject) && nextPeriod.regular_subject && (
+                    {isSubstitutionPeriod(nextPeriod) && (nextPeriod.regular_subject || nextPeriod.in_place_of) && (
                       <p className="text-xs text-amber-400 dark:text-amber-300 light:text-amber-800 font-medium mt-1 flex items-center gap-1.5">
-                        <span>was: <strong className="font-bold">{nextPeriod.regular_subject}</strong></span>
-                        {nextPeriod.in_place_of && <span className="opacity-80"> (in place of {nextPeriod.in_place_of})</span>}
+                        {nextPeriod.regular_subject && (
+                          <span>was: <strong className="font-bold">{nextPeriod.regular_subject}</strong></span>
+                        )}
+                        {nextPeriod.in_place_of && (
+                          <span className="opacity-80">({nextPeriod.regular_subject ? 'in place of ' : 'in place of '}{nextPeriod.in_place_of})</span>
+                        )}
                       </p>
                     )}
                     <p className="text-xs text-zinc-400 dark:text-zinc-400 light:text-slate-600 mt-1.5 flex items-center gap-2">
@@ -401,7 +410,7 @@ export const DashboardPage: React.FC = () => {
                   const isCurrent = period.hour === activePeriodNumber
                   const isPresent = period.attendance_status === 'present'
                   const isAbsent = period.attendance_status === 'absent'
-                  const isSub = period.change === 'substitution' || !!period.regular_subject
+                  const isSub = isSubstitutionPeriod(period)
 
                   return (
                     <div
