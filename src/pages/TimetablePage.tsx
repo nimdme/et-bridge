@@ -291,7 +291,7 @@ export const TimetablePage: React.FC = () => {
               )
             } else if (status === 'duty_leave') {
               statusBadge = (
-                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-purple-400 bg-purple-950/70 border border-purple-800/60 px-2.5 py-1 rounded-full">
+                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-sky-400 bg-sky-950/70 border border-sky-800/60 px-2.5 py-1 rounded-full">
                   <span>Duty Leave</span>
                 </span>
               )
@@ -385,7 +385,7 @@ export const TimetablePage: React.FC = () => {
                   {/* SPECIAL CLASS BADGE */}
                   {isSpecial && (
                     <div className="mt-3 pt-2.5 border-t border-zinc-800/70 dark:border-zinc-800/70 light:border-slate-200 flex items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide bg-purple-500/15 border border-purple-500/40 text-purple-400 shadow-sm">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide bg-cyan-500/15 border border-cyan-500/40 text-cyan-400 shadow-sm">
                         Special Class
                       </span>
                     </div>

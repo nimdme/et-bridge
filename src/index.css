@@ -110,14 +110,14 @@ html.light .glass-panel {
 
 .glass-panel-hover:hover {
   background: rgba(39, 39, 42, 0.85);
-  border-color: rgba(99, 102, 241, 0.3);
+  border-color: rgba(59, 130, 246, 0.3);
   transform: translateY(-1px);
 }
 
 html.light .glass-panel-hover:hover {
   background: #ffffff;
-  border-color: rgba(99, 102, 241, 0.4);
-  box-shadow: 0 10px 25px -3px rgba(99, 102, 241, 0.08);
+  border-color: rgba(37, 99, 235, 0.4);
+  box-shadow: 0 10px 25px -3px rgba(37, 99, 235, 0.08);
   transform: translateY(-1px);
 }
 
@@ -211,7 +211,7 @@ html.light header {
 }
 
 /* General text-white turns into dark slate in light mode, UNLESS inside colored/solid surfaces */
-html.light .text-white:not(.always-white):not([class*="bg-brand"]):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-rose"]):not([class*="bg-emerald"]):not([class*="bg-black"]) {
+html.light .text-white:not(.always-white):not([class*="bg-brand"]):not([class*="bg-blue"]):not([class*="bg-sky"]):not([class*="bg-cyan"]):not([class*="bg-rose"]):not([class*="bg-emerald"]):not([class*="bg-black"]) {
   color: #0f172a !important;
 }
 
@@ -223,8 +223,7 @@ html.light .bg-emerald-600,
 html.light .bg-emerald-500,
 html.light .bg-rose-600,
 html.light .bg-rose-500,
-html.light .bg-indigo-600,
-html.light .bg-purple-600,
+html.light .bg-blue-600,
 html.light .always-white {
   color: #ffffff !important;
 }
@@ -236,8 +235,7 @@ html.light .bg-emerald-600 *,
 html.light .bg-emerald-500 *,
 html.light .bg-rose-600 *,
 html.light .bg-rose-500 *,
-html.light .bg-indigo-600 *,
-html.light .bg-purple-600 *,
+html.light .bg-blue-600 *,
 html.light .always-white * {
   color: #ffffff !important;
 }
@@ -338,11 +336,11 @@ html.light .hover\:border-zinc-600:hover {
 
 /* High Contrast Accent Badges & Chips in Light Mode */
 html.light .text-brand-400 {
-  color: #4338ca !important;
+  color: #1d4ed8 !important;
 }
 
 html.light .text-brand-300 {
-  color: #3730a3 !important;
+  color: #1e40af !important;
 }
 
 html.light .text-emerald-400 {
@@ -369,14 +367,18 @@ html.light .text-amber-300 {
   color: #92400e !important;
 }
 
-html.light .text-purple-400 {
-  color: #6d28d9 !important;
+html.light .text-sky-400 {
+  color: #0284c7 !important;
+}
+
+html.light .text-cyan-400 {
+  color: #0891b2 !important;
 }
 
 /* Soft colored pill/card backgrounds with crisp borders */
 html.light [class*="bg-brand-950"] {
-  background-color: #eef2ff !important;
-  border-color: #c7d2fe !important;
+  background-color: #eff6ff !important;
+  border-color: #bfdbfe !important;
 }
 
 html.light [class*="bg-emerald-950"] {
@@ -394,9 +396,14 @@ html.light [class*="bg-amber-950"] {
   border-color: #fde68a !important;
 }
 
-html.light [class*="bg-purple-950"] {
-  background-color: #faf5ff !important;
-  border-color: #e9d5ff !important;
+html.light [class*="bg-sky-950"] {
+  background-color: #f0f9ff !important;
+  border-color: #bae6fd !important;
+}
+
+html.light [class*="bg-cyan-950"] {
+  background-color: #ecfeff !important;
+  border-color: #a5f3fc !important;
 }
 
 /* Modals & Popovers in Light Mode */

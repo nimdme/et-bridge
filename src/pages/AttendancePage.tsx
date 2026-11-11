@@ -723,7 +723,7 @@ export const AttendancePage: React.FC = () => {
                           {selectedDayAbsentCount} Absent
                         </span>
                         {selectedDayDutyLeaveCount > 0 && (
-                          <span className="px-2 py-0.5 rounded-full bg-purple-950/60 border border-purple-800/60 text-purple-400 text-[10px] font-bold whitespace-nowrap">
+                          <span className="px-2 py-0.5 rounded-full bg-sky-950/60 border border-sky-800/60 text-sky-400 text-[10px] font-bold whitespace-nowrap">
                             {selectedDayDutyLeaveCount} Duty Leave
                           </span>
                         )}
@@ -756,7 +756,7 @@ export const AttendancePage: React.FC = () => {
                           isAbsent
                             ? 'bg-rose-950/25 border-rose-800/50 text-rose-200'
                             : isDutyLeave
-                            ? 'bg-purple-950/25 border-purple-800/50 text-purple-200'
+                            ? 'bg-sky-950/25 border-sky-800/50 text-sky-200'
                             : isSuspended
                             ? 'bg-amber-950/25 border-amber-800/50 text-amber-200'
                             : 'bg-zinc-900/70 dark:bg-zinc-900/70 light:bg-slate-50 border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200'
@@ -788,7 +788,7 @@ export const AttendancePage: React.FC = () => {
                               : isAbsent
                               ? 'bg-rose-950/70 border-rose-800 text-rose-400'
                               : isDutyLeave
-                              ? 'bg-purple-950/70 border-purple-800 text-purple-400'
+                              ? 'bg-sky-950/70 border-sky-800 text-sky-400'
                               : isSuspended
                               ? 'bg-amber-950/70 border-amber-800 text-amber-400'
                               : 'bg-zinc-800 border-zinc-700 text-zinc-400'

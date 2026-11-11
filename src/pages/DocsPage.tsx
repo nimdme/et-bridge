@@ -289,7 +289,7 @@ Content-Type: application/json
             {/* SECTION 3: API REFERENCE */}
             <section id="api-reference" className="space-y-4">
               <div className="flex items-center gap-2">
-                <Code2 className="w-5 h-5 text-indigo-400" />
+                <Code2 className="w-5 h-5 text-brand-400" />
                 <h2 className="text-lg sm:text-xl font-bold text-white dark:text-white light:text-slate-900 font-mono">
                   3. Reverse-Engineered ETLab REST API Reference
                 </h2>
@@ -415,7 +415,7 @@ y = ceil( (0.75 * T - A) / 0.25 )`}</pre>
             {/* SECTION 5: DUTY LEAVE RECONCILIATION */}
             <section id="duty-leaves" className="space-y-4">
               <div className="flex items-center gap-2">
-                <Layers className="w-5 h-5 text-purple-400" />
+                <Layers className="w-5 h-5 text-sky-400" />
                 <h2 className="text-lg sm:text-xl font-bold text-white dark:text-white light:text-slate-900 font-mono">
                   5. Self-Reported Duty Leave Reconciliation Engine
                 </h2>

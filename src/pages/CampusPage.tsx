@@ -96,7 +96,7 @@ export const CampusPage: React.FC = () => {
               : 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white'
           }`}
         >
-          <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
+          <ShieldCheck className="w-3.5 h-3.5 text-sky-400" />
           <span>Duty Leaves ({dutyLeaves.length + pendingDutyLeaves.length})</span>
         </button>
 
@@ -144,7 +144,7 @@ export const CampusPage: React.FC = () => {
             {/* Progress bar */}
             <div className="w-full h-3 rounded-full bg-zinc-800 overflow-hidden mb-3">
               <div
-                className="h-full bg-gradient-to-r from-brand-500 via-indigo-500 to-emerald-400 rounded-full transition-all duration-700"
+                className="h-full bg-gradient-to-r from-brand-500 via-sky-400 to-emerald-400 rounded-full transition-all duration-700"
                 style={{ width: `${pointsPercentage}%` }}
               />
             </div>
@@ -428,7 +428,7 @@ export const CampusPage: React.FC = () => {
                   className="glass-panel rounded-2xl p-5 border border-zinc-800 dark:border-zinc-800 light:border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm"
                 >
                   <div>
-                    <span className="text-[11px] font-mono font-bold text-purple-400 bg-purple-950/60 border border-purple-800/40 px-2 py-0.5 rounded">
+                    <span className="text-[11px] font-mono font-bold text-sky-400 bg-sky-950/60 border border-sky-800/40 px-2 py-0.5 rounded">
                       {dl.hours ? `${dl.hours} Hours` : 'Exemption'}
                     </span>
                     <h3 className="text-base font-bold text-white dark:text-white light:text-slate-900 mt-1.5">{dl.reason}</h3>

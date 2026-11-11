@@ -701,10 +701,10 @@ export const DashboardPage: React.FC = () => {
           className="p-4 rounded-2xl glass-panel border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 hover:border-brand-500/40 transition-all group flex flex-col justify-between"
         >
           <div className="flex items-center justify-between mb-2">
-            <div className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold">
+            <div className="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold">
               <TrendingUp className="w-4 h-4" />
             </div>
-            <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-purple-400 transition-colors" />
+            <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-cyan-400 transition-colors" />
           </div>
           <div>
             <span className="text-xs font-bold text-white dark:text-white light:text-slate-900 block">Academic Analysis</span>

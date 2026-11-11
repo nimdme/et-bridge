@@ -194,7 +194,7 @@ export const Sidebar: React.FC = () => {
             className="p-2.5 rounded-2xl bg-zinc-900/90 dark:bg-zinc-900/90 light:bg-white border border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 shadow-sm flex items-center justify-between gap-2.5 cursor-pointer hover:border-brand-500/50 hover:bg-zinc-800/50 transition-all group"
           >
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center uppercase shadow-sm shrink-0 group-hover:scale-105 transition-transform overflow-hidden ring-1 ring-zinc-700/50">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-700 to-brand-500 text-white font-bold text-xs flex items-center justify-center uppercase shadow-sm shrink-0 group-hover:scale-105 transition-transform overflow-hidden ring-1 ring-zinc-700/50">
                 <EtlabImage
                   src={profile?.photo || profile?.image || profile?.avatar || session?.studentPhoto}
                   alt={studentName}

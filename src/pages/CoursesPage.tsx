@@ -100,8 +100,8 @@ export const CoursesPage: React.FC = () => {
 
             // First character of course type for avatar icon (Theory -> T, Practical -> P, No University -> N)
             const typeInitial = c.type.startsWith('Practical') ? 'P' : c.type.includes('No University') ? 'N' : 'T'
-            const initialBg = typeInitial === 'T' ? 'bg-blue-600/20 text-blue-400 border-blue-500/30' :
-                              typeInitial === 'P' ? 'bg-purple-600/20 text-purple-400 border-purple-500/30' :
+            const initialBg = typeInitial === 'T' ? 'bg-brand-600/20 text-brand-400 border-brand-500/30' :
+                              typeInitial === 'P' ? 'bg-cyan-600/20 text-cyan-400 border-cyan-500/30' :
                               'bg-emerald-600/20 text-emerald-400 border-emerald-500/30'
 
             return (
@@ -172,7 +172,7 @@ export const CoursesPage: React.FC = () => {
                 <div className="mt-5 pt-3.5 border-t border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 grid grid-cols-2 gap-2">
                   <button
                     onClick={() => handleOpenModal(c, 'syllabus')}
-                    className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-purple-950/40 hover:bg-purple-900/50 text-purple-300 border border-purple-800/40 text-[11px] font-bold transition-colors"
+                    className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-sky-950/40 hover:bg-sky-900/50 text-sky-300 border border-sky-800/40 text-[11px] font-bold transition-colors"
                   >
                     <FileText className="w-3.5 h-3.5" />
                     <span>Syllabus</span>

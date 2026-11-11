@@ -118,7 +118,7 @@ export const AssignmentModal: React.FC<AssignmentModalProps> = ({ assignment, on
               </span>
               <span className="text-xs text-zinc-400 dark:text-zinc-400 light:text-slate-600 font-semibold">{assignment.subject_name || assignment.subject}</span>
               {assignment.submission_mode && (
-                <span className="text-[10px] font-semibold text-purple-400 bg-purple-950/60 border border-purple-800/40 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-semibold text-sky-400 bg-sky-950/60 border border-sky-800/40 px-2 py-0.5 rounded-full">
                   {assignment.submission_mode}
                 </span>
               )}

@@ -181,8 +181,8 @@ export const BottomNav: React.FC = () => {
           >
             <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center transition-all duration-200 shadow-md ${
               isSecondaryActive || isMenuOpen
-                ? 'bg-gradient-to-tr from-brand-500 via-indigo-500 to-brand-600 text-white shadow-brand-500/40 scale-105 border border-brand-300/50 ring-2 ring-brand-400/40'
-                : 'bg-gradient-to-tr from-brand-600 via-indigo-600 to-brand-500 text-white shadow-brand-600/30 border border-brand-400/30 hover:scale-105 active:scale-95'
+                ? 'bg-brand-600 text-white shadow-brand-500/40 scale-105 border border-brand-400/40 ring-2 ring-brand-400/30'
+                : 'bg-brand-600 hover:bg-brand-500 text-white shadow-brand-600/30 border border-brand-500/30 hover:scale-105 active:scale-95'
             }`}>
               <Menu className={`w-5 h-5 text-white transition-transform duration-200 ${isMenuOpen ? 'rotate-90' : ''}`} />
             </div>
@@ -263,7 +263,7 @@ export const BottomNav: React.FC = () => {
             {/* Sheet Header: Student Info */}
             <div className="px-5 pb-3 border-b border-zinc-800/80 dark:border-zinc-800/80 light:border-slate-200 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-sm ring-1 ring-white/10 overflow-hidden">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-700 to-brand-500 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-sm ring-1 ring-white/10 overflow-hidden">
                   <EtlabImage
                     src={profile?.photo || profile?.image || profile?.avatar || session?.studentPhoto}
                     alt={studentName}
@@ -373,7 +373,7 @@ export const BottomNav: React.FC = () => {
                       </>
                     ) : (
                       <>
-                        <Moon className="w-3.5 h-3.5 text-indigo-600" />
+                        <Moon className="w-3.5 h-3.5 text-brand-600" />
                         <span>Dark Mode</span>
                       </>
                     )}

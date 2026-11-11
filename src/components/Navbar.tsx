@@ -44,7 +44,7 @@ export const Navbar: React.FC = () => {
         {/* Sleek top indeterminate progress bar during background or manual sync */}
         {(loading || isRefreshing) && (
           <div className="absolute top-0 left-0 right-0 h-[2px] bg-zinc-800/40 dark:bg-zinc-800/40 light:bg-slate-200 overflow-hidden z-50">
-            <div className="h-full bg-gradient-to-r from-brand-500 via-indigo-500 to-emerald-400 w-1/3 animate-indeterminate shadow-[0_0_8px_rgba(99,102,241,0.8)]" />
+            <div className="h-full bg-gradient-to-r from-brand-500 via-sky-400 to-emerald-400 w-1/3 animate-indeterminate shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
           </div>
         )}
         <div className="w-full px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-3 max-w-full">
@@ -105,7 +105,7 @@ export const Navbar: React.FC = () => {
               {theme === 'dark' ? (
                 <Sun className="w-4 h-4 text-amber-400" />
               ) : (
-                <Moon className="w-4 h-4 text-indigo-600" />
+                <Moon className="w-4 h-4 text-brand-600" />
               )}
             </button>
 
@@ -138,7 +138,7 @@ export const Navbar: React.FC = () => {
                 type="button"
                 onClick={() => setShowMobileProfile(true)}
                 title="Open Profile Card"
-                className="md:hidden flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white font-bold text-xs uppercase shadow-sm ring-1 ring-zinc-700/60 shrink-0 always-white ml-0.5 active:scale-95 transition-transform overflow-hidden"
+                className="md:hidden flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-700 to-brand-500 text-white font-bold text-xs uppercase shadow-sm ring-1 ring-zinc-700/60 shrink-0 always-white ml-0.5 active:scale-95 transition-transform overflow-hidden"
               >
                 <EtlabImage
                   src={profile?.photo || profile?.image || profile?.avatar}
